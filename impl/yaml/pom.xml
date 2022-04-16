@@ -19,9 +19,8 @@
 
     <repositories>
         <repository>
-            <id>github</id>
-            <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/CarmJos/YamlConfiguration-Commented/</url>
+            <id>yaml-commented</id>
+            <url>https://maven.pkg.github.com/CarmJos/YamlConfiguration-Commented</url>
         </repository>
     </repositories>
 
