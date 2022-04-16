@@ -47,7 +47,7 @@
             <name>Maven Central</name>
             <url>https://repo1.maven.org/maven2</url>
         </repository>
-      
+  
         <repository>
             <!--采用github依赖库，实时更新，但需要配置 (推荐) -->
             <id>EasyConfiguration</id>
@@ -97,11 +97,7 @@
 
 </details>
 
-<details>
-<summary>平台依赖版本</summary>
-
-<details>
-<summary>基于Spigot实现的版本</summary>
+**基于Spigot实现的版本**
 
 ```xml
 
@@ -117,9 +113,7 @@
 </project>
 ```
 
-</details>
-<details>
-<summary>基于Bungee实现的版本 (不支持自动注释)</summary>
+**基于Bungee实现的版本 (不支持自动注释)**
 
 ```xml
 
@@ -134,8 +128,6 @@
     </dependencies>
 </project>
 ```
-
-</details>
 
 </details>
 
@@ -161,7 +153,7 @@ repositories {
 </details>
 
 <details>
-<summary>原生依赖</summary>
+<summary>通用原生依赖</summary>
 
 ```groovy
 
@@ -179,7 +171,7 @@ dependencies {
 </details>
 
 <details>
-<summary>含连接池版本</summary>
+<summary>平台依赖版本</summary>
 
 ```groovy
 
