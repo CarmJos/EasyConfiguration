@@ -72,7 +72,7 @@ jobs:
         run: |
           cd docs
           git init
-          git remote add origin git@github.com:CarmJos/EasySQL.git
+          git remote add origin git@github.com:CarmJos/EasyConfiguration.git
           git checkout -b gh-pages
           git add -A
           git commit -m "API Document generated."
