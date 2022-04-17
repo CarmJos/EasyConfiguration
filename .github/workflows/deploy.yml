@@ -40,14 +40,14 @@ jobs:
         run: |
           rm -rf docs
           mkdir -vp docs
-          cp -vrf api/target/apidocs/* docs/
+          cp -vrf core/target/apidocs/* docs/
           cp -vrf .documentation/JAVADOC-README.md docs/README.md
 
       - name: "Generate the Javadoc sitemap"
         id: sitemap
         uses: cicirello/generate-sitemap@v1
         with:
-          base-url-path: https://carmjos.github.io/EasySQL
+          base-url-path: https://CarmJos.github.io/EasyConfiguration
           path-to-root: docs
 
       - name: "Output stats"
