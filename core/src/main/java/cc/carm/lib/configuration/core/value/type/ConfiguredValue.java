@@ -1,5 +1,7 @@
 package cc.carm.lib.configuration.core.value.type;
 
+import cc.carm.lib.configuration.core.builder.ConfigBuilder;
+import cc.carm.lib.configuration.core.builder.value.ConfigValueBuilder;
 import cc.carm.lib.configuration.core.function.ConfigDataFunction;
 import cc.carm.lib.configuration.core.function.ConfigValueParser;
 import cc.carm.lib.configuration.core.source.ConfigurationProvider;
@@ -10,6 +12,18 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 
 public class ConfiguredValue<V> extends CachedConfigValue<V> {
+
+    public static <V> ConfigValueBuilder<V> builder(Class<V> valueClass) {
+        return builder().asValue(valueClass);
+    }
+
+    public static <V> ConfiguredValue<V> of(Class<V> valueClass) {
+        return of(valueClass, null);
+    }
+
+    public static <V> ConfiguredValue<V> of(Class<V> valueClass, @Nullable V defaultValue) {
+        return builder(valueClass).fromObject().defaults(defaultValue).build();
+    }
 
     protected final @NotNull Class<V> valueClass;
 

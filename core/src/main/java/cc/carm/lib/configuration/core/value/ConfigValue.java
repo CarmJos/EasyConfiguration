@@ -1,7 +1,6 @@
 package cc.carm.lib.configuration.core.value;
 
 import cc.carm.lib.configuration.core.builder.ConfigBuilder;
-import cc.carm.lib.configuration.core.builder.value.ConfigValueBuilder;
 import cc.carm.lib.configuration.core.source.ConfigurationProvider;
 import cc.carm.lib.configuration.core.source.ConfigurationWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -11,13 +10,9 @@ import java.util.Objects;
 import java.util.Optional;
 
 public abstract class ConfigValue<T> {
-
-    public static <V> ConfigValueBuilder<V> builder(Class<V> valueClass) {
-        return ConfigBuilder.asValue(valueClass);
-    }
-
-    public static <V> ConfigValue<V> of(Class<V> valueClass) {
-        return builder(valueClass).fromObject().build();
+    
+    public static @NotNull ConfigBuilder builder() {
+        return new ConfigBuilder();
     }
 
     protected @Nullable T defaultValue;

@@ -1,8 +1,11 @@
 package cc.carm.lib.configuration.core.value.type;
 
+import cc.carm.lib.configuration.core.builder.ConfigBuilder;
+import cc.carm.lib.configuration.core.builder.list.ConfigListBuilder;
 import cc.carm.lib.configuration.core.function.ConfigDataFunction;
 import cc.carm.lib.configuration.core.source.ConfigurationProvider;
 import cc.carm.lib.configuration.core.value.CachedConfigValue;
+import cc.carm.lib.configuration.core.value.ConfigValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,6 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ConfiguredList<V> extends CachedConfigValue<List<V>> {
+
+    public static <V> @NotNull ConfigListBuilder<V> builder(@NotNull Class<V> valueClass) {
+        return builder().asList(valueClass);
+    }
 
     protected final @NotNull Class<V> valueClass;
 

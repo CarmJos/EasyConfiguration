@@ -18,7 +18,7 @@ public class ConfiguredMap<K, V> extends CachedConfigValue<Map<K, V>> {
 
     public static <K, V> @NotNull ConfigMapBuilder<LinkedHashMap<K, V>, K, V> builder(@NotNull Class<K> keyClass,
                                                                                       @NotNull Class<V> valueClass) {
-        return ConfigBuilder.asMap(keyClass, valueClass);
+        return builder().asMap(keyClass, valueClass);
     }
 
     protected final @NotNull Supplier<? extends Map<K, V>> supplier;

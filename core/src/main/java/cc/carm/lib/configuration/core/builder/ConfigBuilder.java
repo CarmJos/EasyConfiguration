@@ -11,30 +11,30 @@ import java.util.TreeMap;
 
 public class ConfigBuilder {
 
-    public static <V> @NotNull ConfigValueBuilder<V> asValue(@NotNull Class<V> valueClass) {
+    public <V> @NotNull ConfigValueBuilder<V> asValue(@NotNull Class<V> valueClass) {
         return new ConfigValueBuilder<>(valueClass);
     }
 
-    public static <V> @NotNull ConfigListBuilder<V> asList(@NotNull Class<V> valueClass) {
+    public <V> @NotNull ConfigListBuilder<V> asList(@NotNull Class<V> valueClass) {
         return new ConfigListBuilder<>(valueClass);
     }
 
-    public static <K, V> @NotNull ConfigMapBuilder<LinkedHashMap<K, V>, K, V> asMap(@NotNull Class<K> keyClass,
+    public <K, V> @NotNull ConfigMapBuilder<LinkedHashMap<K, V>, K, V> asMap(@NotNull Class<K> keyClass,
                                                                                     @NotNull Class<V> valueClass) {
         return new ConfigMapBuilder<>(LinkedHashMap::new, keyClass, valueClass);
     }
 
-    public static <K, V> @NotNull ConfigMapBuilder<HashMap<K, V>, K, V> asHashMap(@NotNull Class<K> keyClass,
+    public <K, V> @NotNull ConfigMapBuilder<HashMap<K, V>, K, V> asHashMap(@NotNull Class<K> keyClass,
                                                                                   @NotNull Class<V> valueClass) {
         return asMap(keyClass, valueClass).supplier(HashMap::new);
     }
 
-    public static <K, V> @NotNull ConfigMapBuilder<LinkedHashMap<K, V>, K, V> asLinkedMap(@NotNull Class<K> keyClass,
+    public <K, V> @NotNull ConfigMapBuilder<LinkedHashMap<K, V>, K, V> asLinkedMap(@NotNull Class<K> keyClass,
                                                                                           @NotNull Class<V> valueClass) {
         return asMap(keyClass, valueClass);
     }
 
-    public static <K extends Comparable<K>, V> @NotNull ConfigMapBuilder<TreeMap<K, V>, K, V> asTreeMap(@NotNull Class<K> keyClass,
+    public <K extends Comparable<K>, V> @NotNull ConfigMapBuilder<TreeMap<K, V>, K, V> asTreeMap(@NotNull Class<K> keyClass,
                                                                                                         @NotNull Class<V> valueClass) {
         return asMap(keyClass, valueClass).supplier(TreeMap::new);
     }
