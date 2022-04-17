@@ -98,7 +98,7 @@
 </details>
 
 <details>
-<summary>通用原生依赖</summary>
+<summary>平台依赖版本</summary>
 
 **基于Spigot实现的版本**
 
