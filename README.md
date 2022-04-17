@@ -97,6 +97,9 @@
 
 </details>
 
+<details>
+<summary>通用原生依赖</summary>
+
 **基于Spigot实现的版本**
 
 ```xml
