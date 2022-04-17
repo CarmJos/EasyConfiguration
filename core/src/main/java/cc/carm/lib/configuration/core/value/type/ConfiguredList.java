@@ -1,11 +1,9 @@
 package cc.carm.lib.configuration.core.value.type;
 
-import cc.carm.lib.configuration.core.builder.ConfigBuilder;
 import cc.carm.lib.configuration.core.builder.list.ConfigListBuilder;
 import cc.carm.lib.configuration.core.function.ConfigDataFunction;
 import cc.carm.lib.configuration.core.source.ConfigurationProvider;
 import cc.carm.lib.configuration.core.value.CachedConfigValue;
-import cc.carm.lib.configuration.core.value.ConfigValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

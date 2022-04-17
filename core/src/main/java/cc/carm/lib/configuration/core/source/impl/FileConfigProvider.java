@@ -22,17 +22,22 @@ public abstract class FileConfigProvider extends ConfigurationProvider {
     }
 
     public void initializeFile(@Nullable String sourcePath) throws IOException {
-        if (getFile().exists()) return;
-        if (!getFile().getParentFile().exists() && !getFile().getParentFile().mkdirs()) {
+        if (this.file.exists()) return;
+
+        File parent = this.file.getParentFile();
+        if (parent != null && !parent.exists() && !parent.mkdirs()) {
             throw new IOException("Failed to create directory " + file.getParentFile().getAbsolutePath());
         }
-        if (!getFile().createNewFile()) {
+
+        if (!this.file.createNewFile()) {
             throw new IOException("Failed to create file " + file.getAbsolutePath());
         }
-        if (sourcePath == null) return;
-        try {
-            saveResource(sourcePath, true);
-        } catch (Exception ignored) {
+
+        if (sourcePath != null) {
+            try {
+                saveResource(sourcePath, true);
+            } catch (Exception ignored) {
+            }
         }
     }
 
