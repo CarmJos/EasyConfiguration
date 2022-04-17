@@ -11,7 +11,7 @@ public class EasyConfiguration {
         BungeeConfigProvider provider = new BungeeConfigProvider(file);
         try {
             provider.initializeFile(source);
-            provider.initialize();
+            provider.initializeConfig();
         } catch (IOException e) {
             e.printStackTrace();
         }

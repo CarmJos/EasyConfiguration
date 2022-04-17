@@ -12,7 +12,7 @@ public class EasyConfiguration {
         SpigotConfigProvider provider = new SpigotConfigProvider(file);
         try {
             provider.initializeFile(source);
-            provider.initialize();
+            provider.initializeConfig();
         } catch (IOException e) {
             e.printStackTrace();
         }

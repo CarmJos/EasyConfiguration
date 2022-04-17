@@ -11,7 +11,7 @@ public class EasyConfiguration {
         YamlConfigProvider provider = new YamlConfigProvider(file);
         try {
             provider.initializeFile(source);
-            provider.initialize();
+            provider.initializeConfig();
         } catch (IOException e) {
             e.printStackTrace();
         }

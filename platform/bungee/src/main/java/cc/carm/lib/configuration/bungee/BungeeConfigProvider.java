@@ -19,7 +19,7 @@ public class BungeeConfigProvider extends FileConfigProvider {
         super(file);
     }
 
-    public void initialize() throws IOException {
+    public void initializeConfig() throws IOException {
         this.configuration = getLoader().load(file);
     }
 

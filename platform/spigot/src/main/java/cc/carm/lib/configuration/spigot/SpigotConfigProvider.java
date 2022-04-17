@@ -17,7 +17,7 @@ public class SpigotConfigProvider extends FileConfigProvider {
         super(file);
     }
 
-    public void initialize() {
+    public void initializeConfig() {
         this.configuration = CommentedYamlConfiguration.loadConfiguration(comments, file);
     }
 
