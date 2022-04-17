@@ -1,12 +1,12 @@
 package cc.carm.lib.configuration.core.builder.value;
 
-import cc.carm.lib.configuration.core.builder.AbstractConfigBuilder;
+import cc.carm.lib.configuration.core.builder.CommonConfigBuilder;
 import cc.carm.lib.configuration.core.function.ConfigDataFunction;
 import cc.carm.lib.configuration.core.function.ConfigValueParser;
 import cc.carm.lib.configuration.core.value.type.ConfiguredValue;
 import org.jetbrains.annotations.NotNull;
 
-public class SourceValueBuilder<S, V> extends AbstractConfigBuilder<SourceValueBuilder<S, V>, V> {
+public class SourceValueBuilder<S, V> extends CommonConfigBuilder<V, SourceValueBuilder<S, V>> {
 
     protected final @NotNull Class<S> sourceClass;
     protected @NotNull ConfigDataFunction<Object, S> sourceParser;

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public interface ConfigurationWrapper extends ConfigurationReader{
+public interface ConfigurationWrapper extends ConfigurationReader {
 
     @Override
     default ConfigurationWrapper getWrapper() {
@@ -67,6 +67,5 @@ public interface ConfigurationWrapper extends ConfigurationReader{
 
     @Nullable
     ConfigurationWrapper getConfigurationSection(@NotNull String path);
-
 
 }

@@ -1,14 +1,13 @@
 package cc.carm.lib.configuration.core.builder.list;
 
-import cc.carm.lib.configuration.core.builder.AbstractConfigBuilder;
+import cc.carm.lib.configuration.core.builder.CommonConfigBuilder;
 import cc.carm.lib.configuration.core.function.ConfigDataFunction;
 import cc.carm.lib.configuration.core.value.type.ConfiguredList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class SourceListBuilder<S, V>
-        extends AbstractConfigBuilder<SourceListBuilder<S, V>, List<V>> {
+public class SourceListBuilder<S, V> extends CommonConfigBuilder<List<V>, SourceListBuilder<S, V>> {
 
     protected final @NotNull Class<S> sourceClass;
     protected @NotNull ConfigDataFunction<Object, S> sourceParser;

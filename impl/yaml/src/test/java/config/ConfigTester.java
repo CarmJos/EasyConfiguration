@@ -2,9 +2,11 @@ package config;
 
 import cc.carm.lib.configuration.EasyConfiguration;
 import cc.carm.lib.configuration.yaml.YamlConfigProvider;
-import config.misc.TestUser;
-import config.source.DemoConfiguration;
+import config.model.TestModel;
 import config.source.ComplexConfiguration;
+import config.source.DemoConfiguration;
+import config.source.ImplConfiguration;
+import org.bspfsystems.yamlconfiguration.serialization.ConfigurationSerialization;
 import org.junit.Test;
 
 import java.util.LinkedHashMap;
@@ -15,32 +17,16 @@ import java.util.stream.IntStream;
 
 public class ConfigTester {
 
+
     @Test
     public void onTest() {
+        ConfigurationSerialization.registerClass(TestModel.class);
 
         YamlConfigProvider provider = EasyConfiguration.from("target/config.yml", "config.yml");
-        provider.initialize(DemoConfiguration.class);
-        provider.initialize(ComplexConfiguration.class);
 
-        System.out.println("before: " + ComplexConfiguration.Sub.UUID_CONFIG_VALUE.get());
-        ComplexConfiguration.Sub.UUID_CONFIG_VALUE.set(UUID.randomUUID());
-        System.out.println("after: " + ComplexConfiguration.Sub.UUID_CONFIG_VALUE.get());
-
-
-        ComplexConfiguration.Sub.That.Operators.getNotNull().forEach(System.out::println);
-        List<UUID> operators = IntStream.range(0, 5).mapToObj(i -> UUID.randomUUID()).collect(Collectors.toList());
-        ComplexConfiguration.Sub.That.Operators.set(operators);
-
-        System.out.println(ComplexConfiguration.USER.get());
-        TestUser b = new TestUser(UUID.randomUUID().toString().substring(0, 3), UUID.randomUUID());
-        ComplexConfiguration.USER.set(b);
-
-        ComplexConfiguration.USERS.getNotNull().forEach((k, v) -> System.out.println(k + ": " + v));
-        LinkedHashMap<Integer, UUID> data = new LinkedHashMap<>();
-        for (int i = 0; i < 5; i++) {
-            data.put((int) (1000 * Math.random()), UUID.randomUUID());
-        }
-        ComplexConfiguration.USERS.set(data);
+        testDemo(provider);
+        testComplex(provider);
+        testSerialization(provider);
 
         try {
             provider.save();
@@ -48,6 +34,46 @@ public class ConfigTester {
             e.printStackTrace();
         }
 
+    }
+
+    public static void testSerialization(YamlConfigProvider provider) {
+        System.out.println("----------------------------------------------------");
+        provider.initialize(ImplConfiguration.class);
+        System.out.println(ImplConfiguration.TEST.get());
+        ImplConfiguration.TEST.set(TestModel.random());
+        System.out.println("----------------------------------------------------");
+    }
+
+    public static void testDemo(YamlConfigProvider provider) {
+        provider.initialize(DemoConfiguration.class);
+    }
+
+    public static void testComplex(YamlConfigProvider provider) {
+        System.out.println("----------------------------------------------------");
+        provider.initialize(ComplexConfiguration.class);
+
+        System.out.println("> Test Value:");
+        System.out.println("before: " + ComplexConfiguration.Sub.UUID_CONFIG_VALUE.get());
+        ComplexConfiguration.Sub.UUID_CONFIG_VALUE.set(UUID.randomUUID());
+        System.out.println("after: " + ComplexConfiguration.Sub.UUID_CONFIG_VALUE.get());
+
+        System.out.println("> Test List:");
+        ComplexConfiguration.Sub.That.Operators.getNotNull().forEach(System.out::println);
+        List<UUID> operators = IntStream.range(0, 5).mapToObj(i -> UUID.randomUUID()).collect(Collectors.toList());
+        ComplexConfiguration.Sub.That.Operators.set(operators);
+
+        System.out.println("> Test Section:");
+        System.out.println(ComplexConfiguration.USER.get());
+        ComplexConfiguration.USER.set(TestModel.random());
+
+        System.out.println("> Test Maps:");
+        ComplexConfiguration.USERS.getNotNull().forEach((k, v) -> System.out.println(k + ": " + v));
+        LinkedHashMap<Integer, UUID> data = new LinkedHashMap<>();
+        for (int i = 0; i < 5; i++) {
+            data.put((int) (1000 * Math.random()), UUID.randomUUID());
+        }
+        ComplexConfiguration.USERS.set(data);
+        System.out.println("----------------------------------------------------");
     }
 
 

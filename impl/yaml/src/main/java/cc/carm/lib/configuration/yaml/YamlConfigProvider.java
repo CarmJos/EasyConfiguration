@@ -1,6 +1,6 @@
 package cc.carm.lib.configuration.yaml;
 
-import cc.carm.lib.configuration.core.source.ConfigurationWrapper;
+import cc.carm.lib.configuration.core.ConfigInitializer;
 import cc.carm.lib.configuration.core.source.impl.FileConfigProvider;
 import org.bspfsystems.yamlconfiguration.commented.CommentedYamlConfiguration;
 import org.jetbrains.annotations.NotNull;
@@ -8,10 +8,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
-public class YamlConfigProvider extends FileConfigProvider {
+public class YamlConfigProvider extends FileConfigProvider<YamlSectionWrapper> {
 
-    YamlComments comments = new YamlComments();
-    CommentedYamlConfiguration configuration;
+    protected final @NotNull YamlComments comments = new YamlComments();
+    protected CommentedYamlConfiguration configuration;
+    protected ConfigInitializer<YamlConfigProvider> initializer;
 
     public YamlConfigProvider(@NotNull File file) {
         super(file);
@@ -19,10 +20,11 @@ public class YamlConfigProvider extends FileConfigProvider {
 
     public void initializeConfig() {
         this.configuration = CommentedYamlConfiguration.loadConfiguration(comments, file);
+        this.initializer = new ConfigInitializer<>(this);
     }
 
     @Override
-    public @NotNull ConfigurationWrapper getConfiguration() {
+    public @NotNull YamlSectionWrapper getConfiguration() {
         return YamlSectionWrapper.of(configuration);
     }
 
@@ -44,6 +46,11 @@ public class YamlConfigProvider extends FileConfigProvider {
     @Override
     public @Nullable String[] getComments(@NotNull String path) {
         return this.comments.get(path);
+    }
+
+    @Override
+    public @NotNull ConfigInitializer<YamlConfigProvider> getInitializer() {
+        return this.initializer;
     }
 
 }

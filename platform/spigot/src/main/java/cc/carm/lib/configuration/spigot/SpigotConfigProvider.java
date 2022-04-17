@@ -1,17 +1,18 @@
 package cc.carm.lib.configuration.spigot;
 
-import cc.carm.lib.configuration.commented.CommentedYamlConfiguration;
-import cc.carm.lib.configuration.core.source.ConfigurationWrapper;
+import cc.carm.lib.configuration.core.ConfigInitializer;
 import cc.carm.lib.configuration.core.source.impl.FileConfigProvider;
+import cc.carm.lib.configuration.commented.CommentedYamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
-public class SpigotConfigProvider extends FileConfigProvider {
+public class SpigotConfigProvider extends FileConfigProvider<SpigotSectionWrapper> {
 
-    ConfigComments comments = new ConfigComments();
-    CommentedYamlConfiguration configuration;
+    protected final ConfigComments comments = new ConfigComments();
+    protected ConfigInitializer<SpigotConfigProvider> initializer;
+    protected CommentedYamlConfiguration configuration;
 
     public SpigotConfigProvider(@NotNull File file) {
         super(file);
@@ -19,10 +20,15 @@ public class SpigotConfigProvider extends FileConfigProvider {
 
     public void initializeConfig() {
         this.configuration = CommentedYamlConfiguration.loadConfiguration(comments, file);
+        this.initializer = new ConfigInitializer<>(this);
+    }
+
+    public void say() {
+        System.out.println("Hello");
     }
 
     @Override
-    public @NotNull ConfigurationWrapper getConfiguration() {
+    public @NotNull SpigotSectionWrapper getConfiguration() {
         return SpigotSectionWrapper.of(configuration);
     }
 
@@ -44,6 +50,11 @@ public class SpigotConfigProvider extends FileConfigProvider {
     @Override
     public @Nullable String[] getComments(@NotNull String path) {
         return this.comments.get(path);
+    }
+
+    @Override
+    public @NotNull ConfigInitializer<SpigotConfigProvider> getInitializer() {
+        return this.initializer;
     }
 
 }

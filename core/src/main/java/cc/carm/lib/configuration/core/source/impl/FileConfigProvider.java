@@ -1,6 +1,7 @@
 package cc.carm.lib.configuration.core.source.impl;
 
 import cc.carm.lib.configuration.core.source.ConfigurationProvider;
+import cc.carm.lib.configuration.core.source.ConfigurationWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -9,7 +10,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Objects;
 
-public abstract class FileConfigProvider extends ConfigurationProvider {
+public abstract class FileConfigProvider<W extends ConfigurationWrapper> extends ConfigurationProvider<W> {
 
     protected final @NotNull File file;
 

@@ -17,7 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * An hacky extension of {@link Yaml} that allows to write comments when dumping.
+ * A hacky extension of {@link Yaml} that allows to write comments when dumping.
  */
 public class CommentedYaml extends Yaml {
 

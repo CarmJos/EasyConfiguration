@@ -1,6 +1,6 @@
 package cc.carm.lib.configuration.core.builder.map;
 
-import cc.carm.lib.configuration.core.builder.AbstractConfigBuilder;
+import cc.carm.lib.configuration.core.builder.CommonConfigBuilder;
 import cc.carm.lib.configuration.core.function.ConfigDataFunction;
 import cc.carm.lib.configuration.core.value.type.ConfiguredMap;
 import org.jetbrains.annotations.NotNull;
@@ -8,8 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class SourceMapBuilder<M extends Map<K, V>, S, K, V>
-        extends AbstractConfigBuilder<SourceMapBuilder<M, S, K, V>, M> {
+public class SourceMapBuilder<M extends Map<K, V>, S, K, V> extends CommonConfigBuilder<M, SourceMapBuilder<M, S, K, V>> {
 
     protected final @NotNull Supplier<@NotNull M> supplier;
 

@@ -5,25 +5,24 @@ import cc.carm.lib.configuration.core.value.ConfigValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class AbstractConfigBuilder<T, B extends AbstractConfigBuilder<T, B, P>, P extends ConfigurationProvider<?>> {
+public abstract class CommonConfigBuilder<T, B extends CommonConfigBuilder<T, B>>
+        extends AbstractConfigBuilder<T, B, ConfigurationProvider<?>> {
 
-    protected final Class<? super P> providerClass;
-
-    protected @Nullable P provider;
+    protected @Nullable ConfigurationProvider<?> provider;
     protected @Nullable String path;
 
     protected @NotNull String[] comments = new String[0];
     protected @Nullable T defaultValue;
 
-    public AbstractConfigBuilder(Class<? super P> providerClass) {
-        this.providerClass = providerClass;
+    public CommonConfigBuilder() {
+        super(ConfigurationProvider.class);
     }
 
     protected abstract @NotNull B getThis();
 
     public abstract @NotNull ConfigValue<?> build();
 
-    public @NotNull B from(@Nullable P provider) {
+    public @NotNull B from(@Nullable ConfigurationProvider<?> provider) {
         this.provider = provider;
         return getThis();
     }

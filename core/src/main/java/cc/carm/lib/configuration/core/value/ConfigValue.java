@@ -10,28 +10,26 @@ import java.util.Objects;
 import java.util.Optional;
 
 public abstract class ConfigValue<T> {
-    
+
     public static @NotNull ConfigBuilder builder() {
         return new ConfigBuilder();
     }
 
-    protected @Nullable T defaultValue;
-
-    protected @Nullable ConfigurationProvider provider;
+    protected @Nullable ConfigurationProvider<?> provider;
     protected @Nullable String configPath;
     protected @NotNull String[] comments;
 
-    public ConfigValue(@Nullable ConfigurationProvider provider, @Nullable String configPath,
-                       @NotNull String[] comments, @Nullable T defaultValue) {
+    protected @Nullable T defaultValue;
+
+    public ConfigValue(@Nullable ConfigurationProvider<?> provider,
+                       @Nullable String configPath, @NotNull String[] comments, @Nullable T defaultValue) {
         this.provider = provider;
         this.configPath = configPath;
         this.comments = comments;
-
         this.defaultValue = defaultValue;
     }
 
-    public void initialize(@NotNull ConfigurationProvider provider, @NotNull String configPath,
-                           @NotNull String... comments) {
+    public void initialize(@NotNull ConfigurationProvider<?> provider, @NotNull String configPath, @NotNull String... comments) {
         if (this.provider == null) this.provider = provider;
         if (this.configPath == null) this.configPath = configPath;
         if (this.comments.length == 0) this.comments = comments;
@@ -68,7 +66,15 @@ public abstract class ConfigValue<T> {
         Optional.ofNullable(getDefaultValue()).ifPresent(this::set);
     }
 
-    public @NotNull ConfigurationProvider getProvider() {
+    public boolean isDefault() {
+        T defaultValue = getDefaultValue();
+        T value = get();
+        if (defaultValue == null && value == null) return true;
+        else if (defaultValue != null && value != null) return defaultValue.equals(value);
+        else return false;
+    }
+
+    public @NotNull ConfigurationProvider<?> getProvider() {
         return Optional.ofNullable(this.provider)
                 .orElseThrow(() -> new IllegalStateException("Value(" + configPath + ") does not have a provider."));
     }

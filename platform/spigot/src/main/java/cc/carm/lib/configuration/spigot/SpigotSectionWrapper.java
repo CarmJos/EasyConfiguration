@@ -2,6 +2,7 @@ package cc.carm.lib.configuration.spigot;
 
 import cc.carm.lib.configuration.core.source.ConfigurationWrapper;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -68,4 +69,17 @@ public class SpigotSectionWrapper implements ConfigurationWrapper {
     public @Nullable ConfigurationWrapper getConfigurationSection(@NotNull String path) {
         return of(this.section.getConfigurationSection(path));
     }
+
+
+    @Nullable
+    public <T extends ConfigurationSerializable> T getSerializable(@NotNull String path, @NotNull Class<T> clazz) {
+        return getSerializable(path, clazz, null);
+    }
+
+    @Nullable
+    @Contract("_, _, !null -> !null")
+    public <T extends ConfigurationSerializable> T getSerializable(@NotNull String path, @NotNull Class<T> clazz, @Nullable T defaultValue) {
+        return this.section.getSerializable(path, clazz, defaultValue);
+    }
+
 }

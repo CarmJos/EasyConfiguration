@@ -5,7 +5,7 @@ import cc.carm.lib.configuration.core.ConfigurationRoot;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class ConfigurationProvider {
+public abstract class ConfigurationProvider<W extends ConfigurationWrapper> {
 
     protected long updateTime;
 
@@ -21,7 +21,7 @@ public abstract class ConfigurationProvider {
         return this.updateTime > time;
     }
 
-    public abstract @NotNull ConfigurationWrapper getConfiguration();
+    public abstract @NotNull W getConfiguration();
 
     public abstract void reload() throws Exception;
 
@@ -31,8 +31,10 @@ public abstract class ConfigurationProvider {
 
     public abstract @Nullable String[] getComments(@NotNull String path);
 
+    public abstract @NotNull ConfigInitializer<? extends ConfigurationProvider<W>> getInitializer();
+
     public void initialize(Class<? extends ConfigurationRoot> configClazz) {
-        ConfigInitializer.initialize(this, configClazz, true);
+        getInitializer().initialize(configClazz, true);
     }
 
 }

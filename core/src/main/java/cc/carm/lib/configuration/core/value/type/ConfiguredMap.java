@@ -1,11 +1,10 @@
 package cc.carm.lib.configuration.core.value.type;
 
-import cc.carm.lib.configuration.core.builder.ConfigBuilder;
 import cc.carm.lib.configuration.core.builder.map.ConfigMapBuilder;
 import cc.carm.lib.configuration.core.function.ConfigDataFunction;
 import cc.carm.lib.configuration.core.source.ConfigurationProvider;
 import cc.carm.lib.configuration.core.source.ConfigurationWrapper;
-import cc.carm.lib.configuration.core.value.CachedConfigValue;
+import cc.carm.lib.configuration.core.value.impl.CachedConfigValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,7 +31,7 @@ public class ConfiguredMap<K, V> extends CachedConfigValue<Map<K, V>> {
     protected final @NotNull ConfigDataFunction<K, String> keySerializer;
     protected final @NotNull ConfigDataFunction<V, Object> valueSerializer;
 
-    public ConfiguredMap(@Nullable ConfigurationProvider provider,
+    public ConfiguredMap(@Nullable ConfigurationProvider<?> provider,
                          @Nullable String sectionPath, @NotNull String[] comments,
                          @Nullable Map<K, V> defaultValue, @NotNull Supplier<? extends Map<K, V>> supplier,
                          @NotNull Class<K> keyClass, @NotNull ConfigDataFunction<String, K> keyParser,

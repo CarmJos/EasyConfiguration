@@ -8,7 +8,7 @@ import cc.carm.lib.configuration.core.value.type.ConfiguredList;
 import cc.carm.lib.configuration.core.value.type.ConfiguredMap;
 import cc.carm.lib.configuration.core.value.type.ConfiguredSection;
 import cc.carm.lib.configuration.core.value.type.ConfiguredValue;
-import config.misc.TestUser;
+import config.model.TestModel;
 
 import java.util.List;
 import java.util.Map;
@@ -18,11 +18,11 @@ import java.util.UUID;
 public class ComplexConfiguration extends ConfigurationRoot {
 
     @ConfigComment({"User测试"})
-    public static final ConfigValue<TestUser> USER = ConfiguredSection
-            .builder(TestUser.class)
-            .defaults(new TestUser("Carm", UUID.randomUUID()))
-            .parseValue((section, defaultValue) -> TestUser.deserialize(section))
-            .serializeValue(TestUser::serialize).build();
+    public static final ConfigValue<TestModel> USER = ConfiguredSection
+            .builder(TestModel.class)
+            .defaults(new TestModel("Carm", UUID.randomUUID()))
+            .parseValue((section, defaultValue) -> TestModel.deserialize(section))
+            .serializeValue(TestModel::serialize).build();
 
     @ConfigComment({"[ID-UUID] 对照表", "", "用于测试Map类型的解析与序列化保存"})
     public static final ConfigValue<Map<Integer, UUID>> USERS = ConfiguredMap

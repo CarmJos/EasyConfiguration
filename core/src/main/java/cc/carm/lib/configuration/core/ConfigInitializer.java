@@ -11,13 +11,19 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Optional;
 
-public class ConfigInitializer {
+public class ConfigInitializer<T extends ConfigurationProvider<?>> {
 
-    public static void initialize(ConfigurationProvider source, Class<? extends ConfigurationRoot> rootClazz) {
-        initialize(source, rootClazz, true);
+    protected final @NotNull T provider;
+
+    public ConfigInitializer(@NotNull T provider) {
+        this.provider = provider;
     }
 
-    public static void initialize(ConfigurationProvider provider, Class<? extends ConfigurationRoot> rootClazz, boolean saveDefault) {
+    public void initialize(Class<? extends ConfigurationRoot> rootClazz) {
+        initialize(rootClazz, true);
+    }
+
+    public void initialize(Class<? extends ConfigurationRoot> rootClazz, boolean saveDefault) {
         String rootSection = null;
 
         ConfigPath sectionAnnotation = rootClazz.getAnnotation(ConfigPath.class);
@@ -34,11 +40,11 @@ public class ConfigInitializer {
         }
 
         for (Class<?> innerClass : rootClazz.getDeclaredClasses()) {
-            initSection(provider, rootSection, innerClass, saveDefault);
+            initSection(rootSection, innerClass, saveDefault);
         }
 
         for (Field field : rootClazz.getDeclaredFields()) {
-            initValue(provider, rootSection, rootClazz, field, saveDefault);
+            initValue(rootSection, rootClazz, field, saveDefault);
         }
 
         if (saveDefault) {
@@ -51,7 +57,7 @@ public class ConfigInitializer {
 
     }
 
-    private static void initSection(ConfigurationProvider provider, String parentSection, Class<?> clazz, boolean saveDefault) {
+    private void initSection(String parentSection, Class<?> clazz, boolean saveDefault) {
         if (!Modifier.isStatic(clazz.getModifiers()) || !Modifier.isPublic(clazz.getModifiers())) return;
 
         String section = getSectionPath(clazz.getSimpleName(), parentSection, clazz.getAnnotation(ConfigPath.class));
@@ -60,18 +66,18 @@ public class ConfigInitializer {
             provider.setComments(parentSection, comments.value());
         }
 
-        for (Field field : clazz.getDeclaredFields()) initValue(provider, section, clazz, field, saveDefault);
-        for (Class<?> innerClass : clazz.getDeclaredClasses()) initSection(provider, section, innerClass, saveDefault);
+        for (Field field : clazz.getDeclaredFields()) initValue(section, clazz, field, saveDefault);
+        for (Class<?> innerClass : clazz.getDeclaredClasses()) initSection(section, innerClass, saveDefault);
 
     }
 
-    private static void initValue(ConfigurationProvider provider, String parentSection, Class<?> clazz, Field field, boolean saveDefault) {
+    private void initValue(String parentSection, Class<?> clazz, Field field, boolean saveDefault) {
         try {
             field.setAccessible(true);
             Object object = field.get(clazz);
             if (object instanceof ConfigValue<?>) {
                 initializeValue(
-                        provider, (ConfigValue<?>) object, saveDefault,
+                        (ConfigValue<?>) object, saveDefault,
                         getSectionPath(field.getName(), parentSection, field.getAnnotation(ConfigPath.class)),
                         Optional.ofNullable(field.getAnnotation(ConfigComment.class))
                                 .map(ConfigComment::value).orElse(new String[0])
@@ -82,8 +88,8 @@ public class ConfigInitializer {
     }
 
 
-    public static void initializeValue(@NotNull ConfigurationProvider provider, @NotNull ConfigValue<?> value,
-                                       boolean saveDefault, @NotNull String path, @NotNull String[] comments) {
+    public void initializeValue(@NotNull ConfigValue<?> value, boolean saveDefault,
+                                @NotNull String path, @NotNull String[] comments) {
         value.initialize(provider, path, comments);
         if (saveDefault && value.getDefaultValue() != null && !provider.getConfiguration().contains(path)) {
             value.setDefault();
