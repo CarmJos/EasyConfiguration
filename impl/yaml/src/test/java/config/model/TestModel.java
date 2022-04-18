@@ -11,26 +11,17 @@ import java.util.Map;
 import java.util.UUID;
 
 @SerializableAs("TestModel")
-public class TestModel implements ConfigurationSerializable {
+public class TestModel extends AbstractModel implements ConfigurationSerializable {
 
-    public String name;
     public UUID uuid;
 
     public TestModel(String name, UUID uuid) {
-        this.name = name;
+        super(name);
         this.uuid = uuid;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public void setUuid(UUID uuid) {
         this.uuid = uuid;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public UUID getUuid() {

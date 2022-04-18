@@ -11,4 +11,5 @@ public class ImplConfiguration extends ConfigurationRoot {
 
     public static final ConfigValue<TestModel> TEST = ConfiguredSerializable.of(TestModel.class);
 
+
 }

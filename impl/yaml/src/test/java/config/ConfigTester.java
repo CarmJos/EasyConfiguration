@@ -2,6 +2,8 @@ package config;
 
 import cc.carm.lib.configuration.EasyConfiguration;
 import cc.carm.lib.configuration.yaml.YamlConfigProvider;
+import config.model.AbstractModel;
+import config.model.SomeModel;
 import config.model.TestModel;
 import config.source.ComplexConfiguration;
 import config.source.DemoConfiguration;
@@ -11,6 +13,7 @@ import org.junit.Test;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -21,6 +24,7 @@ public class ConfigTester {
     @Test
     public void onTest() {
         ConfigurationSerialization.registerClass(TestModel.class);
+        ConfigurationSerialization.registerClass(SomeModel.class);
 
         YamlConfigProvider provider = EasyConfiguration.from("target/config.yml", "config.yml");
 
@@ -41,6 +45,16 @@ public class ConfigTester {
         provider.initialize(ImplConfiguration.class);
         System.out.println(ImplConfiguration.TEST.get());
         ImplConfiguration.TEST.set(TestModel.random());
+
+        AbstractModel model = provider.getConfiguration().getSerializable("ImplConfiguration.test", TestModel.class);
+
+        provider.getConfiguration().set("ImplConfiguration.some", new SomeModel("lover", 123));
+        AbstractModel model2 = provider.getConfiguration().getSerializable("ImplConfiguration.some", SomeModel.class);
+
+        System.out.println("model1: " + Optional.ofNullable(model).map(AbstractModel::getName).orElse(null));
+        System.out.println("model1: " + Optional.ofNullable(model2).map(AbstractModel::getName).orElse(null));
+
+
         System.out.println("----------------------------------------------------");
     }
 
