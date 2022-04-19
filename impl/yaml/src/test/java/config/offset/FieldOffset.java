@@ -59,4 +59,6 @@ public class FieldOffset implements Comparable<FieldOffset> {
     public int compareTo(@NotNull FieldOffset that) {
         return this.offsetValue.compareTo(that.offsetValue);
     }
+
+
 }

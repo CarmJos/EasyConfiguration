@@ -31,7 +31,7 @@ public class ConfigListBuilder<V> {
         return from(
                 Object.class, ConfigDataFunction.identity(),
                 ConfigDataFunction.castObject(valueClass),
-                ConfigDataFunction.identity(), ConfigDataFunction.toObject()
+                ConfigDataFunction.toObject(), ConfigDataFunction.toObject()
         );
     }
 

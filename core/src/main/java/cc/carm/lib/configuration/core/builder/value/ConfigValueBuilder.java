@@ -46,7 +46,7 @@ public class ConfigValueBuilder<V> {
         return from(
                 Object.class, ConfigDataFunction.identity(),
                 ConfigValueParser.castObject(valueClass),
-                ConfigDataFunction.identity(), ConfigDataFunction.toObject()
+                ConfigDataFunction.toObject(), ConfigDataFunction.toObject()
         );
     }
 

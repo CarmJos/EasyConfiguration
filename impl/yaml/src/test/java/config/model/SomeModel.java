@@ -36,7 +36,7 @@ public class SomeModel extends AbstractModel implements ConfigurationSerializabl
 
     @TestOnly
     public static SomeModel deserialize(Map<String, ?> args) {
-        return new SomeModel((String) args.get("name"), (int) args.get("num"));
+        return new SomeModel((String) args.get("name"), (Integer) args.get("num"));
     }
 
 

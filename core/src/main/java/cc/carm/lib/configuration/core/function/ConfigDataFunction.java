@@ -17,7 +17,12 @@ public interface ConfigDataFunction<T, R> {
     }
 
     @Contract(pure = true)
-    static <T> @NotNull ConfigDataFunction<T, ? super T> identity() {
+    static <T> @NotNull ConfigDataFunction<T, T> identity() {
+        return (input) -> input;
+    }
+
+    @Contract(pure = true)
+    static <T> @NotNull ConfigDataFunction<T, T> identity(Class<T> type) {
         return (input) -> input;
     }
 
@@ -32,7 +37,6 @@ public interface ConfigDataFunction<T, R> {
     static <T> @NotNull ConfigDataFunction<T, Object> toObject() {
         return (input) -> input;
     }
-
 
     @Contract(pure = true)
     static <V> @NotNull ConfigDataFunction<Object, V> castObject(Class<V> valueClass) {
