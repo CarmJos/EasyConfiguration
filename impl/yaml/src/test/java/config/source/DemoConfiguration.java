@@ -4,10 +4,17 @@ import cc.carm.lib.configuration.core.ConfigurationRoot;
 import cc.carm.lib.configuration.core.annotation.ConfigComment;
 import cc.carm.lib.configuration.core.annotation.ConfigPath;
 import cc.carm.lib.configuration.core.value.ConfigValue;
+import cc.carm.lib.configuration.core.value.type.ConfiguredList;
+import cc.carm.lib.configuration.core.value.type.ConfiguredMap;
+import cc.carm.lib.configuration.core.value.type.ConfiguredSection;
 import cc.carm.lib.configuration.core.value.type.ConfiguredValue;
+import config.model.TestModel;
 
-@ConfigPath("database")
-@ConfigComment({"数据库配置", "  用于提供数据库连接，进行数据库操作。"})
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
+
 public class DemoConfiguration extends ConfigurationRoot {
 
     @ConfigPath(root = true)
@@ -19,29 +26,53 @@ public class DemoConfiguration extends ConfigurationRoot {
     protected static final ConfigValue<Double> VERSION = ConfiguredValue.of(Double.class, 1.0D);
 
 
-    @ConfigPath("driver")
-    @ConfigComment({
-            "数据库驱动配置，请根据数据库类型设置。",
-            "- MySQL: com.mysql.cj.jdbc.Driver",
-            "- MariaDB(推荐): org.mariadb.jdbc.Driver",
-    })
-    protected static final ConfigValue<String> DRIVER_NAME = ConfiguredValue.of(
-            String.class, "com.mysql.cj.jdbc.Driver"
-    );
+    // 注意： 若对应类也有注解，则优先使用类的注解。
+    @ConfigPath("impl-test") //支持通过注解修改子配置的主路径，若不修改则以变量名自动生成。
+    @ConfigComment("Something...") // 支持给子路径直接打注释
+    public static final Class<?> IMPL = ImplConfiguration.class;
 
-    protected static final ConfigValue<String> HOST = ConfiguredValue.of(String.class, "127.0.0.1");
-    protected static final ConfigValue<Integer> PORT = ConfiguredValue.of(Integer.class, 3306);
+    // 可以直接写静态内部类，并通过 Class<?> 声明。
+    public static final Class<?> SUB_TEST = Sub.class;
 
-    protected static final ConfigValue<String> DATABASE = ConfiguredValue.of(String.class, "minecraft");
-    protected static final ConfigValue<String> USERNAME = ConfiguredValue.of(String.class, "root");
-    protected static final ConfigValue<String> PASSWORD = ConfiguredValue.of(String.class, "password");
+    @ConfigPath("user") // 通过注解规定配置文件中的路径，若不进行注解则以变量名自动生成。
+    @ConfigComment({"Section类型数据测试"}) // 通过注解给配置添加注释。
+    public static final ConfigValue<TestModel> MODEL_TEST = ConfiguredSection
+            .builder(TestModel.class)
+            .defaults(new TestModel("Carm", UUID.randomUUID()))
+            .parseValue((section, defaultValue) -> TestModel.deserialize(section))
+            .serializeValue(TestModel::serialize).build();
 
-    protected static final ConfigValue<String> EXTRA = ConfiguredValue.of(String.class, "?useSSL=false");
+    // 子配置文件
+    @ConfigPath("database")
+    public static final Class<?> DB_CONFIG = DatabaseConfiguration.class;
 
-    protected static String buildJDBC() {
-        return String.format("jdbc:mysql://%s:%s/%s%s",
-                HOST.get(), PORT.get(), DATABASE.get(), EXTRA.get()
-        );
+    @ConfigComment({"[ID-UUID] 对照表", "", "用于测试Map类型的解析与序列化保存"})
+    public static final ConfigValue<Map<Integer, UUID>> USERS = ConfiguredMap
+            .builder(Integer.class, UUID.class).fromString()
+            .parseKey(Integer::parseInt)
+            .parseValue(v -> Objects.requireNonNull(UUID.fromString(v)))
+            .build();
+
+
+    public static class Sub extends ConfigurationRoot {
+
+        @ConfigPath(value = "uuid-value", root = true)
+        public static final ConfigValue<UUID> UUID_CONFIG_VALUE = ConfiguredValue
+                .builder(UUID.class).fromString()
+                .parseValue((data, defaultValue) -> UUID.fromString(data))
+                .build();
+
+        public static final Class<?> NOTHING = Sub.That.class;
+
+        public static class That extends ConfigurationRoot {
+
+            public static final ConfigValue<List<UUID>> OPERATORS = ConfiguredList
+                    .builder(UUID.class).fromString()
+                    .parseValue(s -> Objects.requireNonNull(UUID.fromString(s)))
+                    .build();
+
+        }
+
     }
 
 

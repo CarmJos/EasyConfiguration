@@ -29,13 +29,12 @@ public abstract class ConfigValue<T> {
         this.defaultValue = defaultValue;
     }
 
-    public void initialize(@NotNull ConfigurationProvider<?> provider, @NotNull String configPath, @NotNull String... comments) {
+    public void initialize(@NotNull ConfigurationProvider<?> provider, boolean saveDefault,
+                           @NotNull String configPath, @NotNull String... comments) {
         if (this.provider == null) this.provider = provider;
         if (this.configPath == null) this.configPath = configPath;
         if (this.comments.length == 0) this.comments = comments;
-
-        this.provider.setComments(this.configPath, this.comments);
-        get();
+        if (saveDefault) setDefault();
     }
 
     public @Nullable T getDefaultValue() {
@@ -63,6 +62,11 @@ public abstract class ConfigValue<T> {
     public abstract void set(@Nullable T value);
 
     public void setDefault() {
+        setDefault(false);
+    }
+
+    public void setDefault(boolean override) {
+        if (!override && getConfiguration().contains(getConfigPath())) return;
         Optional.ofNullable(getDefaultValue()).ifPresent(this::set);
     }
 

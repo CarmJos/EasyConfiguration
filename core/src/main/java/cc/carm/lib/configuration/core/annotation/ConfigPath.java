@@ -16,7 +16,7 @@ public @interface ConfigPath {
 
     /**
      * 指定路径的值。
-     * 若不指定，则会通过 {@link ConfigInitializer#getSectionName(String)}自动生成当前路径的值。
+     * 若不指定，则会通过 {@link ConfigInitializer#getPathFromName(String)} 自动生成当前路径的值。
      *
      * @return 路径的值
      */

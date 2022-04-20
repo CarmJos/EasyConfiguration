@@ -8,8 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.Optional;
 
 public class ConfigInitializer<T extends ConfigurationProvider<?>> {
 
@@ -19,94 +17,116 @@ public class ConfigInitializer<T extends ConfigurationProvider<?>> {
         this.provider = provider;
     }
 
-    public void initialize(Class<? extends ConfigurationRoot> rootClazz) {
-        initialize(rootClazz, true);
+    public void initialize(@NotNull Class<? extends ConfigurationRoot> clazz, boolean saveDefaults) {
+        initializeClass(clazz, null, null, null, null, saveDefaults);
     }
 
-    public void initialize(Class<? extends ConfigurationRoot> rootClazz, boolean saveDefault) {
-        String rootSection = null;
-
-        ConfigPath sectionAnnotation = rootClazz.getAnnotation(ConfigPath.class);
-        if (sectionAnnotation != null && sectionAnnotation.value().length() > 1) {
-            rootSection = sectionAnnotation.value();
+    protected void initializeClass(@NotNull Class<?> clazz,
+                                   @Nullable String parentPath, @Nullable String fieldName,
+                                   @Nullable ConfigPath fieldPath, @Nullable ConfigComment filedComments,
+                                   boolean saveDefaults) {
+        if (!ConfigurationRoot.class.isAssignableFrom(clazz)) return;
+        String path = getClassPath(clazz, parentPath, fieldName, fieldPath);
+        if (path != null) setComments(path, getClassComments(clazz, filedComments));
+        for (Field field : clazz.getDeclaredFields()) {
+            initializeField(clazz, field, path, saveDefaults);
         }
-
-        if (rootSection != null) {
-            //Not usable for null section.
-            ConfigComment comments = rootClazz.getAnnotation(ConfigComment.class);
-            if (comments != null && comments.value().length > 0) {
-                provider.setComments(rootSection, comments.value());
-            }
-        }
-
-        for (Class<?> innerClass : rootClazz.getDeclaredClasses()) {
-            initSection(rootSection, innerClass, saveDefault);
-        }
-
-        for (Field field : rootClazz.getDeclaredFields()) {
-            initValue(rootSection, rootClazz, field, saveDefault);
-        }
-
-        if (saveDefault) {
-            try {
-                provider.save();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
     }
 
-    private void initSection(String parentSection, Class<?> clazz, boolean saveDefault) {
-        if (!Modifier.isStatic(clazz.getModifiers()) || !Modifier.isPublic(clazz.getModifiers())) return;
 
-        String section = getSectionPath(clazz.getSimpleName(), parentSection, clazz.getAnnotation(ConfigPath.class));
-        ConfigComment comments = clazz.getAnnotation(ConfigComment.class);
-        if (comments != null && comments.value().length > 0) {
-            provider.setComments(parentSection, comments.value());
-        }
-
-        for (Field field : clazz.getDeclaredFields()) initValue(section, clazz, field, saveDefault);
-        for (Class<?> innerClass : clazz.getDeclaredClasses()) initSection(section, innerClass, saveDefault);
-
+    protected void initializeValue(@NotNull ConfigValue<?> value, @NotNull String path,
+                                   @NotNull String[] comments, boolean saveDefaults) {
+        value.initialize(provider, saveDefaults, path, comments);
     }
 
-    private void initValue(String parentSection, Class<?> clazz, Field field, boolean saveDefault) {
+    private void initializeField(@NotNull Class<?> source, @NotNull Field field,
+                                 @Nullable String parent, boolean saveDefaults) {
+
         try {
             field.setAccessible(true);
-            Object object = field.get(clazz);
+            Object object = field.get(source);
             if (object instanceof ConfigValue<?>) {
-                initializeValue(
-                        (ConfigValue<?>) object, saveDefault,
-                        getSectionPath(field.getName(), parentSection, field.getAnnotation(ConfigPath.class)),
-                        Optional.ofNullable(field.getAnnotation(ConfigComment.class))
-                                .map(ConfigComment::value).orElse(new String[0])
+                String path = getFieldPath(field, parent);
+                String[] comments = readComments(field.getAnnotation(ConfigComment.class));
+                initializeValue((ConfigValue<?>) object, path, comments, saveDefaults);
+                setComments(path, comments);
+            } else if (object instanceof Class<?>) {
+                initializeClass(
+                        (Class<?>) object, parent, field.getName(),
+                        field.getAnnotation(ConfigPath.class),
+                        field.getAnnotation(ConfigComment.class),
+                        saveDefaults
                 );
             }
         } catch (IllegalAccessException ignored) {
         }
     }
 
-
-    public void initializeValue(@NotNull ConfigValue<?> value, boolean saveDefault,
-                                @NotNull String path, @NotNull String[] comments) {
-        value.initialize(provider, path, comments);
-        if (saveDefault && value.getDefaultValue() != null && !provider.getConfiguration().contains(path)) {
-            value.setDefault();
-        }
+    protected void setComments(@NotNull String path, @Nullable ConfigComment filedComments) {
+        setComments(path, readComments(filedComments));
     }
 
-    public static String getSectionPath(@NotNull String name,
-                                        @Nullable String parentSection,
-                                        @Nullable ConfigPath pathAnnotation) {
-        @NotNull String parent = parentSection != null ? parentSection + "." : "";
-        @NotNull String path = getSectionName(name);
-        boolean root = false;
-        if (pathAnnotation != null) {
-            if (pathAnnotation.value().length() > 0) path = pathAnnotation.value();
-            root = pathAnnotation.root();
+    protected void setComments(@NotNull String path, @NotNull String[] comments) {
+        if (comments.length <= 0) return;
+        this.provider.setComments(path, comments);
+    }
+
+    protected static @NotNull String[] readComments(@Nullable ConfigComment filedComments) {
+        if (filedComments == null) return new String[0];
+        if (String.join("", filedComments.value()).length() <= 0) return new String[0];
+        return filedComments.value();
+    }
+
+    protected static @NotNull String[] getClassComments(@NotNull Class<?> clazz,
+                                                        @Nullable ConfigComment fieldAnnotation) {
+        String[] clazzComments = readComments(clazz.getAnnotation(ConfigComment.class));
+        if (clazzComments.length > 0) return clazzComments;
+        else return readComments(fieldAnnotation);
+    }
+
+    protected static @Nullable String getClassPath(@NotNull Class<?> clazz,
+                                                   @Nullable String parentPath,
+                                                   @Nullable String filedName,
+                                                   @Nullable ConfigPath fieldAnnotation) {
+        @NotNull String parent = parentPath != null ? parentPath + "." : "";
+        boolean fromRoot = false;
+
+        // 先获取 Class 对应的路径注解 其优先度最高。
+        ConfigPath clazzAnnotation = clazz.getAnnotation(ConfigPath.class);
+        if (clazzAnnotation != null) {
+            fromRoot = clazzAnnotation.root();
+            if (clazzAnnotation.value().length() > 0) {
+                return (fromRoot ? "" : parent) + clazzAnnotation.value();
+            }
         }
-        return (root ? "" : parent) + path;
+
+        if (fieldAnnotation != null) {
+            fromRoot = fromRoot || fieldAnnotation.root();
+            if (fieldAnnotation.value().length() > 0) {
+                return (fromRoot ? "" : parent) + fieldAnnotation.value();
+            }
+        }
+
+        // 再由 fieldName 获取路径
+        if (filedName != null) return (fromRoot ? "" : parent) + getPathFromName(filedName);
+        else return null; // 不满足上述条件 且 无 fieldName，则说明是根路径。
+    }
+
+    protected static @NotNull String getFieldPath(@NotNull Field field, @Nullable String parentPath) {
+        @NotNull String parent = parentPath != null ? parentPath + "." : "";
+        boolean fromRoot = false;
+
+        // 先获取 Field 对应的路径注解 其优先度最高。
+        ConfigPath pathAnnotation = field.getAnnotation(ConfigPath.class);
+        if (pathAnnotation != null) {
+            fromRoot = pathAnnotation.root();
+            if (pathAnnotation.value().length() > 0) {
+                return (fromRoot ? "" : parent) + pathAnnotation.value();
+            }
+        }
+
+        // 最后再通过 fieldName 自动生成路径
+        return (fromRoot ? "" : parent) + getPathFromName(field.getName());
     }
 
     /**
@@ -116,7 +136,7 @@ public class ConfigInitializer<T extends ConfigurationProvider<?>> {
      * @param name 源名称
      * @return 全小写，以“-”链接 的 路径名称
      */
-    public static String getSectionName(String name) {
+    public static String getPathFromName(String name) {
         return name.replaceAll("[A-Z]", "-$0") // 将驼峰转换为蛇形;
                 .replaceAll("-(.*)", "$1") // 若首字母也为大写，则也会被转换，需要去掉第一个横线
                 .replaceAll("_-([A-Z])", "_$1") // 因为命名中可能包含 _，因此需要被特殊处理一下

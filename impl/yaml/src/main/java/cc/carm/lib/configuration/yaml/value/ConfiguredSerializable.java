@@ -15,7 +15,7 @@ public class ConfiguredSerializable<T extends ConfigurationSerializable> extends
     }
 
     public static <V extends ConfigurationSerializable> ConfiguredSerializable<V> of(@NotNull Class<V> valueClass,
-                                                                                     @Nullable V defaultValue) {
+                                                                                             @Nullable V defaultValue) {
         return builder().ofSerializable(valueClass).defaults(defaultValue).build();
     }
 
