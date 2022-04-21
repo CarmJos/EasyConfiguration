@@ -15,14 +15,10 @@
     <groupId>cc.carm.lib</groupId>
     <artifactId>easyconfiguration-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
     <modules>
         <module>core</module>
-
         <module>impl/yaml</module>
-
-        <module>platform/spigot</module>
-        <module>platform/bungee</module>
     </modules>
 
     <name>EasyConfiguration</name>
@@ -93,7 +89,7 @@
         <downloadUrl>https://github.com/CarmJos/EasyConfiguration/releases</downloadUrl>
         <site>
             <id>javadoc</id>
-            <name>EasySQL JavaDoc (on Github Pages)</name>
+            <name>EasyConfiguration JavaDoc (on Github Pages)</name>
             <url>https://CarmJos.github.io/EasyConfiguration</url>
         </site>
     </distributionManagement>
