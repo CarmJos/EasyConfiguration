@@ -136,9 +136,9 @@ dependencies {
 
 </details>
 
-### 衍生项目
+## 衍生项目
 
-#### [**MineConfiguration**](https://github.com/CarmJos/MineConfiguration) (by @CarmJos)
+### [**MineConfiguration**](https://github.com/CarmJos/MineConfiguration) (by @CarmJos )
 
 EasyConfiguration for MineCraft!
 开始在 MineCraft 相关服务器平台上轻松(做)配置吧！
