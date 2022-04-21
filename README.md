@@ -97,43 +97,6 @@
 
 </details>
 
-<details>
-<summary>平台依赖版本</summary>
-
-**基于Spigot实现的版本**
-
-```xml
-
-<project>
-    <dependencies>
-        <dependency>
-            <groupId>cc.carm.lib</groupId>
-            <artifactId>easyconfiguration-spigot</artifactId>
-            <version>[LATEST RELEASE]</version>
-            <scope>compile</scope>
-        </dependency>
-    </dependencies>
-</project>
-```
-
-**基于Bungee实现的版本 (不支持自动注释)**
-
-```xml
-
-<project>
-    <dependencies>
-        <dependency>
-            <groupId>cc.carm.lib</groupId>
-            <artifactId>easyconfiguration-bungee</artifactId>
-            <version>[LATEST RELEASE]</version>
-            <scope>compile</scope>
-        </dependency>
-    </dependencies>
-</project>
-```
-
-</details>
-
 #### Gradle 依赖
 
 <details>
@@ -173,24 +136,15 @@ dependencies {
 
 </details>
 
-<details>
-<summary>平台依赖版本</summary>
+### 衍生项目
 
-```groovy
+#### [**MineConfiguration**](https://github.com/CarmJos/MineConfiguration) (by @CarmJos)
 
-dependencies {
+EasyConfiguration for MineCraft!
+开始在 MineCraft 相关服务器平台上轻松(做)配置吧！
 
-    // 用于Spigot服务端的版本
-    api "cc.carm.lib:easyconfiguration-spigot:[LATEST RELEASE]"
+目前支持 BungeeCord, Bukkit(Spigot) 服务端，后续将支持更多平台。
 
-    // 用于BungeeCord服务端的版本，不支持注解。
-    // 如需注解，可选择使用 `easyconfiguration-yaml` 并打包。
-    api "cc.carm.lib:easyconfiguration-bungee:[LATEST RELEASE]"
-
-}
-```
-
-</details>
 
 ## 支持与捐赠
 
