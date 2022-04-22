@@ -5,6 +5,8 @@ import cc.carm.lib.configuration.core.function.ConfigDataFunction;
 import cc.carm.lib.configuration.core.value.type.ConfiguredList;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class SourceListBuilder<S, V> extends CommonConfigBuilder<List<V>, SourceListBuilder<S, V>> {
@@ -28,6 +30,11 @@ public class SourceListBuilder<S, V> extends CommonConfigBuilder<List<V>, Source
         this.valueClass = valueClass;
         this.valueParser = valueParser;
         this.valueSerializer = valueSerializer;
+    }
+
+    @SafeVarargs
+    public final @NotNull SourceListBuilder<S, V> defaults(@NotNull V... values) {
+        return defaults(new ArrayList<>(Arrays.asList(values)));
     }
 
     public @NotNull SourceListBuilder<S, V> parseSource(ConfigDataFunction<Object, S> sourceParser) {

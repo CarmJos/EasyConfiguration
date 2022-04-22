@@ -41,4 +41,8 @@ public abstract class ConfigurationProvider<W extends ConfigurationWrapper> {
         getInitializer().initialize(configClazz, saveDefaults);
     }
 
+    public void initialize(Class<? extends ConfigurationRoot> configClazz, boolean saveDefaults, boolean loadSubClasses) {
+        getInitializer().initialize(configClazz, saveDefaults, loadSubClasses);
+    }
+
 }

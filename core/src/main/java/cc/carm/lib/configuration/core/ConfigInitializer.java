@@ -18,18 +18,34 @@ public class ConfigInitializer<T extends ConfigurationProvider<?>> {
     }
 
     public void initialize(@NotNull Class<? extends ConfigurationRoot> clazz, boolean saveDefaults) {
-        initializeClass(clazz, null, null, null, null, saveDefaults);
+        initialize(clazz, saveDefaults, true);
+    }
+
+    public void initialize(@NotNull Class<? extends ConfigurationRoot> clazz,
+                           boolean saveDefaults, boolean loadSubClasses) {
+        initializeClass(clazz, null, null, null, null, saveDefaults, loadSubClasses);
     }
 
     protected void initializeClass(@NotNull Class<?> clazz,
                                    @Nullable String parentPath, @Nullable String fieldName,
                                    @Nullable ConfigPath fieldPath, @Nullable ConfigComment filedComments,
-                                   boolean saveDefaults) {
-        if (!ConfigurationRoot.class.isAssignableFrom(clazz)) return;
+                                   boolean saveDefaults, boolean loadSubClasses) {
         String path = getClassPath(clazz, parentPath, fieldName, fieldPath);
         if (path != null) setComments(path, getClassComments(clazz, filedComments));
         for (Field field : clazz.getDeclaredFields()) {
-            initializeField(clazz, field, path, saveDefaults);
+            initializeField(clazz, field, path, saveDefaults, loadSubClasses);
+        }
+
+        Class<?>[] classes = clazz.getDeclaredClasses();
+        if (loadSubClasses && classes.length > 0) {
+            // 逆向加载，保持顺序。
+            for (int i = classes.length - 1; i >= 0; i--) {
+                initializeClass(
+                        classes[i], path, classes[i].getSimpleName(),
+                        null, null,
+                        saveDefaults, true
+                );
+            }
         }
     }
 
@@ -39,8 +55,8 @@ public class ConfigInitializer<T extends ConfigurationProvider<?>> {
         value.initialize(provider, saveDefaults, path, comments);
     }
 
-    private void initializeField(@NotNull Class<?> source, @NotNull Field field,
-                                 @Nullable String parent, boolean saveDefaults) {
+    private void initializeField(@NotNull Class<?> source, @NotNull Field field, @Nullable String parent,
+                                 boolean saveDefaults, boolean loadSubClasses) {
 
         try {
             field.setAccessible(true);
@@ -55,7 +71,7 @@ public class ConfigInitializer<T extends ConfigurationProvider<?>> {
                         (Class<?>) object, parent, field.getName(),
                         field.getAnnotation(ConfigPath.class),
                         field.getAnnotation(ConfigComment.class),
-                        saveDefaults
+                        saveDefaults, loadSubClasses
                 );
             }
         } catch (IllegalAccessException ignored) {
