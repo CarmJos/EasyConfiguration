@@ -23,11 +23,11 @@
 
 ## 开发
 
-详细开发介绍请 [点击这里](.documentation/README.md) , JavaDoc(最新Release) 请 [点击这里](https://carmjos.github.io/EasyConfiguration) 。
+详细开发介绍请 [点击这里](.documentation/README.md) , JavaDoc(最新Release) 请 [点击这里](https://CarmJos.github.io/EasyConfiguration) 。
 
 ### 示例代码
 
-您可以 [点击这里](impl/yaml/src/test/java/config/source/TestConfiguration.java) 查看部分代码演示，更多演示详见 [开发介绍](.documentation/README.md) 。
+您可以 [点击这里](impl/yaml/src/test/java/config/source/DemoConfiguration.java) 查看部分代码演示，更多演示详见 [开发介绍](.documentation/README.md) 。
 
 ### 依赖方式
 
@@ -144,7 +144,6 @@ EasyConfiguration for MineCraft!
 开始在 MineCraft 相关服务器平台上轻松(做)配置吧！
 
 目前支持 BungeeCord, Bukkit(Spigot) 服务端，后续将支持更多平台。
-
 
 ## 支持与捐赠
 
