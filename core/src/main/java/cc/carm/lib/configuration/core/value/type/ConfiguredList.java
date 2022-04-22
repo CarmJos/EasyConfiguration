@@ -34,15 +34,10 @@ public class ConfiguredList<V> extends CachedConfigValue<List<V>> {
 
     @Override
     public @NotNull List<V> get() {
-
-
-
         if (isExpired()) { // 已过时的数据，需要重新解析一次。
             List<V> list = new ArrayList<>();
-
             List<?> data = getConfiguration().getList(getConfigPath());
             if (data == null || data.isEmpty()) return useOrDefault(list);
-
             for (Object dataVal : data) {
                 if (dataVal == null) continue;
                 try {
@@ -51,7 +46,6 @@ public class ConfiguredList<V> extends CachedConfigValue<List<V>> {
                     e.printStackTrace();
                 }
             }
-
             return updateCache(list);
         } else if (getCachedValue() != null) return getCachedValue();
         else if (getDefaultValue() != null) return getDefaultValue();

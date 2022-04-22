@@ -109,9 +109,10 @@ public class ConfiguredMap<K, V> extends CachedConfigValue<Map<K, V>> {
             Map<String, Object> data = new LinkedHashMap<>();
             for (Map.Entry<K, V> entry : value.entrySet()) {
                 try {
-                    String key = keySerializer.parse(entry.getKey());
-                    Object val = valueSerializer.parse(entry.getValue());
-                    data.put(key, val);
+                    data.put(
+                            keySerializer.parse(entry.getKey()),
+                            valueSerializer.parse(entry.getValue())
+                    );
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

@@ -69,7 +69,6 @@ public class ConfiguredSection<V> extends CachedConfigValue<V> {
         else {
             try {
                 setValue(serializer.parse(value));
-//                getConfiguration().createSection(getSectionPath(), serializer.parse(value));
             } catch (Exception e) {
                 e.printStackTrace();
             }
