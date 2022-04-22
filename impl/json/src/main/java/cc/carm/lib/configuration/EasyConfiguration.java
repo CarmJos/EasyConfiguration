@@ -1,14 +1,14 @@
 package cc.carm.lib.configuration;
 
-import cc.carm.lib.configuration.yaml.YAMLConfigProvider;
+import cc.carm.lib.configuration.json.JSONConfigProvider;
 
 import java.io.File;
 import java.io.IOException;
 
 public class EasyConfiguration {
 
-    public static YAMLConfigProvider from(File file, String source) {
-        YAMLConfigProvider provider = new YAMLConfigProvider(file);
+    public static JSONConfigProvider from(File file, String source) {
+        JSONConfigProvider provider = new JSONConfigProvider(file);
         try {
             provider.initializeFile(source);
             provider.initializeConfig();
@@ -18,17 +18,16 @@ public class EasyConfiguration {
         return provider;
     }
 
-    public static YAMLConfigProvider from(File file) {
+    public static JSONConfigProvider from(File file) {
         return from(file, file.getName());
     }
 
-    public static YAMLConfigProvider from(String fileName) {
+    public static JSONConfigProvider from(String fileName) {
         return from(fileName, fileName);
     }
 
-    public static YAMLConfigProvider from(String fileName, String source) {
+    public static JSONConfigProvider from(String fileName, String source) {
         return from(new File(fileName), source);
     }
-
 
 }

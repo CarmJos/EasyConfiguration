@@ -12,17 +12,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class YamlSectionWrapper implements ConfigurationWrapper {
+public class YAMLSectionWrapper implements ConfigurationWrapper {
 
     private final ConfigurationSection section;
 
-    private YamlSectionWrapper(ConfigurationSection section) {
+    private YAMLSectionWrapper(ConfigurationSection section) {
         this.section = section;
     }
 
     @Contract("!null->!null")
-    public static @Nullable YamlSectionWrapper of(@Nullable ConfigurationSection section) {
-        return section == null ? null : new YamlSectionWrapper(section);
+    public static @Nullable YAMLSectionWrapper of(@Nullable ConfigurationSection section) {
+        return section == null ? null : new YAMLSectionWrapper(section);
     }
 
     @Override

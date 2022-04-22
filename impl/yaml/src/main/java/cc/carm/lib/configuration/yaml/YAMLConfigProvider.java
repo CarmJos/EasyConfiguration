@@ -8,13 +8,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
-public class YamlConfigProvider extends FileConfigProvider<YamlSectionWrapper> {
+public class YAMLConfigProvider extends FileConfigProvider<YAMLSectionWrapper> {
 
-    protected final @NotNull YamlComments comments = new YamlComments();
+    protected final @NotNull YAMLComments comments = new YAMLComments();
     protected CommentedYamlConfiguration configuration;
-    protected ConfigInitializer<YamlConfigProvider> initializer;
+    protected ConfigInitializer<YAMLConfigProvider> initializer;
 
-    public YamlConfigProvider(@NotNull File file) {
+    public YAMLConfigProvider(@NotNull File file) {
         super(file);
     }
 
@@ -24,8 +24,8 @@ public class YamlConfigProvider extends FileConfigProvider<YamlSectionWrapper> {
     }
 
     @Override
-    public @NotNull YamlSectionWrapper getConfiguration() {
-        return YamlSectionWrapper.of(configuration);
+    public @NotNull YAMLSectionWrapper getConfiguration() {
+        return YAMLSectionWrapper.of(configuration);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class YamlConfigProvider extends FileConfigProvider<YamlSectionWrapper> {
     }
 
     @Override
-    public @NotNull ConfigInitializer<YamlConfigProvider> getInitializer() {
+    public @NotNull ConfigInitializer<YAMLConfigProvider> getInitializer() {
         return this.initializer;
     }
 

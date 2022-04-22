@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class YamlComments implements CommentsProvider {
+public class YAMLComments implements CommentsProvider {
 
     Map<String, String[]> comments = new HashMap<>();
 

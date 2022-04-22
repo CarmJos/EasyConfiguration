@@ -1,13 +1,9 @@
 package config;
 
 import cc.carm.lib.configuration.EasyConfiguration;
-import cc.carm.lib.configuration.yaml.YAMLConfigProvider;
-import config.model.AbstractModel;
-import config.model.SomeModel;
+import cc.carm.lib.configuration.json.JSONConfigProvider;
 import config.model.TestModel;
 import config.source.DemoConfiguration;
-import config.source.ImplConfiguration;
-import org.bspfsystems.yamlconfiguration.serialization.ConfigurationSerialization;
 import org.junit.Test;
 
 import java.util.LinkedHashMap;
@@ -16,21 +12,17 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class ConfigTester {
+public class JSONConfigTest {
 
-    static {
-        ConfigurationSerialization.registerClass(TestModel.class);
-        ConfigurationSerialization.registerClass(SomeModel.class);
-    }
+    protected final JSONConfigProvider provider = EasyConfiguration.from("target/config.yml", "config.yml");
 
-    protected final YAMLConfigProvider provider = EasyConfiguration.from("target/config.yml", "config.yml");
 
     @Test
     public void onTest() {
+
         provider.initialize(DemoConfiguration.class);
 
         testDemo();
-        testSerialization();
 
         try {
             provider.save();
@@ -39,7 +31,6 @@ public class ConfigTester {
         }
 
     }
-
 
     public static void testDemo() {
         System.out.println("----------------------------------------------------");
@@ -65,15 +56,6 @@ public class ConfigTester {
             data.put(i, UUID.randomUUID());
         }
         DemoConfiguration.USERS.set(data);
-        System.out.println("----------------------------------------------------");
-    }
-
-    public static void testSerialization() {
-        System.out.println("----------------------------------------------------");
-        AbstractModel model = ImplConfiguration.TEST.get();
-        if (model != null) {
-            System.out.println(model.getName());
-        }
         System.out.println("----------------------------------------------------");
     }
 

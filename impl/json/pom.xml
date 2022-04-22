@@ -6,15 +6,33 @@
         <artifactId>easyconfiguration-parent</artifactId>
         <groupId>cc.carm.lib</groupId>
         <version>2.1.0</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <properties>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
     </properties>
-
-    <artifactId>easyconfiguration-core</artifactId>
+    <artifactId>easyconfiguration-json</artifactId>
     <packaging>jar</packaging>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>easyconfiguration-core</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.9.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+    </dependencies>
 
     <build>
         <plugins>

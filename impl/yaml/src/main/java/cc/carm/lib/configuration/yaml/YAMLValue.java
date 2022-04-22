@@ -2,30 +2,28 @@ package cc.carm.lib.configuration.yaml;
 
 import cc.carm.lib.configuration.core.source.ConfigurationProvider;
 import cc.carm.lib.configuration.core.value.impl.CachedConfigValue;
-import cc.carm.lib.configuration.yaml.YamlConfigProvider;
-import cc.carm.lib.configuration.yaml.YamlSectionWrapper;
-import cc.carm.lib.configuration.yaml.builder.YamlConfigBuilder;
+import cc.carm.lib.configuration.yaml.builder.YAMLConfigBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class YAMLValue<T> extends CachedConfigValue<T> {
 
-    public static @NotNull YamlConfigBuilder builder() {
-        return new YamlConfigBuilder();
+    public static @NotNull YAMLConfigBuilder builder() {
+        return new YAMLConfigBuilder();
     }
 
-    public YAMLValue(@Nullable YamlConfigProvider provider,
+    public YAMLValue(@Nullable YAMLConfigProvider provider,
                      @Nullable String configPath, @NotNull String[] comments, @Nullable T defaultValue) {
         super(provider, configPath, comments, defaultValue);
     }
 
-    public YamlConfigProvider getYAMLProvider() {
+    public YAMLConfigProvider getYAMLProvider() {
         ConfigurationProvider<?> provider = getProvider();
-        if (provider instanceof YamlConfigProvider) return (YamlConfigProvider) getProvider();
-        else throw new IllegalStateException("Provider is not a SpigotConfigProvider");
+        if (provider instanceof YAMLConfigProvider) return (YAMLConfigProvider) getProvider();
+        else throw new IllegalStateException("Provider is not a YamlConfigProvider");
     }
 
-    public YamlSectionWrapper getYAMLConfig() {
+    public YAMLSectionWrapper getYAMLConfig() {
         return getYAMLProvider().getConfiguration();
     }
 
