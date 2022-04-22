@@ -45,12 +45,29 @@ public abstract class ConfigValue<T> {
         this.defaultValue = defaultValue;
     }
 
+    /**
+     * 得到该配置的设定值(即读取到的值)。
+     * <br> 若初始化时未写入默认值，则可以通过 {@link #getOrDefault()} 方法在该设定值为空时获取默认值。
+     *
+     * @return 设定值
+     */
     public abstract @Nullable T get();
 
+    /**
+     * 得到该配置的设定值，若不存在，则返回默认值。
+     *
+     * @return 设定值或默认值
+     */
     public @Nullable T getOrDefault() {
-        return Optional.ofNullable(get()).orElse(getDefaultValue());
+        return getOptional().orElse(getDefaultValue());
     }
 
+    /**
+     * 得到该配置的非空值。
+     *
+     * @return 非空值
+     * @throws NullPointerException 对应数据为空时抛出
+     */
     public @NotNull T getNotNull() {
         return Objects.requireNonNull(getOrDefault(), "Value(" + configPath + ") is null.");
     }
@@ -59,12 +76,28 @@ public abstract class ConfigValue<T> {
         return Optional.ofNullable(get());
     }
 
+    /**
+     * 设定该配置的值。
+     * <br> 设定后，不会自动保存配置文件；若需要保存，请调用 {@link ConfigurationProvider#save()} 方法。
+     *
+     * @param value 配置的值
+     */
     public abstract void set(@Nullable T value);
 
+    /**
+     * 初始化该配置的默认值。
+     * <br> 设定后，不会自动保存配置文件；若需要保存，请调用 {@link ConfigurationProvider#save()} 方法。
+     */
     public void setDefault() {
         setDefault(false);
     }
 
+    /**
+     * 将该配置的值设置为默认值。
+     * <br> 设定后，不会自动保存配置文件；若需要保存，请调用 {@link ConfigurationProvider#save()} 方法。
+     *
+     * @param override 是否覆盖已设定的值
+     */
     public void setDefault(boolean override) {
         if (!override && getConfiguration().contains(getConfigPath())) return;
         Optional.ofNullable(getDefaultValue()).ifPresent(this::set);

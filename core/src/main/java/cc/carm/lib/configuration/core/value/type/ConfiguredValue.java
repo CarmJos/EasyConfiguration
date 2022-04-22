@@ -52,7 +52,7 @@ public class ConfiguredValue<V> extends CachedConfigValue<V> {
     @Override
     public V get() {
         if (isExpired()) { // 已过时的数据，需要重新解析一次。
-            Object value = getConfiguration().get(getConfigPath());
+            Object value = getValue();
             if (value == null) return useDefault(); // 获取的值不存在，直接使用默认值。
             try {
                 // 若未出现错误，则直接更新缓存并返回。

@@ -9,6 +9,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 
+/**
+ * 配置文件类初始化方法
+ * 用于初始化 {@link ConfigurationRoot} 中的每个 {@link ConfigValue} 对象
+ *
+ * @param <T> {@link ConfigurationProvider} 配置文件的数据来源
+ * @author CarmJos
+ */
 public class ConfigInitializer<T extends ConfigurationProvider<?>> {
 
     protected final @NotNull T provider;
@@ -17,13 +24,37 @@ public class ConfigInitializer<T extends ConfigurationProvider<?>> {
         this.provider = provider;
     }
 
+    /**
+     * 初始化指定类以及其子类的所有 {@link ConfigValue} 对象。
+     *
+     * @param clazz        配置文件类，须继承于 {@link ConfigurationRoot} 。
+     * @param saveDefaults 是否写入默认值(默认为 true)。
+     */
     public void initialize(@NotNull Class<? extends ConfigurationRoot> clazz, boolean saveDefaults) {
         initialize(clazz, saveDefaults, true);
     }
 
+    /**
+     * 初始化指定类的所有 {@link ConfigValue} 对象。
+     *
+     * @param clazz          配置文件类，须继承于 {@link ConfigurationRoot} 。
+     * @param saveDefaults   是否写入默认值(默认为 true)。
+     * @param loadSubClasses 是否加载内部子类(默认为 true)。
+     */
     public void initialize(@NotNull Class<? extends ConfigurationRoot> clazz,
                            boolean saveDefaults, boolean loadSubClasses) {
-        initializeClass(clazz, null, null, null, null, saveDefaults, loadSubClasses);
+        initializeClass(
+                clazz, null,
+                null, null, null,
+                saveDefaults, loadSubClasses
+        );
+        if (saveDefaults) {
+            try {
+                provider.save();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     protected void initializeClass(@NotNull Class<?> clazz,
