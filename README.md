@@ -9,7 +9,7 @@
 # EasyConfiguration
 
 [![version](https://img.shields.io/github/v/release/CarmJos/EasyConfiguration)](https://github.com/CarmJos/EasyConfiguration/releases)
-[![License](https://img.shields.io/github/license/CarmJos/EasyConfiguration)](https://opensource.org/licenses/MIT)
+[![License](https://img.shields.io/github/license/CarmJos/EasyConfiguration)](https://www.gnu.org/licenses/lgpl-3.0.html)
 [![workflow](https://github.com/CarmJos/EasyConfiguration/actions/workflows/maven.yml/badge.svg?branch=master)](https://github.com/CarmJos/EasyConfiguration/actions/workflows/maven.yml)
 [![CodeFactor](https://www.codefactor.io/repository/github/carmjos/easyconfiguration/badge)](https://www.codefactor.io/repository/github/carmjos/easyconfiguration)
 ![CodeSize](https://img.shields.io/github/languages/code-size/CarmJos/EasyConfiguration)
