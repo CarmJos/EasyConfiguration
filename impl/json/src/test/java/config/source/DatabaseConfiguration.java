@@ -10,11 +10,6 @@ import cc.carm.lib.configuration.core.value.type.ConfiguredValue;
 public class DatabaseConfiguration extends ConfigurationRoot {
 
     @ConfigPath("driver")
-    @ConfigComment({
-            "数据库驱动配置，请根据数据库类型设置。",
-            "- MySQL: com.mysql.cj.jdbc.Driver",
-            "- MariaDB(推荐): org.mariadb.jdbc.Driver",
-    })
     protected static final ConfigValue<String> DRIVER_NAME = ConfiguredValue.of(
             String.class, "com.mysql.cj.jdbc.Driver"
     );
