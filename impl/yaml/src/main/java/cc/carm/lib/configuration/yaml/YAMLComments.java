@@ -55,14 +55,14 @@ public class YAMLComments {
 
     /**
      * 从一个文件读取配置并写入注释到某个写入器中。
-     * 该方法的源代码来自 tchristofferson/ConfigUpdater 项目。
+     * 该方法的部分源代码借鉴自 tchristofferson/ConfigUpdater 项目。
      *
      * @param source 源配置文件
      * @param writer 配置写入器
      * @throws IOException 当写入发生错误时抛出
      */
     public void writeComments(@NotNull YamlConfiguration source, @NotNull BufferedWriter writer) throws IOException {
-        FileConfiguration parserConfig = new YamlConfiguration();
+        FileConfiguration temp = new YamlConfiguration(); // 该对象用于临时记录配置内容
 
         for (String fullKey : source.getKeys(true)) {
             String indents = getIndents(fullKey);
@@ -76,26 +76,26 @@ public class YAMLComments {
 
             if (currentValue instanceof ConfigurationSection) {
                 writer.write(indents + trailingKey + ":");
-
-                if (!((ConfigurationSection) currentValue).getKeys(false).isEmpty())
+                if (!((ConfigurationSection) currentValue).getKeys(false).isEmpty()) {
                     writer.write("\n");
-                else
+                } else {
                     writer.write(" {}\n");
-
+                }
                 continue;
             }
 
-            parserConfig.set(trailingKey, currentValue);
-            String yaml = parserConfig.saveToString();
+            temp.set(trailingKey, currentValue);
+            String yaml = temp.saveToString();
             yaml = yaml.substring(0, yaml.length() - 1).replace("\n", "\n" + indents);
             String toWrite = indents + yaml + "\n";
-            parserConfig.set(trailingKey, null);
+            temp.set(trailingKey, null);
+
             writer.write(toWrite);
         }
 
         String endComment = buildComments("", null);
         if (endComment != null) writer.write(endComment);
-        
+
         writer.close();
     }
 
