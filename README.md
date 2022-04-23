@@ -20,6 +20,9 @@
 ## 优势
 
 - 基于类的配置文件初始化、加载、获取与更新机制，方便快捷。
+- 支持复杂配置的手动序列化、反序列化。
+- 提供多种builder形式，快速构建 `ConfigValue<?>`` 对象。
+- 支持通过注解规定配置对应的路径、注释等信息。
 
 ## 开发
 
@@ -91,6 +94,15 @@
             <scope>compile</scope>
         </dependency>
 
+        <!--基于JSON文件的实现版本，可用于全部Java环境。-->
+        <!--需要注意的是，JSON不支持文件注释。-->
+        <dependency>
+            <groupId>cc.carm.lib</groupId>
+            <artifactId>easyconfiguration-json</artifactId>
+            <version>[LATEST RELEASE]</version>
+            <scope>compile</scope>
+        </dependency>
+
     </dependencies>
 </project>
 ```
@@ -130,6 +142,10 @@ dependencies {
 
     //基于YAML文件的实现版本，可用于全部Java环境。
     api "cc.carm.lib:easyconfiguration-yaml:[LATEST RELEASE]"
+
+     //基于JSON文件的实现版本，可用于全部Java环境。
+    //需要注意的是，JSON不支持文件注释。
+    api "cc.carm.lib:easyconfiguration-json:[LATEST RELEASE]"
 
 }
 ```
