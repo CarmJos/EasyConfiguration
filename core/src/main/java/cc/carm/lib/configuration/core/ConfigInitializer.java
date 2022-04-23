@@ -2,6 +2,7 @@ package cc.carm.lib.configuration.core;
 
 import cc.carm.lib.configuration.core.annotation.ConfigComment;
 import cc.carm.lib.configuration.core.annotation.ConfigPath;
+import cc.carm.lib.configuration.core.source.ConfigCommentInfo;
 import cc.carm.lib.configuration.core.source.ConfigurationProvider;
 import cc.carm.lib.configuration.core.value.ConfigValue;
 import org.jetbrains.annotations.NotNull;
@@ -62,7 +63,7 @@ public class ConfigInitializer<T extends ConfigurationProvider<?>> {
                                    @Nullable ConfigPath fieldPath, @Nullable ConfigComment filedComments,
                                    boolean saveDefaults, boolean loadSubClasses) {
         String path = getClassPath(clazz, parentPath, fieldName, fieldPath);
-        if (path != null) setComments(path, getClassComments(clazz, filedComments));
+        this.provider.setComment(path, getClassComments(clazz, filedComments));
         for (Field field : clazz.getDeclaredFields()) {
             initializeField(clazz, field, path, saveDefaults, loadSubClasses);
         }
@@ -82,21 +83,21 @@ public class ConfigInitializer<T extends ConfigurationProvider<?>> {
 
 
     protected void initializeValue(@NotNull ConfigValue<?> value, @NotNull String path,
-                                   @NotNull String[] comments, boolean saveDefaults) {
+                                   @Nullable ConfigCommentInfo comments, boolean saveDefaults) {
         value.initialize(provider, saveDefaults, path, comments);
     }
 
     private void initializeField(@NotNull Class<?> source, @NotNull Field field, @Nullable String parent,
                                  boolean saveDefaults, boolean loadSubClasses) {
-
         try {
             field.setAccessible(true);
             Object object = field.get(source);
             if (object instanceof ConfigValue<?>) {
-                String path = getFieldPath(field, parent);
-                String[] comments = readComments(field.getAnnotation(ConfigComment.class));
-                initializeValue((ConfigValue<?>) object, path, comments, saveDefaults);
-                setComments(path, comments);
+                initializeValue(
+                        (ConfigValue<?>) object, getFieldPath(field, parent),
+                        ConfigCommentInfo.fromAnnotation(field.getAnnotation(ConfigComment.class)),
+                        saveDefaults
+                );
             } else if (object instanceof Class<?>) {
                 initializeClass(
                         (Class<?>) object, parent, field.getName(),
@@ -109,26 +110,15 @@ public class ConfigInitializer<T extends ConfigurationProvider<?>> {
         }
     }
 
-    protected void setComments(@NotNull String path, @Nullable ConfigComment filedComments) {
-        setComments(path, readComments(filedComments));
+    protected void setComments(@Nullable String path, @Nullable ConfigCommentInfo comments) {
+        if (comments != null) this.provider.setComment(path, comments);
     }
 
-    protected void setComments(@NotNull String path, @NotNull String[] comments) {
-        if (comments.length <= 0) return;
-        this.provider.setComments(path, comments);
-    }
-
-    protected static @NotNull String[] readComments(@Nullable ConfigComment filedComments) {
-        if (filedComments == null) return new String[0];
-        if (String.join("", filedComments.value()).length() <= 0) return new String[0];
-        return filedComments.value();
-    }
-
-    protected static @NotNull String[] getClassComments(@NotNull Class<?> clazz,
-                                                        @Nullable ConfigComment fieldAnnotation) {
-        String[] clazzComments = readComments(clazz.getAnnotation(ConfigComment.class));
-        if (clazzComments.length > 0) return clazzComments;
-        else return readComments(fieldAnnotation);
+    protected static @Nullable ConfigCommentInfo getClassComments(@NotNull Class<?> clazz,
+                                                                  @Nullable ConfigComment fieldAnnotation) {
+        ConfigCommentInfo classComments = ConfigCommentInfo.fromAnnotation(clazz.getAnnotation(ConfigComment.class));
+        if (classComments != null) return classComments;
+        return ConfigCommentInfo.fromAnnotation(fieldAnnotation);
     }
 
     protected static @Nullable String getClassPath(@NotNull Class<?> clazz,

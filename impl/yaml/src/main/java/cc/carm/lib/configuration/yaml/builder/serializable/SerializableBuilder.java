@@ -21,7 +21,7 @@ public class SerializableBuilder<T extends ConfigurationSerializable>
 
     @Override
     public @NotNull ConfiguredSerializable<T> build() {
-        return new ConfiguredSerializable<>(this.provider, this.path, this.comments, this.valueClass, this.defaultValue);
+        return new ConfiguredSerializable<>(this.provider, this.path, buildComments(), this.valueClass, this.defaultValue);
     }
 
 

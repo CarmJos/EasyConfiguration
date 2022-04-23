@@ -1,7 +1,8 @@
 package cc.carm.lib.configuration.yaml.value;
 
-import cc.carm.lib.configuration.yaml.YAMLValue;
+import cc.carm.lib.configuration.core.source.ConfigCommentInfo;
 import cc.carm.lib.configuration.yaml.YAMLConfigProvider;
+import cc.carm.lib.configuration.yaml.YAMLValue;
 import org.bspfsystems.yamlconfiguration.serialization.ConfigurationSerializable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,14 +16,14 @@ public class ConfiguredSerializable<T extends ConfigurationSerializable> extends
     }
 
     public static <V extends ConfigurationSerializable> ConfiguredSerializable<V> of(@NotNull Class<V> valueClass,
-                                                                                             @Nullable V defaultValue) {
+                                                                                     @Nullable V defaultValue) {
         return builder().ofSerializable(valueClass).defaults(defaultValue).build();
     }
 
     protected final @NotNull Class<T> valueClass;
 
     public ConfiguredSerializable(@Nullable YAMLConfigProvider provider,
-                                  @Nullable String configPath, @NotNull String[] comments,
+                                  @Nullable String configPath, @Nullable ConfigCommentInfo comments,
                                   @NotNull Class<T> valueClass, @Nullable T defaultValue) {
         super(provider, configPath, comments, defaultValue);
         this.valueClass = valueClass;

@@ -65,7 +65,7 @@ public class SourceListBuilder<S, V> extends CommonConfigBuilder<List<V>, Source
     @Override
     public @NotNull ConfiguredList<V> build() {
         return new ConfiguredList<>(
-                this.provider, this.path, this.comments,
+                this.provider, this.path, this.buildComments(),
                 this.valueClass, this.defaultValue,
                 this.sourceParser.andThen(this.valueParser),
                 this.valueSerializer.andThen(sourceSerializer)

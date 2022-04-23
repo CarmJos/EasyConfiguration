@@ -1,6 +1,7 @@
 package cc.carm.lib.configuration.json;
 
 import cc.carm.lib.configuration.core.ConfigInitializer;
+import cc.carm.lib.configuration.core.source.ConfigCommentInfo;
 import cc.carm.lib.configuration.core.source.ConfigurationProvider;
 import cc.carm.lib.configuration.core.source.impl.FileConfigProvider;
 import com.google.gson.Gson;
@@ -68,14 +69,15 @@ public class JSONConfigProvider extends FileConfigProvider<JSONConfigWrapper> {
     }
 
     @Override
-    public void setComments(@NotNull String path, @NotNull String... comments) {
-        // JSON doesn't support comments.
+    public void setComment(@Nullable String path, @Nullable ConfigCommentInfo comment) {
+        // JSON doesn't support comments;
     }
 
     @Override
-    public @Nullable String[] getComments(@NotNull String path) {
-        return new String[0];     // JSON doesn't support comments.
+    public @Nullable ConfigCommentInfo getComment(@Nullable String path) {
+        return null;
     }
+
 
     @Override
     public @NotNull ConfigInitializer<? extends ConfigurationProvider<JSONConfigWrapper>> getInitializer() {

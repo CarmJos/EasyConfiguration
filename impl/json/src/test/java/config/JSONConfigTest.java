@@ -23,6 +23,11 @@ public class JSONConfigTest {
         provider.initialize(DemoConfiguration.class);
 
         testDemo();
+        System.out.println("----------------------------------------------------");
+        provider.getConfiguration().getValues(true).forEach((k, v) -> System.out.println(k + ": " + v));
+        System.out.println("----------------------------------------------------");
+        provider.getConfiguration().getValues(false).forEach((k, v) -> System.out.println(k + ": " + v));
+        System.out.println("----------------------------------------------------");
 
         try {
             provider.save();

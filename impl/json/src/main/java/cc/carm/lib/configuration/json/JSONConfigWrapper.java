@@ -4,7 +4,10 @@ import cc.carm.lib.configuration.core.source.ConfigurationWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Some code comes from BungeeCord's implementation of the JsonConfiguration.
@@ -33,12 +36,16 @@ public class JSONConfigWrapper implements ConfigurationWrapper {
 
     @Override
     public @NotNull Set<String> getKeys(boolean deep) {
-        return new LinkedHashSet<>(this.data.keySet());
+        return getValues(deep).keySet();
     }
 
     @Override
     public @NotNull Map<String, Object> getValues(boolean deep) {
-        return new LinkedHashMap<>(this.data);
+        if (deep) {
+            Map<String, Object> values = new LinkedHashMap<>();
+            mapChildrenValues(values, this, null, true);
+            return values;
+        } else return new LinkedHashMap<>(this.data);
     }
 
     @Override
@@ -111,4 +118,16 @@ public class JSONConfigWrapper implements ConfigurationWrapper {
         return (index == -1) ? path : path.substring(index + 1);
     }
 
+
+    protected void mapChildrenValues(@NotNull Map<String, Object> output, @NotNull JSONConfigWrapper section,
+                                     @Nullable String parent, boolean deep) {
+        for (Map.Entry<String, Object> entry : section.data.entrySet()) {
+            String path = (parent == null ? "" : parent + ".") + entry.getKey();
+            output.remove(path);
+            output.put(path, entry.getValue());
+            if (deep && entry.getValue() instanceof JSONConfigWrapper) {
+                this.mapChildrenValues(output, (JSONConfigWrapper) entry.getValue(), path, true);
+            }
+        }
+    }
 }

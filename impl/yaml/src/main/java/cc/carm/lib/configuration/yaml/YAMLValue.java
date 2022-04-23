@@ -1,5 +1,6 @@
 package cc.carm.lib.configuration.yaml;
 
+import cc.carm.lib.configuration.core.source.ConfigCommentInfo;
 import cc.carm.lib.configuration.core.source.ConfigurationProvider;
 import cc.carm.lib.configuration.core.value.impl.CachedConfigValue;
 import cc.carm.lib.configuration.yaml.builder.YAMLConfigBuilder;
@@ -13,7 +14,8 @@ public abstract class YAMLValue<T> extends CachedConfigValue<T> {
     }
 
     public YAMLValue(@Nullable YAMLConfigProvider provider,
-                     @Nullable String configPath, @NotNull String[] comments, @Nullable T defaultValue) {
+                     @Nullable String configPath, @Nullable ConfigCommentInfo comments,
+                     @Nullable T defaultValue) {
         super(provider, configPath, comments, defaultValue);
     }
 

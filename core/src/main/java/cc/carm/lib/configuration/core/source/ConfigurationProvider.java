@@ -27,9 +27,9 @@ public abstract class ConfigurationProvider<W extends ConfigurationWrapper> {
 
     public abstract void save() throws Exception;
 
-    public abstract void setComments(@NotNull String path, @NotNull String... comments);
+    public abstract void setComment(@Nullable String path, @Nullable ConfigCommentInfo comment);
 
-    public abstract @Nullable String[] getComments(@NotNull String path);
+    public abstract @Nullable ConfigCommentInfo getComment(@Nullable String path);
 
     public abstract @NotNull ConfigInitializer<? extends ConfigurationProvider<W>> getInitializer();
 

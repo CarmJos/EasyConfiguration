@@ -1,6 +1,7 @@
 package cc.carm.lib.configuration.core.value;
 
 import cc.carm.lib.configuration.core.builder.ConfigBuilder;
+import cc.carm.lib.configuration.core.source.ConfigCommentInfo;
 import cc.carm.lib.configuration.core.source.ConfigurationProvider;
 import cc.carm.lib.configuration.core.source.ConfigurationWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -17,12 +18,13 @@ public abstract class ConfigValue<T> {
 
     protected @Nullable ConfigurationProvider<?> provider;
     protected @Nullable String configPath;
-    protected @NotNull String[] comments;
+    protected @Nullable ConfigCommentInfo comments;
 
     protected @Nullable T defaultValue;
 
     public ConfigValue(@Nullable ConfigurationProvider<?> provider,
-                       @Nullable String configPath, @NotNull String[] comments, @Nullable T defaultValue) {
+                       @Nullable String configPath, @Nullable ConfigCommentInfo comments,
+                       @Nullable T defaultValue) {
         this.provider = provider;
         this.configPath = configPath;
         this.comments = comments;
@@ -30,11 +32,12 @@ public abstract class ConfigValue<T> {
     }
 
     public void initialize(@NotNull ConfigurationProvider<?> provider, boolean saveDefault,
-                           @NotNull String configPath, @NotNull String... comments) {
+                           @NotNull String configPath, @Nullable ConfigCommentInfo comments) {
         if (this.provider == null) this.provider = provider;
         if (this.configPath == null) this.configPath = configPath;
-        if (this.comments.length == 0) this.comments = comments;
+        if (this.comments == null) this.comments = comments;
         if (saveDefault) setDefault();
+        if (getComments() != null) this.provider.setComment(getConfigPath(), getComments());
     }
 
     public @Nullable T getDefaultValue() {
@@ -103,6 +106,11 @@ public abstract class ConfigValue<T> {
         Optional.ofNullable(getDefaultValue()).ifPresent(this::set);
     }
 
+    /**
+     * 判断加载的配置是否与默认值相同。
+     *
+     * @return 获取当前值是否为默认值。
+     */
     public boolean isDefault() {
         T defaultValue = getDefaultValue();
         T value = get();
@@ -137,12 +145,8 @@ public abstract class ConfigValue<T> {
         getConfiguration().set(getConfigPath(), value);
     }
 
-    public String[] getComments() {
+    public @Nullable ConfigCommentInfo getComments() {
         return comments;
-    }
-
-    public void setComments(String[] comments) {
-        this.comments = comments;
     }
 
 }

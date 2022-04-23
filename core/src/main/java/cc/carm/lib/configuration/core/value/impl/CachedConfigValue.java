@@ -1,5 +1,6 @@
 package cc.carm.lib.configuration.core.value.impl;
 
+import cc.carm.lib.configuration.core.source.ConfigCommentInfo;
 import cc.carm.lib.configuration.core.source.ConfigurationProvider;
 import cc.carm.lib.configuration.core.value.ConfigValue;
 import org.jetbrains.annotations.NotNull;
@@ -12,7 +13,7 @@ public abstract class CachedConfigValue<T> extends ConfigValue<T> {
     protected long parsedTime = -1;
 
     public CachedConfigValue(@Nullable ConfigurationProvider<?> provider, @Nullable String sectionPath,
-                             @NotNull String[] comments, @Nullable T defaultValue) {
+                             @Nullable ConfigCommentInfo comments, @Nullable T defaultValue) {
         super(provider, sectionPath, comments, defaultValue);
     }
 

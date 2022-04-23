@@ -16,14 +16,16 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
+
+@ConfigComment({"给根类添加的注释将显示在文件的末尾。"})
 public class DemoConfiguration extends ConfigurationRoot {
 
     @ConfigPath(root = true)
-    @ConfigComment({
+    @ConfigComment(value = {
             "有时候，需要在配置文件最上面显示点东西，",
             "此时就推荐添加一个可以用到但并不重要的参数到最上面",
             "并给他添加对应的注释。"
-    })
+    }, startWrap = false, endWrap = true)
     protected static final ConfigValue<Double> VERSION = ConfiguredValue.of(Double.class, 1.0D);
 
 

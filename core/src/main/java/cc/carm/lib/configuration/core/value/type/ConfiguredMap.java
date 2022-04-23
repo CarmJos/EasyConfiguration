@@ -2,6 +2,7 @@ package cc.carm.lib.configuration.core.value.type;
 
 import cc.carm.lib.configuration.core.builder.map.ConfigMapBuilder;
 import cc.carm.lib.configuration.core.function.ConfigDataFunction;
+import cc.carm.lib.configuration.core.source.ConfigCommentInfo;
 import cc.carm.lib.configuration.core.source.ConfigurationProvider;
 import cc.carm.lib.configuration.core.source.ConfigurationWrapper;
 import cc.carm.lib.configuration.core.value.impl.CachedConfigValue;
@@ -32,7 +33,7 @@ public class ConfiguredMap<K, V> extends CachedConfigValue<Map<K, V>> {
     protected final @NotNull ConfigDataFunction<V, Object> valueSerializer;
 
     public ConfiguredMap(@Nullable ConfigurationProvider<?> provider,
-                         @Nullable String sectionPath, @NotNull String[] comments,
+                         @Nullable String sectionPath, @Nullable ConfigCommentInfo comments,
                          @Nullable Map<K, V> defaultValue, @NotNull Supplier<? extends Map<K, V>> supplier,
                          @NotNull Class<K> keyClass, @NotNull ConfigDataFunction<String, K> keyParser,
                          @NotNull Class<V> valueClass, @NotNull ConfigDataFunction<Object, V> valueParser,
