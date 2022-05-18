@@ -1,10 +1,10 @@
 package cc.carm.lib.configuration.core.value.impl;
 
-import cc.carm.lib.configuration.core.source.ConfigCommentInfo;
 import cc.carm.lib.configuration.core.source.ConfigurationProvider;
 import cc.carm.lib.configuration.core.value.ConfigValue;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public abstract class CachedConfigValue<T> extends ConfigValue<T> {
 
@@ -13,8 +13,9 @@ public abstract class CachedConfigValue<T> extends ConfigValue<T> {
     protected long parsedTime = -1;
 
     public CachedConfigValue(@Nullable ConfigurationProvider<?> provider, @Nullable String sectionPath,
-                             @Nullable ConfigCommentInfo comments, @Nullable T defaultValue) {
-        super(provider, sectionPath, comments, defaultValue);
+                             @Nullable List<String> headerComments, @Nullable String inlineComments,
+                             @Nullable T defaultValue) {
+        super(provider, sectionPath, headerComments, inlineComments, defaultValue);
     }
 
     protected T updateCache(T value) {

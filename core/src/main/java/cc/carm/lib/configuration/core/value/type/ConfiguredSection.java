@@ -3,13 +3,13 @@ package cc.carm.lib.configuration.core.value.type;
 import cc.carm.lib.configuration.core.builder.value.SectionValueBuilder;
 import cc.carm.lib.configuration.core.function.ConfigDataFunction;
 import cc.carm.lib.configuration.core.function.ConfigValueParser;
-import cc.carm.lib.configuration.core.source.ConfigCommentInfo;
 import cc.carm.lib.configuration.core.source.ConfigurationProvider;
 import cc.carm.lib.configuration.core.source.ConfigurationWrapper;
 import cc.carm.lib.configuration.core.value.impl.CachedConfigValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -24,12 +24,12 @@ public class ConfiguredSection<V> extends CachedConfigValue<V> {
     protected final @NotNull ConfigValueParser<ConfigurationWrapper, V> parser;
     protected final @NotNull ConfigDataFunction<V, ? extends Map<String, Object>> serializer;
 
-    public ConfiguredSection(@Nullable ConfigurationProvider<?> provider,
-                             @Nullable String sectionPath, @Nullable ConfigCommentInfo comments,
+    public ConfiguredSection(@Nullable ConfigurationProvider<?> provider, @Nullable String sectionPath,
+                             @Nullable List<String> headerComments, @Nullable String inlineComments,
                              @NotNull Class<V> valueClass, @Nullable V defaultValue,
                              @NotNull ConfigValueParser<ConfigurationWrapper, V> parser,
                              @NotNull ConfigDataFunction<V, ? extends Map<String, Object>> serializer) {
-        super(provider, sectionPath, comments, defaultValue);
+        super(provider, sectionPath, headerComments, inlineComments, defaultValue);
         this.valueClass = valueClass;
         this.parser = parser;
         this.serializer = serializer;

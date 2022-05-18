@@ -1,8 +1,8 @@
 package cc.carm.lib.configuration.core.value.type;
 
+import cc.carm.lib.configuration.core.annotation.HeaderComment;
 import cc.carm.lib.configuration.core.builder.list.ConfigListBuilder;
 import cc.carm.lib.configuration.core.function.ConfigDataFunction;
-import cc.carm.lib.configuration.core.source.ConfigCommentInfo;
 import cc.carm.lib.configuration.core.source.ConfigurationProvider;
 import cc.carm.lib.configuration.core.value.impl.CachedConfigValue;
 import org.jetbrains.annotations.NotNull;
@@ -17,17 +17,18 @@ public class ConfiguredList<V> extends CachedConfigValue<List<V>> {
         return builder().asList(valueClass);
     }
 
+    @HeaderComment
     protected final @NotNull Class<V> valueClass;
 
     protected final @NotNull ConfigDataFunction<Object, V> parser;
     protected final @NotNull ConfigDataFunction<V, Object> serializer;
 
-    public ConfiguredList(@Nullable ConfigurationProvider<?> provider,
-                          @Nullable String sectionPath, @Nullable ConfigCommentInfo comments,
+    public ConfiguredList(@Nullable ConfigurationProvider<?> provider, @Nullable String sectionPath,
+                          @Nullable List<String> headerComments, @Nullable String inlineComments,
                           @NotNull Class<V> valueClass, @Nullable List<V> defaultValue,
                           @NotNull ConfigDataFunction<Object, V> parser,
                           @NotNull ConfigDataFunction<V, Object> serializer) {
-        super(provider, sectionPath, comments, defaultValue);
+        super(provider, sectionPath, headerComments, inlineComments, defaultValue);
         this.valueClass = valueClass;
         this.parser = parser;
         this.serializer = serializer;

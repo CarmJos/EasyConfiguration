@@ -3,7 +3,6 @@ package cc.carm.lib.configuration.core.builder.value;
 import cc.carm.lib.configuration.core.builder.CommonConfigBuilder;
 import cc.carm.lib.configuration.core.function.ConfigDataFunction;
 import cc.carm.lib.configuration.core.function.ConfigValueParser;
-import cc.carm.lib.configuration.core.source.ConfigCommentInfo;
 import cc.carm.lib.configuration.core.value.type.ConfiguredValue;
 import org.jetbrains.annotations.NotNull;
 
@@ -58,7 +57,8 @@ public class SourceValueBuilder<S, V> extends CommonConfigBuilder<V, SourceValue
     @Override
     public @NotNull ConfiguredValue<V> build() {
         return new ConfiguredValue<>(
-                this.provider, this.path, this.buildComments(),
+                this.provider, this.path,
+                this.headerComments, this.inlineComment,
                 this.valueClass, this.defaultValue,
                 this.valueParser.compose(this.sourceParser),
                 this.valueSerializer.andThen(sourceSerializer)

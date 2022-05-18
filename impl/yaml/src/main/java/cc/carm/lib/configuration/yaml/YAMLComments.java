@@ -1,17 +1,15 @@
 package cc.carm.lib.configuration.yaml;
 
-import cc.carm.lib.configuration.core.source.ConfigCommentInfo;
 import org.bspfsystems.yamlconfiguration.configuration.ConfigurationSection;
 import org.bspfsystems.yamlconfiguration.file.FileConfiguration;
 import org.bspfsystems.yamlconfiguration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.StringJoiner;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -19,38 +17,55 @@ import static cc.carm.lib.configuration.yaml.YAMLConfigProvider.SEPARATOR;
 
 public class YAMLComments {
 
-    Map<String, ConfigCommentInfo> comments = new HashMap<>();
+    protected final @NotNull Map<String, List<String>> headerComments = new HashMap<>();
+    protected final @NotNull Map<String, String> inlineComments = new HashMap<>();
 
-    protected Map<String, ConfigCommentInfo> getComments() {
-        return comments;
+    protected @NotNull Map<String, List<String>> getHeaderComments() {
+        return headerComments;
     }
 
-    public void set(@Nullable String path, @Nullable ConfigCommentInfo comments) {
+    protected @NotNull Map<String, String> getInlineComments() {
+        return inlineComments;
+    }
+
+    public void setHeaderComments(@Nullable String path, @Nullable List<String> comments) {
+
         if (comments == null) {
-            getComments().remove(path);
+            getHeaderComments().remove(path);
         } else {
-            getComments().put(path, comments);
+            getHeaderComments().put(path, comments);
         }
     }
 
-    public @NotNull ConfigCommentInfo get(@Nullable String path) {
-        return getComments().getOrDefault(path, ConfigCommentInfo.defaults());
+
+    public void setInlineComment(@NotNull String path, @Nullable String comment) {
+        if (comment == null) {
+            getInlineComments().remove(path);
+        } else {
+            getInlineComments().put(path, comment);
+        }
     }
 
-    public @Nullable String buildComments(@NotNull String indents, @Nullable String path) {
-        ConfigCommentInfo comments = get(path);
-        if (!String.join("", comments.getComments()).isEmpty()) {
-            String prefix = comments.startWrap() ? "\n" : "";
-            String suffix = comments.endWrap() ? "\n" : "";
-            StringJoiner joiner = new StringJoiner("\n", prefix, suffix);
-            for (String comment : comments.getComments()) {
-                if (comment.length() == 0) joiner.add(" ");
-                else joiner.add(indents + "# " + comment);
-            }
-            return joiner + "\n";
-        } else {
-            return comments.startWrap() || comments.endWrap() ? "\n" : null;
+    @Nullable
+    @Unmodifiable
+    public List<String> getHeaderComment(@Nullable String path) {
+        return Optional.ofNullable(getHeaderComments().get(path)).map(Collections::unmodifiableList).orElse(null);
+    }
+
+    public @Nullable String getInlineComment(@NotNull String path) {
+        return getInlineComments().get(path);
+    }
+
+    public @Nullable String buildHeaderComments(@Nullable String path, @NotNull String indents) {
+        List<String> comments = getHeaderComment(path);
+        if (comments == null || comments.size() == 0) return null;
+
+        StringJoiner joiner = new StringJoiner("\n");
+        for (String comment : comments) {
+            if (comment.length() == 0) joiner.add(" ");
+            else joiner.add(indents + "# " + comment);
         }
+        return joiner + "\n";
     }
 
     /**
@@ -64,37 +79,56 @@ public class YAMLComments {
     public void writeComments(@NotNull YamlConfiguration source, @NotNull BufferedWriter writer) throws IOException {
         FileConfiguration temp = new YamlConfiguration(); // 该对象用于临时记录配置内容
 
-        for (String fullKey : source.getKeys(true)) {
-            String indents = getIndents(fullKey);
-            String comment = buildComments(indents, fullKey);
-            if (comment != null) writer.write(comment);
+        String configHeader = buildHeaderComments(null, "");
+        if (configHeader != null) writer.write(configHeader);
 
+        for (String fullKey : source.getKeys(true)) {
             Object currentValue = source.get(fullKey);
+
+            String indents = getIndents(fullKey);
+            String headerComments = buildHeaderComments(fullKey, indents);
+            String inlineComment = getInlineComment(fullKey);
+
+            if (headerComments != null) writer.write(headerComments);
 
             String[] splitFullKey = fullKey.split("[" + SEPARATOR + "]");
             String trailingKey = splitFullKey[splitFullKey.length - 1];
 
             if (currentValue instanceof ConfigurationSection) {
+                ConfigurationSection section = (ConfigurationSection) currentValue;
                 writer.write(indents + trailingKey + ":");
-                if (!((ConfigurationSection) currentValue).getKeys(false).isEmpty()) {
+                if (inlineComment != null && inlineComment.length() > 0) {
+                    writer.write(" # " + inlineComment);
+                }
+                if (!section.getKeys(false).isEmpty()) {
                     writer.write("\n");
                 } else {
                     writer.write(" {}\n");
+                    if (indents.length() == 0) writer.write("\n");
                 }
                 continue;
             }
 
             temp.set(trailingKey, currentValue);
             String yaml = temp.saveToString();
-            yaml = yaml.substring(0, yaml.length() - 1).replace("\n", "\n" + indents);
-            String toWrite = indents + yaml + "\n";
             temp.set(trailingKey, null);
 
-            writer.write(toWrite);
-        }
+            yaml = yaml.substring(0, yaml.length() - 1);
 
-        String endComment = buildComments("", null);
-        if (endComment != null) writer.write(endComment);
+            if (inlineComment != null && inlineComment.length() > 0) {
+                if (yaml.contains("\n")) {
+                    // section为多行内容，需要 InlineComment 加在首行末尾
+                    String[] splitLine = yaml.split("\n", 2);
+                    yaml = splitLine[0] + " # " + inlineComment + "\n" + splitLine[1];
+                } else {
+                    // 其他情况下就直接加载后面就好。
+                    yaml += " # " + inlineComment;
+                }
+            }
+
+            writer.write(indents + yaml.replace("\n", "\n" + indents) + "\n");
+            if (indents.length() == 0) writer.write("\n");
+        }
 
         writer.close();
     }

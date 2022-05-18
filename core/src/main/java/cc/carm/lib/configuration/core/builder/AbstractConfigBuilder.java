@@ -1,10 +1,12 @@
 package cc.carm.lib.configuration.core.builder;
 
-import cc.carm.lib.configuration.core.source.ConfigCommentInfo;
 import cc.carm.lib.configuration.core.source.ConfigurationProvider;
 import cc.carm.lib.configuration.core.value.ConfigValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Arrays;
+import java.util.List;
 
 public abstract class AbstractConfigBuilder<T, B extends AbstractConfigBuilder<T, B, P>, P extends ConfigurationProvider<?>> {
 
@@ -13,9 +15,8 @@ public abstract class AbstractConfigBuilder<T, B extends AbstractConfigBuilder<T
     protected @Nullable P provider;
     protected @Nullable String path;
 
-    protected @NotNull String[] comments = new String[0];
-    protected boolean startWrap = true;
-    protected boolean endWrap = false;
+    protected @Nullable List<String> headerComments;
+    protected @Nullable String inlineComment;
 
     protected @Nullable T defaultValue;
 
@@ -38,38 +39,26 @@ public abstract class AbstractConfigBuilder<T, B extends AbstractConfigBuilder<T
     }
 
     public @NotNull B comments(@NotNull String... comments) {
-        this.comments = comments;
+        return headerComments(comments);
+    }
+
+    public @NotNull B headerComments(@NotNull String... comments) {
+        return headerComments(Arrays.asList(comments));
+    }
+
+    public @NotNull B headerComments(@NotNull List<String> comments) {
+        this.headerComments = comments;
         return getThis();
     }
 
-    public @NotNull B setStartWarp(boolean enable) {
-        this.startWrap = enable;
+    public @NotNull B inlineComment(@NotNull String comment) {
+        this.inlineComment = comment;
         return getThis();
-    }
-
-    public @NotNull B startWarp() {
-        return setStartWarp(true);
-    }
-
-    public @NotNull B setEndWarp(boolean enable) {
-        this.endWrap = enable;
-        return getThis();
-    }
-
-    public @NotNull B endWarp() {
-        return setEndWarp(true);
     }
 
     public @NotNull B defaults(@Nullable T defaultValue) {
         this.defaultValue = defaultValue;
         return getThis();
     }
-
-    protected @Nullable ConfigCommentInfo buildComments() {
-        ConfigCommentInfo info = ConfigCommentInfo.of(this.comments, this.startWrap, this.endWrap);
-        if (info.equals(ConfigCommentInfo.defaults())) return null;
-        else return info;
-    }
-
 
 }

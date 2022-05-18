@@ -30,5 +30,4 @@ public class EasyConfiguration {
         return from(new File(fileName), source);
     }
 
-
 }

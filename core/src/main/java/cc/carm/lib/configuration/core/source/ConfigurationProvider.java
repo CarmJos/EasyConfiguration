@@ -4,6 +4,9 @@ import cc.carm.lib.configuration.core.ConfigInitializer;
 import cc.carm.lib.configuration.core.ConfigurationRoot;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
+
+import java.util.List;
 
 public abstract class ConfigurationProvider<W extends ConfigurationWrapper> {
 
@@ -27,9 +30,15 @@ public abstract class ConfigurationProvider<W extends ConfigurationWrapper> {
 
     public abstract void save() throws Exception;
 
-    public abstract void setComment(@Nullable String path, @Nullable ConfigCommentInfo comment);
+    public abstract void setHeaderComment(@Nullable String path, @Nullable List<String> comments);
 
-    public abstract @Nullable ConfigCommentInfo getComment(@Nullable String path);
+    public abstract void setInlineComment(@NotNull String path, @Nullable String comment);
+
+    @Nullable
+    @Unmodifiable
+    public abstract List<String> getHeaderComment(@Nullable String path);
+
+    public abstract @Nullable String getInlineComment(@NotNull String path);
 
     public abstract @NotNull ConfigInitializer<? extends ConfigurationProvider<W>> getInitializer();
 

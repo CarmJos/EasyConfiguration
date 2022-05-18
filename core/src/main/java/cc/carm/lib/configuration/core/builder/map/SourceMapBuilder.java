@@ -89,7 +89,8 @@ public class SourceMapBuilder<M extends Map<K, V>, S, K, V> extends CommonConfig
     @Override
     public @NotNull ConfiguredMap<K, V> build() {
         return new ConfiguredMap<>(
-                this.provider, this.path,this.buildComments(),
+                this.provider, this.path,
+                this.headerComments, this.inlineComment,
                 this.defaultValue, this.supplier,
                 this.keyClass, this.keyParser,
                 this.valueClass, this.sourceParser.andThen(this.valueParser),

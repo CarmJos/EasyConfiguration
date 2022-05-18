@@ -1,12 +1,13 @@
 package cc.carm.lib.configuration.core.value;
 
 import cc.carm.lib.configuration.core.builder.ConfigBuilder;
-import cc.carm.lib.configuration.core.source.ConfigCommentInfo;
 import cc.carm.lib.configuration.core.source.ConfigurationProvider;
 import cc.carm.lib.configuration.core.source.ConfigurationWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -18,26 +19,37 @@ public abstract class ConfigValue<T> {
 
     protected @Nullable ConfigurationProvider<?> provider;
     protected @Nullable String configPath;
-    protected @Nullable ConfigCommentInfo comments;
+
+    protected @Nullable List<String> headerComments;
+    protected @Nullable String inlineComments;
 
     protected @Nullable T defaultValue;
 
-    public ConfigValue(@Nullable ConfigurationProvider<?> provider,
-                       @Nullable String configPath, @Nullable ConfigCommentInfo comments,
+    public ConfigValue(@Nullable ConfigurationProvider<?> provider, @Nullable String configPath,
+                       @Nullable List<String> headerComments, @Nullable String inlineComments,
                        @Nullable T defaultValue) {
         this.provider = provider;
         this.configPath = configPath;
-        this.comments = comments;
+        this.headerComments = headerComments;
+        this.inlineComments = inlineComments;
         this.defaultValue = defaultValue;
     }
 
-    public void initialize(@NotNull ConfigurationProvider<?> provider, boolean saveDefault,
-                           @NotNull String configPath, @Nullable ConfigCommentInfo comments) {
+    public void initialize(@NotNull ConfigurationProvider<?> provider, boolean saveDefault, @NotNull String configPath,
+                           @Nullable List<String> headerComments, @Nullable String inlineComments) {
         if (this.provider == null) this.provider = provider;
         if (this.configPath == null) this.configPath = configPath;
-        if (this.comments == null) this.comments = comments;
+        if (this.headerComments == null) this.headerComments = headerComments;
+        if (this.inlineComments == null) this.inlineComments = inlineComments;
         if (saveDefault) setDefault();
-        if (getComments() != null) this.provider.setComment(getConfigPath(), getComments());
+
+        if (getHeaderComments() != null) {
+            this.provider.setHeaderComment(getConfigPath(), getHeaderComments());
+        }
+        if (getInlineComments() != null) {
+            this.provider.setInlineComment(getConfigPath(), getInlineComments());
+        }
+
     }
 
     public @Nullable T getDefaultValue() {
@@ -145,8 +157,13 @@ public abstract class ConfigValue<T> {
         getConfiguration().set(getConfigPath(), value);
     }
 
-    public @Nullable ConfigCommentInfo getComments() {
-        return comments;
+    public @Nullable String getInlineComments() {
+        return inlineComments;
+    }
+
+    @Unmodifiable
+    public @Nullable List<String> getHeaderComments() {
+        return headerComments;
     }
 
 }

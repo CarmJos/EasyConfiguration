@@ -10,7 +10,9 @@ import config.model.TestModel;
 @ConfigPath(root = true)
 public class ImplConfiguration extends ConfigurationRoot {
 
-    public static final ConfigValue<? extends AbstractModel> TEST = ConfiguredSerializable.of(TestModel.class, TestModel.random());
+    public static final ConfigValue<? extends AbstractModel> TEST = ConfiguredSerializable.of(
+            TestModel.class, TestModel.random()
+    );
 
 
 }

@@ -1,7 +1,9 @@
 package cc.carm.lib.configuration.core.builder.list;
 
+import cc.carm.lib.configuration.core.annotation.InlineComment;
 import cc.carm.lib.configuration.core.function.ConfigDataFunction;
 import org.jetbrains.annotations.NotNull;
+
 
 public class ConfigListBuilder<V> {
 
