@@ -1,0 +1,13 @@
+cc.carm.lib.configuration.core
+cc.carm.lib.configuration.core.annotation
+cc.carm.lib.configuration.core.builder
+cc.carm.lib.configuration.core.builder.list
+cc.carm.lib.configuration.core.builder.map
+cc.carm.lib.configuration.core.builder.value
+cc.carm.lib.configuration.core.function
+cc.carm.lib.configuration.core.source
+cc.carm.lib.configuration.core.source.impl
+cc.carm.lib.configuration.core.util
+cc.carm.lib.configuration.core.value
+cc.carm.lib.configuration.core.value.impl
+cc.carm.lib.configuration.core.value.type
