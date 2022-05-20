@@ -26,9 +26,14 @@ public abstract class ConfigurationProvider<W extends ConfigurationWrapper> {
 
     public abstract @NotNull W getConfiguration();
 
-    public abstract void reload() throws Exception;
+    public void reload() throws Exception {
+        onReload(); // 调用重写的Reload方法
+        this.updateTime = System.currentTimeMillis();
+    }
 
     public abstract void save() throws Exception;
+
+    protected abstract void onReload() throws Exception;
 
     public abstract void setHeaderComment(@Nullable String path, @Nullable List<String> comments);
 

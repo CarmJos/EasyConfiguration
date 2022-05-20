@@ -49,7 +49,6 @@ public class JSONConfigProvider extends FileConfigProvider<JSONConfigWrapper> {
         if (map == null) map = new LinkedHashMap<>();
 
         this.configuration = new JSONConfigWrapper(map);
-        this.initializer = new ConfigInitializer<>(this);
     }
 
     @Override
@@ -58,7 +57,8 @@ public class JSONConfigProvider extends FileConfigProvider<JSONConfigWrapper> {
     }
 
     @Override
-    public void reload() {
+    protected void onReload() throws Exception {
+        super.reload();
         initializeConfig();
     }
 
