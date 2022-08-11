@@ -51,7 +51,7 @@ public class SQLSectionWrapper implements ConfigurationWrapper {
     }
 
     @Override
-    public @Nullable ConfigurationWrapper getConfigurationSection(@NotNull String path) {
+    public @Nullable SQLSectionWrapper getConfigurationSection(@NotNull String path) {
         return null;
     }
 
