@@ -14,7 +14,7 @@ import java.util.Set;
  *
  * @author md_5, CarmJos
  */
-public class JSONConfigWrapper implements ConfigurationWrapper {
+public class JSONConfigWrapper implements ConfigurationWrapper<Map<String, Object>> {
 
     private static final char SEPARATOR = '.';
     protected final Map<String, Object> data;
@@ -33,6 +33,10 @@ public class JSONConfigWrapper implements ConfigurationWrapper {
         }
     }
 
+    @Override
+    public @NotNull Map<String, Object> getSource() {
+        return this.data;
+    }
 
     @Override
     public @NotNull Set<String> getKeys(boolean deep) {
@@ -94,7 +98,7 @@ public class JSONConfigWrapper implements ConfigurationWrapper {
     }
 
     @Override
-    public @Nullable ConfigurationWrapper getConfigurationSection(@NotNull String path) {
+    public @Nullable JSONConfigWrapper getConfigurationSection(@NotNull String path) {
         Object val = get(path);
         return (val instanceof JSONConfigWrapper) ? (JSONConfigWrapper) val : null;
     }

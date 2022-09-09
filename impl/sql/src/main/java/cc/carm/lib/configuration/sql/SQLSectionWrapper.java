@@ -8,7 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class SQLSectionWrapper implements ConfigurationWrapper {
+public class SQLSectionWrapper implements ConfigurationWrapper<Map<String, Object>> {
+
+    @Override
+    public @NotNull Map<String, Object> getSource() {
+        return null;
+    }
 
     @Override
     public @NotNull Set<String> getKeys(boolean deep) {

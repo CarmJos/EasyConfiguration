@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class YAMLSectionWrapper implements ConfigurationWrapper {
+public class YAMLSectionWrapper implements ConfigurationWrapper<ConfigurationSection> {
 
     private final ConfigurationSection section;
 
@@ -23,6 +23,11 @@ public class YAMLSectionWrapper implements ConfigurationWrapper {
     @Contract("!null->!null")
     public static @Nullable YAMLSectionWrapper of(@Nullable ConfigurationSection section) {
         return section == null ? null : new YAMLSectionWrapper(section);
+    }
+
+    @Override
+    public @NotNull ConfigurationSection getSource() {
+        return this.section;
     }
 
     @Override
@@ -66,7 +71,7 @@ public class YAMLSectionWrapper implements ConfigurationWrapper {
     }
 
     @Override
-    public @Nullable ConfigurationWrapper getConfigurationSection(@NotNull String path) {
+    public @Nullable YAMLSectionWrapper getConfigurationSection(@NotNull String path) {
         return of(this.section.getConfigurationSection(path));
     }
 
@@ -80,5 +85,5 @@ public class YAMLSectionWrapper implements ConfigurationWrapper {
     public <T extends ConfigurationSerializable> T getSerializable(@NotNull String path, @NotNull Class<T> clazz, @Nullable T defaultValue) {
         return this.section.getSerializable(path, clazz, defaultValue);
     }
-    
+
 }

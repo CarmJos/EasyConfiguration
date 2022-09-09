@@ -9,12 +9,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public interface ConfigurationWrapper extends ConfigurationReader {
+public interface ConfigurationWrapper<S> extends ConfigurationReader {
 
     @Override
-    default ConfigurationWrapper getWrapper() {
+    default ConfigurationWrapper<S> getWrapper() {
         return this;
     }
+
+    @NotNull S getSource();
 
     @NotNull
     Set<String> getKeys(boolean deep);
@@ -66,6 +68,6 @@ public interface ConfigurationWrapper extends ConfigurationReader {
     boolean isConfigurationSection(@NotNull String path);
 
     @Nullable
-    ConfigurationWrapper getConfigurationSection(@NotNull String path);
+    ConfigurationWrapper<S> getConfigurationSection(@NotNull String path);
 
 }
