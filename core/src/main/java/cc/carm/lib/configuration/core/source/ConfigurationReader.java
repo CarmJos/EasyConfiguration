@@ -12,7 +12,7 @@ import java.util.List;
 
 interface ConfigurationReader {
 
-    ConfigurationWrapper getWrapper();
+    ConfigurationWrapper<?> getWrapper();
 
     default boolean isBoolean(@NotNull String path) {
         return getWrapper().isType(path, Boolean.class);
