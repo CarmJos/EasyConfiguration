@@ -78,7 +78,7 @@ public class ConfiguredMap<K, V> extends CachedConfigValue<Map<K, V>> {
         if (isExpired()) { // 已过时的数据，需要重新解析一次。
             Map<K, V> map = supplier.get();
 
-            ConfigurationWrapper section = getConfiguration().getConfigurationSection(getConfigPath());
+            ConfigurationWrapper<?> section = getConfiguration().getConfigurationSection(getConfigPath());
             if (section == null) return useOrDefault(map);
 
             Set<String> keys = section.getKeys(false);

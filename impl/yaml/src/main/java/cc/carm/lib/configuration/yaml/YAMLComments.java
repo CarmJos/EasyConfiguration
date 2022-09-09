@@ -16,6 +16,7 @@ import java.util.stream.IntStream;
 
 import static cc.carm.lib.configuration.yaml.YAMLConfigProvider.SEPARATOR;
 
+@SuppressWarnings("SpellCheckingInspection")
 public class YAMLComments extends ConfigurationComments {
 
     public @Nullable String buildHeaderComments(@Nullable String path, @NotNull String indents) {

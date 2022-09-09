@@ -10,7 +10,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Objects;
 
-public abstract class FileConfigProvider<W extends ConfigurationWrapper> extends ConfigurationProvider<W> {
+public abstract class FileConfigProvider<W extends ConfigurationWrapper<?>> extends ConfigurationProvider<W> {
 
     protected final @NotNull File file;
 

@@ -11,7 +11,7 @@ import java.util.Map;
 @SerializableAs("SomeModel")
 public class SomeModel extends AbstractModel implements ConfigurationSerializable {
 
-    int num;
+    public final int num;
 
     public SomeModel(@NotNull String name, int num) {
         super(name);

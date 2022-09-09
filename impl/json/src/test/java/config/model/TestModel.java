@@ -33,7 +33,7 @@ public class TestModel extends AbstractModel {
         return map;
     }
 
-    public static TestModel deserialize(ConfigurationWrapper section) {
+    public static TestModel deserialize(ConfigurationWrapper<?> section) {
         String name = section.getString("name");
         if (name == null) throw new NullPointerException("name is null");
         String uuidString = section.getString("info.uuid");

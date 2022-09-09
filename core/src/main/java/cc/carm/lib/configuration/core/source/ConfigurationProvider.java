@@ -7,8 +7,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.List;
+import java.util.Optional;
 
-public abstract class ConfigurationProvider<W extends ConfigurationWrapper> {
+public abstract class ConfigurationProvider<W extends ConfigurationWrapper<?>> {
 
     protected long updateTime;
 
@@ -21,7 +22,7 @@ public abstract class ConfigurationProvider<W extends ConfigurationWrapper> {
     }
 
     public boolean isExpired(long time) {
-        return this.updateTime > time;
+        return getUpdateTime() > time;
     }
 
     public abstract @NotNull W getConfiguration();
@@ -35,15 +36,27 @@ public abstract class ConfigurationProvider<W extends ConfigurationWrapper> {
 
     protected abstract void onReload() throws Exception;
 
-    public abstract void setHeaderComment(@Nullable String path, @Nullable List<String> comments);
+    public abstract @Nullable ConfigurationComments getComments();
 
-    public abstract void setInlineComment(@NotNull String path, @Nullable String comment);
+    public void setHeaderComment(@Nullable String path, @Nullable List<String> comments) {
+        if (getComments() == null) return;
+        getComments().setHeaderComments(path, comments);
+    }
+
+    public void setInlineComment(@NotNull String path, @Nullable String comment) {
+        if (getComments() == null) return;
+        getComments().setInlineComment(path, comment);
+    }
 
     @Nullable
     @Unmodifiable
-    public abstract List<String> getHeaderComment(@Nullable String path);
+    public List<String> getHeaderComment(@Nullable String path) {
+        return Optional.ofNullable(getComments()).map(c -> c.getHeaderComment(path)).orElse(null);
+    }
 
-    public abstract @Nullable String getInlineComment(@NotNull String path);
+    public @Nullable String getInlineComment(@NotNull String path) {
+        return Optional.ofNullable(getComments()).map(c -> c.getInlineComment(path)).orElse(null);
+    }
 
     public abstract @NotNull ConfigInitializer<? extends ConfigurationProvider<W>> getInitializer();
 

@@ -3,17 +3,16 @@ package config;
 import config.offset.FieldOffset;
 import config.offset.OffsetUtil;
 import config.source.DemoConfiguration;
-import org.junit.Test;
 
 import java.util.List;
 
 public class OffsetTest {
 
-    @Test
+    //    @Test
     public void test() {
 //
-//        output(OffsetUtil.getClassMemberOffset(DemoConfiguration.class));
-//        output(OffsetUtil.getClassMemberOffset(DemoConfiguration.Sub.class));
+        output(OffsetUtil.getClassMemberOffset(DemoConfiguration.class));
+        output(OffsetUtil.getClassMemberOffset(DemoConfiguration.Sub.class));
 
     }
 

@@ -136,7 +136,7 @@ public abstract class ConfigValue<T> {
                 .orElseThrow(() -> new IllegalStateException("Value(" + configPath + ") does not have a provider."));
     }
 
-    public final @NotNull ConfigurationWrapper getConfiguration() {
+    public final @NotNull ConfigurationWrapper<?> getConfiguration() {
         try {
             return getProvider().getConfiguration();
         } catch (Exception ex) {

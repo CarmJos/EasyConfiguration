@@ -16,7 +16,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class ConfigTester {
+public class DemoConfigTest {
 
     static {
         ConfigurationSerialization.registerClass(TestModel.class);

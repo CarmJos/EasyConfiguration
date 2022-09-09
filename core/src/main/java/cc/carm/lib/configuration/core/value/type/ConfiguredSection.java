@@ -21,13 +21,13 @@ public class ConfiguredSection<V> extends CachedConfigValue<V> {
 
     protected final @NotNull Class<V> valueClass;
 
-    protected final @NotNull ConfigValueParser<ConfigurationWrapper, V> parser;
+    protected final @NotNull ConfigValueParser<ConfigurationWrapper<?>, V> parser;
     protected final @NotNull ConfigDataFunction<V, ? extends Map<String, Object>> serializer;
 
     public ConfiguredSection(@Nullable ConfigurationProvider<?> provider, @Nullable String sectionPath,
                              @Nullable List<String> headerComments, @Nullable String inlineComments,
                              @NotNull Class<V> valueClass, @Nullable V defaultValue,
-                             @NotNull ConfigValueParser<ConfigurationWrapper, V> parser,
+                             @NotNull ConfigValueParser<ConfigurationWrapper<?>, V> parser,
                              @NotNull ConfigDataFunction<V, ? extends Map<String, Object>> serializer) {
         super(provider, sectionPath, headerComments, inlineComments, defaultValue);
         this.valueClass = valueClass;
@@ -39,7 +39,7 @@ public class ConfiguredSection<V> extends CachedConfigValue<V> {
         return valueClass;
     }
 
-    public @NotNull ConfigValueParser<ConfigurationWrapper, V> getParser() {
+    public @NotNull ConfigValueParser<ConfigurationWrapper<?>, V> getParser() {
         return parser;
     }
 
@@ -50,7 +50,7 @@ public class ConfiguredSection<V> extends CachedConfigValue<V> {
     @Override
     public @Nullable V get() {
         if (isExpired()) { // 已过时的数据，需要重新解析一次。
-            ConfigurationWrapper section = getConfiguration().getConfigurationSection(getConfigPath());
+            ConfigurationWrapper<?> section = getConfiguration().getConfigurationSection(getConfigPath());
             if (section == null) return useDefault();
             try {
                 // 若未出现错误，则直接更新缓存并返回。

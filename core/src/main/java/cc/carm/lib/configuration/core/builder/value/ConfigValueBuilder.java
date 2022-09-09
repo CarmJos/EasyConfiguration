@@ -19,7 +19,7 @@ public class ConfigValueBuilder<V> {
         return fromSection(ConfigValueParser.required(), ConfigDataFunction.required());
     }
 
-    public @NotNull SectionValueBuilder<V> fromSection(@NotNull ConfigValueParser<ConfigurationWrapper, V> valueParser,
+    public @NotNull SectionValueBuilder<V> fromSection(@NotNull ConfigValueParser<ConfigurationWrapper<?>, V> valueParser,
                                                        @NotNull ConfigDataFunction<V, ? extends Map<String, Object>> valueSerializer) {
         return new SectionValueBuilder<>(this.valueClass, valueParser, valueSerializer);
     }

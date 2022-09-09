@@ -91,7 +91,7 @@
         <downloadUrl>https://github.com/CarmJos/EasyConfiguration/releases</downloadUrl>
         <site>
             <id>javadoc</id>
-            <name>EasyConfiguration JavaDoc (on Github Pages)</name>
+            <name>EasyConfiguration JavaDoc (on GitHub Pages)</name>
             <url>https://CarmJos.github.io/EasyConfiguration</url>
         </site>
     </distributionManagement>

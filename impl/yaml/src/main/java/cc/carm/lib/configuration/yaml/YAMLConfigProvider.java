@@ -1,11 +1,11 @@
 package cc.carm.lib.configuration.yaml;
 
 import cc.carm.lib.configuration.core.ConfigInitializer;
+import cc.carm.lib.configuration.core.source.ConfigurationComments;
 import cc.carm.lib.configuration.core.source.impl.FileConfigProvider;
 import org.bspfsystems.yamlconfiguration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -13,7 +13,6 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 
 public class YAMLConfigProvider extends FileConfigProvider<YAMLSectionWrapper> {
 
@@ -43,6 +42,12 @@ public class YAMLConfigProvider extends FileConfigProvider<YAMLSectionWrapper> {
     }
 
     @Override
+    public @Nullable ConfigurationComments getComments() {
+        return this.comments;
+    }
+
+    @Override
+    @SuppressWarnings("SpellCheckingInspection")
     public void save() throws Exception {
         configuration.save(getFile());
 
@@ -58,28 +63,6 @@ public class YAMLConfigProvider extends FileConfigProvider<YAMLSectionWrapper> {
         }
         // tchristofferson/ConfigUpdater end
 
-    }
-
-    @Override
-    public void setHeaderComment(@Nullable String path, @Nullable List<String> comments) {
-        this.comments.setHeaderComments(path, comments);
-    }
-
-    @Override
-    public void setInlineComment(@NotNull String path, @Nullable String comment) {
-        this.comments.setInlineComment(path, comment);
-    }
-
-    @Override
-    @Nullable
-    @Unmodifiable
-    public List<String> getHeaderComment(@Nullable String path) {
-        return this.comments.getHeaderComment(path);
-    }
-
-    @Override
-    public @Nullable String getInlineComment(@NotNull String path) {
-        return this.comments.getInlineComment(path);
     }
 
     @Override

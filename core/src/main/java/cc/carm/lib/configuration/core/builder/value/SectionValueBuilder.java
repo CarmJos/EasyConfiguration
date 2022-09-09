@@ -15,11 +15,11 @@ public class SectionValueBuilder<V>
 
     protected final @NotNull Class<V> valueClass;
 
-    protected @NotNull ConfigValueParser<ConfigurationWrapper, V> parser;
+    protected @NotNull ConfigValueParser<ConfigurationWrapper<?>, V> parser;
     protected @NotNull ConfigDataFunction<V, ? extends Map<String, Object>> serializer;
 
     public SectionValueBuilder(@NotNull Class<V> valueClass,
-                               @NotNull ConfigValueParser<ConfigurationWrapper, V> parser,
+                               @NotNull ConfigValueParser<ConfigurationWrapper<?>, V> parser,
                                @NotNull ConfigDataFunction<V, ? extends Map<String, Object>> serializer) {
         this.valueClass = valueClass;
         this.parser = parser;
@@ -32,7 +32,7 @@ public class SectionValueBuilder<V>
         return this;
     }
 
-    public @NotNull SectionValueBuilder<V> parseValue(ConfigValueParser<ConfigurationWrapper, V> valueParser) {
+    public @NotNull SectionValueBuilder<V> parseValue(ConfigValueParser<ConfigurationWrapper<?>, V> valueParser) {
         this.parser = valueParser;
         return this;
     }

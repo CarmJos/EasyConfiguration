@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class SomeModel extends AbstractModel {
 
-    int num;
+    public final int num;
 
     public SomeModel(@NotNull String name, int num) {
         super(name);

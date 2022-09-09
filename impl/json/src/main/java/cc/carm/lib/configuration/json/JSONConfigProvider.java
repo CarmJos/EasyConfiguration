@@ -1,6 +1,7 @@
 package cc.carm.lib.configuration.json;
 
 import cc.carm.lib.configuration.core.ConfigInitializer;
+import cc.carm.lib.configuration.core.source.ConfigurationComments;
 import cc.carm.lib.configuration.core.source.ConfigurationProvider;
 import cc.carm.lib.configuration.core.source.impl.FileConfigProvider;
 import com.google.gson.Gson;
@@ -8,12 +9,10 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
-import java.util.List;
 
 /**
  * Some code comes from BungeeCord's implementation of the JsonConfiguration.
@@ -63,30 +62,15 @@ public class JSONConfigProvider extends FileConfigProvider<JSONConfigWrapper> {
     }
 
     @Override
+    public @Nullable ConfigurationComments getComments() {
+        return null;
+    }
+
+    @Override
     public void save() throws Exception {
         try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
             gson.toJson(configuration.data, writer);
         }
-    }
-
-    @Override
-    public void setHeaderComment(@Nullable String path, @Nullable List<String> comments) {
-        // JSON doesn't support comments;
-    }
-
-    @Override
-    public void setInlineComment(@NotNull String path, @Nullable String comment) {
-        // JSON doesn't support comments;
-    }
-
-    @Override
-    public @Nullable @Unmodifiable List<String> getHeaderComment(@Nullable String path) {
-        return null;
-    }
-
-    @Override
-    public @Nullable String getInlineComment(@NotNull String path) {
-        return null;
     }
 
     @Override
