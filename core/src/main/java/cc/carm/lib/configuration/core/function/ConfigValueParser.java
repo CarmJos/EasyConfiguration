@@ -50,6 +50,23 @@ public interface ConfigValueParser<T, R> {
     @Contract(pure = true)
     static <V> @NotNull ConfigValueParser<Object, V> castObject(Class<V> valueClass) {
         return (input, defaultValue) -> {
+
+            if (Number.class.isAssignableFrom(valueClass)) {
+                if (Long.class.isAssignableFrom(valueClass)) {
+                    input = longValue().parse(input, null);
+                } else if (Integer.class.isAssignableFrom(valueClass)) {
+                    input = intValue().parse(input, null);
+                } else if (Float.class.isAssignableFrom(valueClass)) {
+                    input = floatValue().parse(input, null);
+                } else if (Double.class.isAssignableFrom(valueClass)) {
+                    input = doubleValue().parse(input, null);
+                } else if (Byte.class.isAssignableFrom(valueClass)) {
+                    input = byteValue().parse(input, null);
+                } else if (Short.class.isAssignableFrom(valueClass)) {
+                    input = shortValue().parse(input, null);
+                }
+            }
+
             if (valueClass.isInstance(input)) return valueClass.cast(input);
             else throw new IllegalArgumentException("Cannot cast value to " + valueClass.getName());
         };

@@ -44,6 +44,12 @@ public class DemoConfigTest {
     public static void testDemo() {
         System.out.println("----------------------------------------------------");
 
+        System.out.println("Test Number: ");
+
+        System.out.println("before: " + DemoConfiguration.TEST_NUMBER.get());
+        DemoConfiguration.TEST_NUMBER.set((long) (Long.MAX_VALUE * Math.random()));
+        System.out.println("after: " + DemoConfiguration.TEST_NUMBER.get());
+
         System.out.println("> Test Value:");
         System.out.println("before: " + DemoConfiguration.Sub.UUID_CONFIG_VALUE.get());
         DemoConfiguration.Sub.UUID_CONFIG_VALUE.set(UUID.randomUUID());

@@ -27,6 +27,9 @@ public class DemoConfiguration extends ConfigurationRoot {
     @ConfigPath(root = true)
     protected static final ConfigValue<Double> VERSION = ConfiguredValue.of(Double.class, 1.0D);
 
+    @ConfigPath(root = true)
+    public static final ConfigValue<Long> TEST_NUMBER = ConfiguredValue.of(Long.class, 1000000L);
+
     // 支持通过 Class<?> 变量标注子配置，一并注册。
     // 注意： 若对应类也有注解，则优先使用类的注解。
     @ConfigPath("impl-test") //支持通过注解修改子配置的主路径，若不修改则以变量名自动生成。
