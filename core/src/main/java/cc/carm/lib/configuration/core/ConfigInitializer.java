@@ -46,7 +46,7 @@ public class ConfigInitializer<T extends ConfigurationProvider<?>> {
      */
     public void initialize(@NotNull Class<? extends ConfigurationRoot> clazz,
                            boolean saveDefaults, boolean loadSubClasses) {
-        initializeClass(
+        initializeStaticClass(
                 clazz, null, null,
                 null, null, null,
                 saveDefaults, loadSubClasses
@@ -76,7 +76,7 @@ public class ConfigInitializer<T extends ConfigurationProvider<?>> {
      * @param saveDefaults 是否写入默认值(默认为 true)。
      */
     public void initialize(@NotNull ConfigurationRoot config, boolean saveDefaults) {
-        initializeClass(
+        initializeInstance(
                 config, null, null,
                 null, null, null,
                 saveDefaults
@@ -90,27 +90,30 @@ public class ConfigInitializer<T extends ConfigurationProvider<?>> {
         }
     }
 
-    protected void initializeClass(@NotNull ConfigurationRoot root,
-                                   @Nullable String parentPath, @Nullable String fieldName,
-                                   @Nullable ConfigPath fieldPath,
-                                   @Nullable HeaderComment fieldHeaderComments,
-                                   @Nullable InlineComment fieldInlineComments,
-                                   boolean saveDefaults) {
+
+    // 针对实例类的初始化方法
+    private void initializeInstance(@NotNull ConfigurationRoot root,
+                                    @Nullable String parentPath, @Nullable String fieldName,
+                                    @Nullable ConfigPath fieldPath,
+                                    @Nullable HeaderComment fieldHeaderComments,
+                                    @Nullable InlineComment fieldInlineComments,
+                                    boolean saveDefaults) {
         String path = getClassPath(root.getClass(), parentPath, fieldName, fieldPath);
         this.provider.setHeaderComment(path, getClassHeaderComments(root.getClass(), fieldHeaderComments));
         if (path != null) this.provider.setInlineComment(path, readInlineComments(fieldInlineComments));
 
         for (Field field : root.getClass().getDeclaredFields()) {
-            initializeField(root, field, path, saveDefaults);
+            initializeField(root, field, path, saveDefaults, false);
         }
     }
 
-    protected void initializeClass(@NotNull Class<?> clazz,
-                                   @Nullable String parentPath, @Nullable String fieldName,
-                                   @Nullable ConfigPath fieldPath,
-                                   @Nullable HeaderComment fieldHeaderComments,
-                                   @Nullable InlineComment fieldInlineComments,
-                                   boolean saveDefaults, boolean loadSubClasses) {
+    // 针对静态类的初始化方法
+    private void initializeStaticClass(@NotNull Class<?> clazz,
+                                       @Nullable String parentPath, @Nullable String fieldName,
+                                       @Nullable ConfigPath fieldPath,
+                                       @Nullable HeaderComment fieldHeaderComments,
+                                       @Nullable InlineComment fieldInlineComments,
+                                       boolean saveDefaults, boolean loadSubClasses) {
         if (!ConfigurationRoot.class.isAssignableFrom(clazz)) return; // 只解析继承了 ConfigurationRoot 的类
         String path = getClassPath(clazz, parentPath, fieldName, fieldPath);
         this.provider.setHeaderComment(path, getClassHeaderComments(clazz, fieldHeaderComments));
@@ -123,7 +126,7 @@ public class ConfigInitializer<T extends ConfigurationProvider<?>> {
         if (!loadSubClasses) return;
         Class<?>[] classes = clazz.getDeclaredClasses();
         for (int i = classes.length - 1; i >= 0; i--) {   // 逆向加载，保持顺序。
-            initializeClass(
+            initializeStaticClass(
                     classes[i], path, classes[i].getSimpleName(),
                     null, null, null,
                     saveDefaults, true
@@ -131,12 +134,12 @@ public class ConfigInitializer<T extends ConfigurationProvider<?>> {
         }
     }
 
-    private void initializeField(@NotNull ConfigurationRoot root,
-                                 @NotNull Field field, @Nullable String parent,
-                                 boolean saveDefaults) {
+    private void initializeField(@NotNull Object source, @NotNull Field field,
+                                 @Nullable String parent, boolean saveDefaults, boolean loadSubClasses) {
         try {
             field.setAccessible(true);
-            Object object = field.get(root);
+            Object object = field.get(source);
+
             if (object instanceof ConfigValue<?>) {
                 initializeValue(
                         (ConfigValue<?>) object, getFieldPath(field, parent),
@@ -144,33 +147,18 @@ public class ConfigInitializer<T extends ConfigurationProvider<?>> {
                         field.getAnnotation(InlineComment.class),
                         saveDefaults
                 );
-            } else if (object instanceof ConfigurationRoot) {
-                initializeClass(
+            } else if (source instanceof ConfigurationRoot && object instanceof ConfigurationRoot) {
+                // 当且仅当 源字段与字段 均为ConfigurationRoot实例时，才对目标字段进行下一步初始化加载。
+                initializeInstance(
                         (ConfigurationRoot) object, parent, field.getName(),
                         field.getAnnotation(ConfigPath.class),
                         field.getAnnotation(HeaderComment.class),
                         field.getAnnotation(InlineComment.class),
                         saveDefaults
                 );
-            }
-        } catch (IllegalAccessException ignored) {
-        }
-    }
-
-    private void initializeField(@NotNull Class<?> source, @NotNull Field field, @Nullable String parent,
-                                 boolean saveDefaults, boolean loadSubClasses) {
-        try {
-            field.setAccessible(true);
-            Object object = field.get(source);
-            if (object instanceof ConfigValue<?>) {
-                initializeValue(
-                        (ConfigValue<?>) object, getFieldPath(field, parent),
-                        field.getAnnotation(HeaderComment.class),
-                        field.getAnnotation(InlineComment.class),
-                        saveDefaults
-                );
-            } else if (object instanceof Class<?>) {
-                initializeClass(
+            } else if (source instanceof Class<?> && object instanceof Class<?>) {
+                // 当且仅当 源字段与字段 均为静态类时，才对目标字段进行下一步初始化加载。
+                initializeStaticClass(
                         (Class<?>) object, parent, field.getName(),
                         field.getAnnotation(ConfigPath.class),
                         field.getAnnotation(HeaderComment.class),
@@ -178,6 +166,11 @@ public class ConfigInitializer<T extends ConfigurationProvider<?>> {
                         saveDefaults, loadSubClasses
                 );
             }
+
+            // 以上判断实现以下规范：
+            // - 实例类中仅加载 ConfigValue实例 与 ConfigurationRoot实例
+            // - 静态类中仅加载 静态ConfigValue实例 与 静态ConfigurationRoot类
+
         } catch (IllegalAccessException ignored) {
         }
     }
