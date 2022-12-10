@@ -105,32 +105,6 @@ public class ConfigInitializer<T extends ConfigurationProvider<?>> {
         }
     }
 
-    private void initializeField(@NotNull ConfigurationRoot root,
-                                 @NotNull Field field, @Nullable String parent,
-                                 boolean saveDefaults) {
-        try {
-            field.setAccessible(true);
-            Object object = field.get(root);
-            if (object instanceof ConfigValue<?>) {
-                initializeValue(
-                        (ConfigValue<?>) object, getFieldPath(field, parent),
-                        field.getAnnotation(HeaderComment.class),
-                        field.getAnnotation(InlineComment.class),
-                        saveDefaults
-                );
-            } else if (object instanceof ConfigurationRoot) {
-                initializeClass(
-                        (ConfigurationRoot) object, parent, field.getName(),
-                        field.getAnnotation(ConfigPath.class),
-                        field.getAnnotation(HeaderComment.class),
-                        field.getAnnotation(InlineComment.class),
-                        saveDefaults
-                );
-            }
-        } catch (IllegalAccessException ignored) {
-        }
-    }
-
     protected void initializeClass(@NotNull Class<?> clazz,
                                    @Nullable String parentPath, @Nullable String fieldName,
                                    @Nullable ConfigPath fieldPath,
@@ -154,6 +128,32 @@ public class ConfigInitializer<T extends ConfigurationProvider<?>> {
                     null, null, null,
                     saveDefaults, true
             );
+        }
+    }
+
+    private void initializeField(@NotNull ConfigurationRoot root,
+                                 @NotNull Field field, @Nullable String parent,
+                                 boolean saveDefaults) {
+        try {
+            field.setAccessible(true);
+            Object object = field.get(root);
+            if (object instanceof ConfigValue<?>) {
+                initializeValue(
+                        (ConfigValue<?>) object, getFieldPath(field, parent),
+                        field.getAnnotation(HeaderComment.class),
+                        field.getAnnotation(InlineComment.class),
+                        saveDefaults
+                );
+            } else if (object instanceof ConfigurationRoot) {
+                initializeClass(
+                        (ConfigurationRoot) object, parent, field.getName(),
+                        field.getAnnotation(ConfigPath.class),
+                        field.getAnnotation(HeaderComment.class),
+                        field.getAnnotation(InlineComment.class),
+                        saveDefaults
+                );
+            }
+        } catch (IllegalAccessException ignored) {
         }
     }
 
