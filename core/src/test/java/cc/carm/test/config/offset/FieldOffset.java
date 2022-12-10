@@ -1,4 +1,4 @@
-package config.offset;
+package cc.carm.test.config.offset;
 
 import org.jetbrains.annotations.NotNull;
 

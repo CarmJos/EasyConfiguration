@@ -1,4 +1,4 @@
-package config.source;
+package cc.carm.lib.configuration.demo;
 
 import cc.carm.lib.configuration.core.ConfigurationRoot;
 import cc.carm.lib.configuration.core.annotation.ConfigPath;
@@ -12,7 +12,8 @@ public class DatabaseConfiguration extends ConfigurationRoot {
     @ConfigPath("driver")
     @HeaderComment({
             "数据库驱动配置，请根据数据库类型设置。",
-            "- MySQL: com.mysql.cj.jdbc.Driver",
+            "- MySQL(旧): com.mysql.jdbc.Driver",
+            "- MySQL(新): com.mysql.cj.jdbc.Driver",
             "- MariaDB(推荐): org.mariadb.jdbc.Driver",
     })
     protected static final ConfigValue<String> DRIVER_NAME = ConfiguredValue.of(

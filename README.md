@@ -30,7 +30,7 @@
 
 ### 示例代码
 
-您可以 [点击这里](impl/yaml/src/test/java/config/source/DemoConfiguration.java) 查看部分代码演示，更多演示详见 [开发介绍](.documentation/README.md) 。
+您可以 [点击这里](demo/src/main/java/cc/carm/lib/configuration/demo/DatabaseConfiguration.java) 查看部分代码演示，更多演示详见 [开发介绍](.documentation/README.md) 。
 
 ### 依赖方式
 

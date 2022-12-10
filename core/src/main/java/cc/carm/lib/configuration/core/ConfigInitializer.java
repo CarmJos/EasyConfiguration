@@ -60,12 +60,84 @@ public class ConfigInitializer<T extends ConfigurationProvider<?>> {
         }
     }
 
+    /**
+     * 初始化指定实例的所有 {@link ConfigValue} 与内部 {@link ConfigurationRoot} 对象。
+     *
+     * @param config 配置文件实例类，须实现 {@link ConfigurationRoot} 。
+     */
+    public void initialize(@NotNull ConfigurationRoot config) {
+        initialize(config, true);
+    }
+
+    /**
+     * 初始化指定实例的所有 {@link ConfigValue} 与内部 {@link ConfigurationRoot} 对象。
+     *
+     * @param config       配置文件实例类，须实现 {@link ConfigurationRoot} 。
+     * @param saveDefaults 是否写入默认值(默认为 true)。
+     */
+    public void initialize(@NotNull ConfigurationRoot config, boolean saveDefaults) {
+        initializeClass(
+                config, null, null,
+                null, null, null,
+                saveDefaults
+        );
+        if (saveDefaults) {
+            try {
+                provider.save();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    protected void initializeClass(@NotNull ConfigurationRoot root,
+                                   @Nullable String parentPath, @Nullable String fieldName,
+                                   @Nullable ConfigPath fieldPath,
+                                   @Nullable HeaderComment fieldHeaderComments,
+                                   @Nullable InlineComment fieldInlineComments,
+                                   boolean saveDefaults) {
+        String path = getClassPath(root.getClass(), parentPath, fieldName, fieldPath);
+        this.provider.setHeaderComment(path, getClassHeaderComments(root.getClass(), fieldHeaderComments));
+        if (path != null) this.provider.setInlineComment(path, readInlineComments(fieldInlineComments));
+
+        for (Field field : root.getClass().getDeclaredFields()) {
+            initializeField(root, field, path, saveDefaults);
+        }
+    }
+
+    private void initializeField(@NotNull ConfigurationRoot root,
+                                 @NotNull Field field, @Nullable String parent,
+                                 boolean saveDefaults) {
+        try {
+            field.setAccessible(true);
+            Object object = field.get(root);
+            if (object instanceof ConfigValue<?>) {
+                initializeValue(
+                        (ConfigValue<?>) object, getFieldPath(field, parent),
+                        field.getAnnotation(HeaderComment.class),
+                        field.getAnnotation(InlineComment.class),
+                        saveDefaults
+                );
+            } else if (object instanceof ConfigurationRoot) {
+                initializeClass(
+                        (ConfigurationRoot) object, parent, field.getName(),
+                        field.getAnnotation(ConfigPath.class),
+                        field.getAnnotation(HeaderComment.class),
+                        field.getAnnotation(InlineComment.class),
+                        saveDefaults
+                );
+            }
+        } catch (IllegalAccessException ignored) {
+        }
+    }
+
     protected void initializeClass(@NotNull Class<?> clazz,
                                    @Nullable String parentPath, @Nullable String fieldName,
                                    @Nullable ConfigPath fieldPath,
                                    @Nullable HeaderComment fieldHeaderComments,
                                    @Nullable InlineComment fieldInlineComments,
                                    boolean saveDefaults, boolean loadSubClasses) {
+        if (!ConfigurationRoot.class.isAssignableFrom(clazz)) return; // 只解析继承了 ConfigurationRoot 的类
         String path = getClassPath(clazz, parentPath, fieldName, fieldPath);
         this.provider.setHeaderComment(path, getClassHeaderComments(clazz, fieldHeaderComments));
         if (path != null) this.provider.setInlineComment(path, readInlineComments(fieldInlineComments));
@@ -142,7 +214,7 @@ public class ConfigInitializer<T extends ConfigurationProvider<?>> {
         return value.length() > 0 ? value : null;
     }
 
-    protected static @Nullable String getClassPath(@NotNull Class<?> clazz,
+    protected static @Nullable String getClassPath(@Nullable Class<?> clazz,
                                                    @Nullable String parentPath,
                                                    @Nullable String filedName,
                                                    @Nullable ConfigPath fieldAnnotation) {
@@ -150,11 +222,13 @@ public class ConfigInitializer<T extends ConfigurationProvider<?>> {
         boolean fromRoot = false;
 
         // 先获取 Class 对应的路径注解 其优先度最高。
-        ConfigPath clazzAnnotation = clazz.getAnnotation(ConfigPath.class);
-        if (clazzAnnotation != null) {
-            fromRoot = clazzAnnotation.root();
-            if (clazzAnnotation.value().length() > 0) {
-                return (fromRoot ? "" : parent) + clazzAnnotation.value();
+        if (clazz != null) {
+            ConfigPath clazzAnnotation = clazz.getAnnotation(ConfigPath.class);
+            if (clazzAnnotation != null) {
+                fromRoot = clazzAnnotation.root();
+                if (clazzAnnotation.value().length() > 0) {
+                    return (fromRoot ? "" : parent) + clazzAnnotation.value();
+                }
             }
         }
 

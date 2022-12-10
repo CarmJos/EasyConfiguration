@@ -1,9 +1,8 @@
-package config.model;
+package cc.carm.lib.configuration.demo.tests.model;
 
-import org.bspfsystems.yamlconfiguration.serialization.ConfigurationSerializable;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractModel implements ConfigurationSerializable {
+public abstract class AbstractModel {
 
     protected final @NotNull String name;
 

@@ -2,6 +2,8 @@ package cc.carm.lib.configuration.core.source;
 
 import cc.carm.lib.configuration.core.ConfigInitializer;
 import cc.carm.lib.configuration.core.ConfigurationRoot;
+import cc.carm.lib.configuration.core.value.ConfigValue;
+import cc.carm.lib.configuration.core.value.impl.CachedConfigValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -17,23 +19,54 @@ public abstract class ConfigurationProvider<W extends ConfigurationWrapper<?>> {
         this.updateTime = System.currentTimeMillis();
     }
 
+    /**
+     * 得到配置文件的更新(最后加载)时间。
+     *
+     * @return 更新时间
+     */
     public long getUpdateTime() {
         return updateTime;
     }
 
+    /**
+     * 用于 {@link CachedConfigValue} 判断缓存值是否过期(即缓存的时间早于配置文件的最后加载时间)。
+     *
+     * @param time 缓存值时的时间戳
+     * @return 缓存值是否过期
+     */
     public boolean isExpired(long time) {
         return getUpdateTime() > time;
     }
 
+    /**
+     * 得到配置文件的原生功能类。
+     *
+     * @return 原生类
+     */
     public abstract @NotNull W getConfiguration();
 
+    /**
+     * 重载当前配置文件。(将不会保存已修改的内容)
+     *
+     * @throws Exception 当重载出现错误时抛出
+     */
     public void reload() throws Exception {
         onReload(); // 调用重写的Reload方法
         this.updateTime = System.currentTimeMillis();
     }
 
+    /**
+     * 将当前对配置文件的更改进行保存。
+     *
+     * @throws Exception 当保存出现错误时抛出
+     */
     public abstract void save() throws Exception;
 
+    /**
+     * 针对于不同配置文件类型所执行的重载操作。
+     *
+     * @throws Exception 当操作出现错误时抛出。
+     */
     protected abstract void onReload() throws Exception;
 
     public abstract @Nullable ConfigurationComments getComments();
@@ -60,16 +93,53 @@ public abstract class ConfigurationProvider<W extends ConfigurationWrapper<?>> {
 
     public abstract @NotNull ConfigInitializer<? extends ConfigurationProvider<W>> getInitializer();
 
+    /**
+     * 初始化指定类以及其子类的所有 {@link ConfigValue} 对象。
+     *
+     * @param configClazz 配置文件类，须继承于 {@link ConfigurationRoot} 。
+     */
     public void initialize(Class<? extends ConfigurationRoot> configClazz) {
         initialize(configClazz, true);
     }
 
+    /**
+     * 初始化指定类以及其子类的所有 {@link ConfigValue} 对象。
+     *
+     * @param configClazz  配置文件类，须继承于 {@link ConfigurationRoot} 。
+     * @param saveDefaults 是否写入默认值(默认为 true)。
+     */
     public void initialize(Class<? extends ConfigurationRoot> configClazz, boolean saveDefaults) {
-        getInitializer().initialize(configClazz, saveDefaults);
+        this.getInitializer().initialize(configClazz, saveDefaults);
     }
 
+    /**
+     * 初始化指定类的所有 {@link ConfigValue} 对象。
+     *
+     * @param configClazz    配置文件类，须继承于 {@link ConfigurationRoot} 。
+     * @param saveDefaults   是否写入默认值(默认为 true)。
+     * @param loadSubClasses 是否加载内部子类(默认为 true)。
+     */
     public void initialize(Class<? extends ConfigurationRoot> configClazz, boolean saveDefaults, boolean loadSubClasses) {
-        getInitializer().initialize(configClazz, saveDefaults, loadSubClasses);
+        this.getInitializer().initialize(configClazz, saveDefaults, loadSubClasses);
+    }
+
+    /**
+     * 初始化指定实例的所有 {@link ConfigValue} 与内部 {@link ConfigurationRoot} 对象。
+     *
+     * @param config 配置文件实例类，须实现 {@link ConfigurationRoot} 。
+     */
+    public void initialize(@NotNull ConfigurationRoot config) {
+        this.getInitializer().initialize(config, true);
+    }
+
+    /**
+     * 初始化指定实例的所有 {@link ConfigValue} 与内部 {@link ConfigurationRoot} 对象。
+     *
+     * @param config       配置文件实例类，须实现 {@link ConfigurationRoot} 。
+     * @param saveDefaults 是否写入默认值(默认为 true)。
+     */
+    public void initialize(@NotNull ConfigurationRoot config, boolean saveDefaults) {
+        this.getInitializer().initialize(config, saveDefaults);
     }
 
 }

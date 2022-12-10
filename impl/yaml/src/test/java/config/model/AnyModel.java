@@ -10,21 +10,21 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@SerializableAs("SomeModel")
-public class SomeModel extends AbstractModel implements ConfigurationSerializable {
+@SerializableAs("AnyModel")
+public class AnyModel extends AbstractModel implements ConfigurationSerializable {
 
-    public final int num;
+    public final boolean bool;
 
-    public SomeModel(@NotNull String name, int num) {
+    public AnyModel(@NotNull String name, boolean bool) {
         super(name);
-        this.num = num;
+        this.bool = bool;
     }
 
     @Override
     public String toString() {
-        return "SomeModel{" +
+        return "AnyModel{" +
                 "name='" + name + '\'' +
-                ", num=" + num +
+                ", bool=" + bool +
                 '}';
     }
 
@@ -32,18 +32,18 @@ public class SomeModel extends AbstractModel implements ConfigurationSerializabl
     public @NotNull Map<String, Object> serialize() {
         Map<String, Object> map = new HashMap<>();
         map.put("name", name);
-        map.put("num", num);
+        map.put("state", bool);
         return map;
     }
 
-    public static SomeModel random() {
-        return new SomeModel(UUID.randomUUID().toString().substring(0, 5), (int) (Math.random() * 1000));
+    public static AnyModel random() {
+        return new AnyModel(UUID.randomUUID().toString().substring(0, 5), Math.random() > 0.5);
     }
 
 
     @TestOnly
-    public static SomeModel deserialize(Map<String, ?> args) {
-        return new SomeModel((String) args.get("name"), (Integer) args.get("num"));
+    public static AnyModel deserialize(Map<String, ?> args) {
+        return new AnyModel((String) args.get("name"), (Boolean) args.get("state"));
     }
 
 

@@ -53,18 +53,20 @@ public interface ConfigValueParser<T, R> {
 
             if (Number.class.isAssignableFrom(valueClass)) {
                 if (Long.class.isAssignableFrom(valueClass)) {
-                    input = longValue().parse(input, null);
+                    input = longValue().parse(input, (Long) defaultValue);
                 } else if (Integer.class.isAssignableFrom(valueClass)) {
-                    input = intValue().parse(input, null);
+                    input = intValue().parse(input, (Integer) defaultValue);
                 } else if (Float.class.isAssignableFrom(valueClass)) {
-                    input = floatValue().parse(input, null);
+                    input = floatValue().parse(input, (Float) defaultValue);
                 } else if (Double.class.isAssignableFrom(valueClass)) {
-                    input = doubleValue().parse(input, null);
+                    input = doubleValue().parse(input, (Double) defaultValue);
                 } else if (Byte.class.isAssignableFrom(valueClass)) {
-                    input = byteValue().parse(input, null);
+                    input = byteValue().parse(input, (Byte) defaultValue);
                 } else if (Short.class.isAssignableFrom(valueClass)) {
-                    input = shortValue().parse(input, null);
+                    input = shortValue().parse(input, (Short) defaultValue);
                 }
+            } else if (Boolean.class.isAssignableFrom(valueClass)) {
+                input = booleanValue().parse(input, (Boolean) defaultValue);
             }
 
             if (valueClass.isInstance(input)) return valueClass.cast(input);
