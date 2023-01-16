@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 
 public abstract class AbstractConfigBuilder<T, B extends AbstractConfigBuilder<T, B, P>, P extends ConfigurationProvider<?>> {
 
@@ -59,6 +60,10 @@ public abstract class AbstractConfigBuilder<T, B extends AbstractConfigBuilder<T
     public @NotNull B defaults(@Nullable T defaultValue) {
         this.defaultValue = defaultValue;
         return getThis();
+    }
+
+    public @NotNull B defaults(@NotNull Supplier<T> defaultValueSupplier) {
+        return defaults(defaultValueSupplier.get());
     }
 
 }
