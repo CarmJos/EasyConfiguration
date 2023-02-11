@@ -62,7 +62,7 @@ public abstract class AbstractConfigBuilder<T, B extends AbstractConfigBuilder<T
         return getThis();
     }
 
-    public @NotNull B defaults(@NotNull Supplier<T> defaultValueSupplier) {
+    public @NotNull B defaults(@NotNull Supplier<@Nullable T> defaultValueSupplier) {
         return defaults(defaultValueSupplier.get());
     }
 

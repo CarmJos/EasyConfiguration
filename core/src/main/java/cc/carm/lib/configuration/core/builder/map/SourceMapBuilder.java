@@ -6,6 +6,7 @@ import cc.carm.lib.configuration.core.value.type.ConfiguredMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class SourceMapBuilder<M extends Map<K, V>, S, K, V> extends CommonConfigBuilder<M, SourceMapBuilder<M, S, K, V>> {
@@ -49,6 +50,12 @@ public class SourceMapBuilder<M extends Map<K, V>, S, K, V> extends CommonConfig
                 keyClass, keyParser, sourceClass, sourceParser, valueClass, valueParser,
                 keySerializer, valueSerializer, sourceSerializer
         );
+    }
+
+    public @NotNull SourceMapBuilder<M, S, K, V> defaults(@NotNull Consumer<M> factory) {
+        M map = supplier.get();
+        factory.accept(map);
+        return defaults(map);
     }
 
     public @NotNull SourceMapBuilder<M, S, K, V> parseKey(@NotNull ConfigDataFunction<String, K> parser) {
