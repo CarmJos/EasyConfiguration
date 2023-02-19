@@ -1,6 +1,5 @@
 package cc.carm.lib.configuration.core.value.type;
 
-import cc.carm.lib.configuration.core.annotation.HeaderComment;
 import cc.carm.lib.configuration.core.builder.list.ConfigListBuilder;
 import cc.carm.lib.configuration.core.function.ConfigDataFunction;
 import cc.carm.lib.configuration.core.source.ConfigurationProvider;
@@ -8,16 +7,16 @@ import cc.carm.lib.configuration.core.value.impl.CachedConfigValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
-public class ConfiguredList<V> extends CachedConfigValue<List<V>> {
+public class ConfiguredList<V> extends CachedConfigValue<List<V>> implements List<V> {
 
     public static <V> @NotNull ConfigListBuilder<V> builder(@NotNull Class<V> valueClass) {
         return builder().asList(valueClass);
     }
 
-    @HeaderComment
     protected final @NotNull Class<V> valueClass;
 
     protected final @NotNull ConfigDataFunction<Object, V> parser;
@@ -73,5 +72,140 @@ public class ConfiguredList<V> extends CachedConfigValue<List<V>> {
         }
     }
 
+    public <T> @NotNull T modifyValue(Function<List<V>, T> function) {
+        List<V> list = get();
+        T result = function.apply(list);
+        set(list);
+        return result;
+    }
+
+    public @NotNull List<V> modifyList(Consumer<List<V>> consumer) {
+        List<V> list = get();
+        consumer.accept(list);
+        set(list);
+        return list;
+    }
+
+    @Override
+    public int size() {
+        return get().size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return get().isEmpty();
+    }
+
+    @Override
+    public boolean contains(Object o) {
+        return get().contains(o);
+    }
+
+    @NotNull
+    @Override
+    public Iterator<V> iterator() {
+        return get().iterator();
+    }
+
+    @NotNull
+    @Override
+    public Object @NotNull [] toArray() {
+        return get().toArray();
+    }
+
+    @NotNull
+    @Override
+    public <T> T @NotNull [] toArray(@NotNull T[] a) {
+        return get().toArray(a);
+    }
+
+    @Override
+    public boolean add(V v) {
+        modifyValue(list -> list.add(v));
+        return true;
+    }
+
+    @Override
+    public boolean remove(Object o) {
+        return modifyValue(list -> list.remove(o));
+    }
+
+    @Override
+    public boolean containsAll(@NotNull Collection<?> c) {
+        return new HashSet<>(get()).containsAll(c);
+    }
+
+    @Override
+    public boolean addAll(@NotNull Collection<? extends V> c) {
+        return modifyValue(list -> list.addAll(c));
+    }
+
+    @Override
+    public boolean addAll(int index, @NotNull Collection<? extends V> c) {
+        return modifyValue(list -> list.addAll(index, c));
+    }
+
+    @Override
+    public boolean removeAll(@NotNull Collection<?> c) {
+        return modifyValue(list -> list.removeAll(c));
+    }
+
+    @Override
+    public boolean retainAll(@NotNull Collection<?> c) {
+        return modifyValue(list -> list.retainAll(c));
+    }
+
+    @Override
+    public void clear() {
+        modifyList(List::clear);
+    }
+
+    @Override
+    public V get(int index) {
+        return get().get(index);
+    }
+
+    @Override
+    public V set(int index, V element) {
+        return modifyValue(list -> list.set(index, element));
+    }
+
+    @Override
+    public void add(int index, V element) {
+        modifyList(list -> list.add(index, element));
+    }
+
+    @Override
+    public V remove(int index) {
+        return modifyValue(list -> list.remove(index));
+    }
+
+    @Override
+    public int indexOf(Object o) {
+        return get().indexOf(o);
+    }
+
+    @Override
+    public int lastIndexOf(Object o) {
+        return get().lastIndexOf(o);
+    }
+
+    @NotNull
+    @Override
+    public ListIterator<V> listIterator() {
+        return get().listIterator();
+    }
+
+    @NotNull
+    @Override
+    public ListIterator<V> listIterator(int index) {
+        return get().listIterator(index);
+    }
+
+    @NotNull
+    @Override
+    public List<V> subList(int fromIndex, int toIndex) {
+        return get().subList(fromIndex, toIndex);
+    }
 
 }

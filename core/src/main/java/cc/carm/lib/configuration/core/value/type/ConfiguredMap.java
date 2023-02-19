@@ -7,14 +7,14 @@ import cc.carm.lib.configuration.core.source.ConfigurationWrapper;
 import cc.carm.lib.configuration.core.value.impl.CachedConfigValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class ConfiguredMap<K, V> extends CachedConfigValue<Map<K, V>> {
+public class ConfiguredMap<K, V> extends CachedConfigValue<Map<K, V>> implements Map<K, V> {
 
     public static <K, V> @NotNull ConfigMapBuilder<LinkedHashMap<K, V>, K, V> builder(@NotNull Class<K> keyClass,
                                                                                       @NotNull Class<V> valueClass) {
@@ -103,7 +103,7 @@ public class ConfiguredMap<K, V> extends CachedConfigValue<Map<K, V>> {
     }
 
     @Override
-    public void set(Map<K, V> value) {
+    public void set(@Nullable Map<K, V> value) {
         updateCache(value);
         if (value == null) setValue(null);
         else {
@@ -122,5 +122,83 @@ public class ConfiguredMap<K, V> extends CachedConfigValue<Map<K, V>> {
         }
     }
 
+    public <T> @NotNull T modifyValue(Function<Map<K, V>, T> function) {
+        Map<K, V> m = get();
+        T result = function.apply(m);
+        set(m);
+        return result;
+    }
+
+    public @NotNull Map<K, V> modifyMap(Consumer<Map<K, V>> consumer) {
+        Map<K, V> m = get();
+        consumer.accept(m);
+        set(m);
+        return m;
+    }
+
+    @Override
+    public int size() {
+        return get().size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return get().isEmpty();
+    }
+
+    @Override
+    public boolean containsKey(Object key) {
+        return get().containsKey(key);
+    }
+
+    @Override
+    public boolean containsValue(Object value) {
+        return get().containsValue(value);
+    }
+
+    @Override
+    public V get(Object key) {
+        return get().get(key);
+    }
+
+    @Nullable
+    @Override
+    public V put(K key, V value) {
+        return modifyValue(m -> m.put(key, value));
+    }
+
+    @Override
+    public V remove(Object key) {
+        return modifyValue(m -> m.remove(key));
+    }
+
+    @Override
+    public void putAll(@NotNull Map<? extends K, ? extends V> m) {
+        modifyMap(map -> map.putAll(m));
+    }
+
+    @Override
+    public void clear() {
+        modifyMap(Map::clear);
+    }
+
+    @NotNull
+    @Override
+    public Set<K> keySet() {
+        return get().keySet();
+    }
+
+    @NotNull
+    @Override
+    public Collection<V> values() {
+        return get().values();
+    }
+
+    @NotNull
+    @Override
+    @Unmodifiable
+    public Set<Entry<K, V>> entrySet() {
+        return get().entrySet();
+    }
 
 }

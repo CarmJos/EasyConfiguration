@@ -69,7 +69,7 @@ public class DemoConfiguration extends ConfigurationRoot {
 
         public static class That extends ConfigurationRoot {
 
-            public static final ConfigValue<List<UUID>> OPERATORS = ConfiguredList
+            public static final ConfiguredList<UUID> OPERATORS = ConfiguredList
                     .builder(UUID.class).fromString()
                     .parseValue(s -> Objects.requireNonNull(UUID.fromString(s)))
                     .build();

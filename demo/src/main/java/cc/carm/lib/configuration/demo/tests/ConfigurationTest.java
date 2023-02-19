@@ -1,9 +1,10 @@
 package cc.carm.lib.configuration.demo.tests;
 
 import cc.carm.lib.configuration.core.source.ConfigurationProvider;
-import cc.carm.lib.configuration.demo.tests.model.TestModel;
 import cc.carm.lib.configuration.demo.tests.conf.DemoConfiguration;
 import cc.carm.lib.configuration.demo.tests.conf.TestConfiguration;
+import cc.carm.lib.configuration.demo.tests.model.TestModel;
+import org.jetbrains.annotations.TestOnly;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.stream.IntStream;
 
 public class ConfigurationTest {
 
+    @TestOnly
     public static void testDemo(ConfigurationProvider<?> provider) {
         provider.initialize(DemoConfiguration.class);
 
@@ -30,9 +32,18 @@ public class ConfigurationTest {
         System.out.println("after: " + DemoConfiguration.Sub.UUID_CONFIG_VALUE.get());
 
         System.out.println("> Test List:");
-        DemoConfiguration.Sub.That.OPERATORS.getNotNull().forEach(System.out::println);
+
+        System.out.println(" Before:");
+        DemoConfiguration.Sub.That.OPERATORS.forEach(System.out::println);
         List<UUID> operators = IntStream.range(0, 5).mapToObj(i -> UUID.randomUUID()).collect(Collectors.toList());
         DemoConfiguration.Sub.That.OPERATORS.set(operators);
+        System.out.println(" After:");
+        DemoConfiguration.Sub.That.OPERATORS.forEach(System.out::println);
+
+        System.out.println("> Clear List:");
+        System.out.println(" Before: size :" + DemoConfiguration.Sub.That.OPERATORS.size());
+        DemoConfiguration.Sub.That.OPERATORS.modifyList(List::clear);
+        System.out.println(" After size :" + DemoConfiguration.Sub.That.OPERATORS.size());
 
         System.out.println("> Test Section:");
         System.out.println(DemoConfiguration.MODEL_TEST.get());
