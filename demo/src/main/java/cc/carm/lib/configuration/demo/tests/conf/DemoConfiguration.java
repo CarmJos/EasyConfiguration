@@ -12,8 +12,6 @@ import cc.carm.lib.configuration.core.value.type.ConfiguredSection;
 import cc.carm.lib.configuration.core.value.type.ConfiguredValue;
 import cc.carm.lib.configuration.demo.tests.model.TestModel;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -47,7 +45,7 @@ public class DemoConfiguration extends ConfigurationRoot {
             .serializeValue(TestModel::serialize).build();
 
     @HeaderComment({"", "[ID - UUID]对照表", "", "用于测试Map类型的解析与序列化保存"})
-    public static final ConfigValue<Map<Integer, UUID>> USERS = ConfiguredMap
+    public static final ConfiguredMap<Integer, UUID> USERS = ConfiguredMap
             .builder(Integer.class, UUID.class).fromString()
             .parseKey(Integer::parseInt)
             .parseValue(v -> Objects.requireNonNull(UUID.fromString(v)))

@@ -50,7 +50,7 @@ public class ConfigurationTest {
         DemoConfiguration.MODEL_TEST.set(TestModel.random());
 
         System.out.println("> Test Maps:");
-        DemoConfiguration.USERS.getNotNull().forEach((k, v) -> System.out.println(k + ": " + v));
+        DemoConfiguration.USERS.forEach((k, v) -> System.out.println(k + ": " + v));
         LinkedHashMap<Integer, UUID> data = new LinkedHashMap<>();
         for (int i = 1; i <= 5; i++) {
             data.put(i, UUID.randomUUID());
