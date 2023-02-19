@@ -38,8 +38,9 @@ public class ConfiguredList<V> extends CachedConfigValue<List<V>> {
     public @NotNull List<V> get() {
         if (isExpired()) { // 已过时的数据，需要重新解析一次。
             List<V> list = new ArrayList<>();
-            List<?> data = getConfiguration().getList(getConfigPath());
-            if (data == null || data.isEmpty()) return useOrDefault(list);
+            List<?> data = getConfiguration().contains(getConfigPath()) ?
+                    getConfiguration().getList(getConfigPath()) : null;
+            if (data == null) return useOrDefault(list);
             for (Object dataVal : data) {
                 if (dataVal == null) continue;
                 try {
