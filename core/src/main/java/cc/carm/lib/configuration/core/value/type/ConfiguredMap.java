@@ -103,6 +103,11 @@ public class ConfiguredMap<K, V> extends CachedConfigValue<Map<K, V>> implements
     }
 
     @Override
+    public V get(Object key) {
+        return get().get(key);
+    }
+
+    @Override
     public void set(@Nullable Map<K, V> value) {
         updateCache(value);
         if (value == null) setValue(null);
@@ -154,11 +159,6 @@ public class ConfiguredMap<K, V> extends CachedConfigValue<Map<K, V>> implements
     @Override
     public boolean containsValue(Object value) {
         return get().containsValue(value);
-    }
-
-    @Override
-    public V get(Object key) {
-        return get().get(key);
     }
 
     @Nullable

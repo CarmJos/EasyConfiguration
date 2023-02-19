@@ -55,6 +55,25 @@ public class ConfiguredList<V> extends CachedConfigValue<List<V>> implements Lis
     }
 
     @Override
+    public V get(int index) {
+        return get().get(index);
+    }
+
+    public <T> @NotNull T modifyValue(Function<List<V>, T> function) {
+        List<V> list = get();
+        T result = function.apply(list);
+        set(list);
+        return result;
+    }
+
+    public @NotNull List<V> modifyList(Consumer<List<V>> consumer) {
+        List<V> list = get();
+        consumer.accept(list);
+        set(list);
+        return list;
+    }
+
+    @Override
     public void set(@Nullable List<V> value) {
         updateCache(value);
         if (value == null) setValue(null);
@@ -72,18 +91,9 @@ public class ConfiguredList<V> extends CachedConfigValue<List<V>> implements Lis
         }
     }
 
-    public <T> @NotNull T modifyValue(Function<List<V>, T> function) {
-        List<V> list = get();
-        T result = function.apply(list);
-        set(list);
-        return result;
-    }
-
-    public @NotNull List<V> modifyList(Consumer<List<V>> consumer) {
-        List<V> list = get();
-        consumer.accept(list);
-        set(list);
-        return list;
+    @Override
+    public V set(int index, V element) {
+        return modifyValue(list -> list.set(index, element));
     }
 
     @Override
@@ -120,19 +130,19 @@ public class ConfiguredList<V> extends CachedConfigValue<List<V>> implements Lis
     }
 
     @Override
+    public boolean containsAll(@NotNull Collection<?> c) {
+        return new HashSet<>(get()).containsAll(c);
+    }
+
+    @Override
     public boolean add(V v) {
         modifyValue(list -> list.add(v));
         return true;
     }
 
     @Override
-    public boolean remove(Object o) {
-        return modifyValue(list -> list.remove(o));
-    }
-
-    @Override
-    public boolean containsAll(@NotNull Collection<?> c) {
-        return new HashSet<>(get()).containsAll(c);
+    public void add(int index, V element) {
+        modifyList(list -> list.add(index, element));
     }
 
     @Override
@@ -143,6 +153,16 @@ public class ConfiguredList<V> extends CachedConfigValue<List<V>> implements Lis
     @Override
     public boolean addAll(int index, @NotNull Collection<? extends V> c) {
         return modifyValue(list -> list.addAll(index, c));
+    }
+
+    @Override
+    public boolean remove(Object o) {
+        return modifyValue(list -> list.remove(o));
+    }
+
+    @Override
+    public V remove(int index) {
+        return modifyValue(list -> list.remove(index));
     }
 
     @Override
@@ -159,27 +179,7 @@ public class ConfiguredList<V> extends CachedConfigValue<List<V>> implements Lis
     public void clear() {
         modifyList(List::clear);
     }
-
-    @Override
-    public V get(int index) {
-        return get().get(index);
-    }
-
-    @Override
-    public V set(int index, V element) {
-        return modifyValue(list -> list.set(index, element));
-    }
-
-    @Override
-    public void add(int index, V element) {
-        modifyList(list -> list.add(index, element));
-    }
-
-    @Override
-    public V remove(int index) {
-        return modifyValue(list -> list.remove(index));
-    }
-
+    
     @Override
     public int indexOf(Object o) {
         return get().indexOf(o);
