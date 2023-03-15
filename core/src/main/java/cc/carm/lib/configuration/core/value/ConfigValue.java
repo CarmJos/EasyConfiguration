@@ -2,62 +2,34 @@ package cc.carm.lib.configuration.core.value;
 
 import cc.carm.lib.configuration.core.builder.ConfigBuilder;
 import cc.carm.lib.configuration.core.source.ConfigurationProvider;
-import cc.carm.lib.configuration.core.source.ConfigurationWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public abstract class ConfigValue<T> {
+public abstract class ConfigValue<T> extends ValueManifest<T> {
 
     public static @NotNull ConfigBuilder builder() {
         return new ConfigBuilder();
     }
 
-    protected @Nullable ConfigurationProvider<?> provider;
-    protected @Nullable String configPath;
+    public ConfigValue(@NotNull ValueManifest<T> manifest) {
+        super(manifest.provider, manifest.configPath, manifest.headerComments, manifest.inlineComment, manifest.defaultValue);
+    }
 
-    protected @Nullable List<String> headerComments;
-    protected @Nullable String inlineComments;
-
-    protected @Nullable T defaultValue;
-
+    @Deprecated
     public ConfigValue(@Nullable ConfigurationProvider<?> provider, @Nullable String configPath,
                        @Nullable List<String> headerComments, @Nullable String inlineComments,
                        @Nullable T defaultValue) {
-        this.provider = provider;
-        this.configPath = configPath;
-        this.headerComments = headerComments;
-        this.inlineComments = inlineComments;
-        this.defaultValue = defaultValue;
+        super(provider, configPath, headerComments, inlineComments, defaultValue);
     }
 
     public void initialize(@NotNull ConfigurationProvider<?> provider, boolean saveDefault, @NotNull String configPath,
                            @Nullable List<String> headerComments, @Nullable String inlineComments) {
-        if (this.provider == null) this.provider = provider;
-        if (this.configPath == null) this.configPath = configPath;
-        if (this.headerComments == null) this.headerComments = headerComments;
-        if (this.inlineComments == null) this.inlineComments = inlineComments;
+        this.initialize(provider, configPath, headerComments, inlineComments);
         if (saveDefault) setDefault();
-
-        if (getHeaderComments() != null) {
-            this.provider.setHeaderComment(getConfigPath(), getHeaderComments());
-        }
-        if (getInlineComments() != null) {
-            this.provider.setInlineComment(getConfigPath(), getInlineComments());
-        }
-
-    }
-
-    public @Nullable T getDefaultValue() {
-        return defaultValue;
-    }
-
-    public void setDefaultValue(@Nullable T defaultValue) {
-        this.defaultValue = defaultValue;
     }
 
     /**
@@ -129,41 +101,6 @@ public abstract class ConfigValue<T> {
         if (defaultValue == null && value == null) return true;
         else if (defaultValue != null && value != null) return defaultValue.equals(value);
         else return false;
-    }
-
-    public @NotNull ConfigurationProvider<?> getProvider() {
-        return Optional.ofNullable(this.provider)
-                .orElseThrow(() -> new IllegalStateException("Value(" + configPath + ") does not have a provider."));
-    }
-
-    public final @NotNull ConfigurationWrapper<?> getConfiguration() {
-        try {
-            return getProvider().getConfiguration();
-        } catch (Exception ex) {
-            throw new IllegalStateException("Value(" + configPath + ") has not been initialized", ex);
-        }
-    }
-
-    public @NotNull String getConfigPath() {
-        return Optional.ofNullable(this.configPath)
-                .orElseThrow(() -> new IllegalStateException("No section path provided."));
-    }
-
-    protected Object getValue() {
-        return getConfiguration().get(getConfigPath());
-    }
-
-    protected void setValue(@Nullable Object value) {
-        getConfiguration().set(getConfigPath(), value);
-    }
-
-    public @Nullable String getInlineComments() {
-        return inlineComments;
-    }
-
-    @Unmodifiable
-    public @Nullable List<String> getHeaderComments() {
-        return headerComments;
     }
 
 }

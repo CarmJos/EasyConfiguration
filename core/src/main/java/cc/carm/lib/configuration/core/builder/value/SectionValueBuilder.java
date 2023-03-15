@@ -44,12 +44,7 @@ public class SectionValueBuilder<V>
 
     @Override
     public @NotNull ConfiguredSection<V> build() {
-        return new ConfiguredSection<>(
-                this.provider, this.path,
-                this.headerComments, this.inlineComment,
-                this.valueClass, this.defaultValue,
-                this.parser, this.serializer
-        );
+        return new ConfiguredSection<>(buildManifest(), this.valueClass, this.parser, this.serializer);
     }
 
 }

@@ -1,12 +1,10 @@
 package cc.carm.lib.configuration.yaml;
 
 import cc.carm.lib.configuration.core.source.ConfigurationProvider;
+import cc.carm.lib.configuration.core.value.ValueManifest;
 import cc.carm.lib.configuration.core.value.impl.CachedConfigValue;
 import cc.carm.lib.configuration.yaml.builder.YAMLConfigBuilder;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public abstract class YAMLValue<T> extends CachedConfigValue<T> {
 
@@ -14,10 +12,8 @@ public abstract class YAMLValue<T> extends CachedConfigValue<T> {
         return new YAMLConfigBuilder();
     }
 
-    public YAMLValue(@Nullable YAMLConfigProvider provider, @Nullable String configPath,
-                     @Nullable List<String> headerComments, @Nullable String inlineComments,
-                     @Nullable T defaultValue) {
-        super(provider, configPath, headerComments, inlineComments, defaultValue);
+    public YAMLValue(@NotNull ValueManifest<T> manifest) {
+        super(manifest);
     }
 
     public YAMLConfigProvider getYAMLProvider() {

@@ -3,12 +3,11 @@ package cc.carm.lib.configuration.core.value.type;
 import cc.carm.lib.configuration.core.builder.value.ConfigValueBuilder;
 import cc.carm.lib.configuration.core.function.ConfigDataFunction;
 import cc.carm.lib.configuration.core.function.ConfigValueParser;
-import cc.carm.lib.configuration.core.source.ConfigurationProvider;
+import cc.carm.lib.configuration.core.value.ValueManifest;
 import cc.carm.lib.configuration.core.value.impl.CachedConfigValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Optional;
 
 public class ConfiguredValue<V> extends CachedConfigValue<V> {
@@ -30,13 +29,10 @@ public class ConfiguredValue<V> extends CachedConfigValue<V> {
     protected final @NotNull ConfigValueParser<Object, V> parser;
     protected final @NotNull ConfigDataFunction<V, Object> serializer;
 
-    public ConfiguredValue(@Nullable ConfigurationProvider<?> provider, @Nullable String sectionPath,
-                           @Nullable List<String> headerComments, @Nullable String inlineComments,
-                           @NotNull Class<V> valueClass, @Nullable V defaultValue,
+    public ConfiguredValue(@NotNull ValueManifest<V> manifest, @NotNull Class<V> valueClass,
                            @NotNull ConfigValueParser<Object, V> parser,
                            @NotNull ConfigDataFunction<V, Object> serializer) {
-
-        super(provider, sectionPath, headerComments, inlineComments, defaultValue);
+        super(manifest);
         this.valueClass = valueClass;
         this.parser = parser;
         this.serializer = serializer;

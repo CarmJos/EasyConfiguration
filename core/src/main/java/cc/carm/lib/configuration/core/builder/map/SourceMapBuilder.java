@@ -2,6 +2,7 @@ package cc.carm.lib.configuration.core.builder.map;
 
 import cc.carm.lib.configuration.core.builder.CommonConfigBuilder;
 import cc.carm.lib.configuration.core.function.ConfigDataFunction;
+import cc.carm.lib.configuration.core.value.ValueManifest;
 import cc.carm.lib.configuration.core.value.type.ConfiguredMap;
 import org.jetbrains.annotations.NotNull;
 
@@ -96,10 +97,8 @@ public class SourceMapBuilder<M extends Map<K, V>, S, K, V> extends CommonConfig
     @Override
     public @NotNull ConfiguredMap<K, V> build() {
         return new ConfiguredMap<>(
-                this.provider, this.path,
-                this.headerComments, this.inlineComment,
-                this.defaultValue, this.supplier,
-                this.keyClass, this.keyParser,
+                new ValueManifest<>(provider, path, headerComments, inlineComment, defaultValue),
+                this.supplier, this.keyClass, this.keyParser,
                 this.valueClass, this.sourceParser.andThen(this.valueParser),
                 this.keySerializer, this.valueSerializer.andThen(this.sourceSerializer)
         );

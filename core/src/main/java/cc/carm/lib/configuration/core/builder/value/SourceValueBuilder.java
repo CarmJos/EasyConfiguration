@@ -57,9 +57,7 @@ public class SourceValueBuilder<S, V> extends CommonConfigBuilder<V, SourceValue
     @Override
     public @NotNull ConfiguredValue<V> build() {
         return new ConfiguredValue<>(
-                this.provider, this.path,
-                this.headerComments, this.inlineComment,
-                this.valueClass, this.defaultValue,
+                buildManifest(), this.valueClass,
                 this.valueParser.compose(this.sourceParser),
                 this.valueSerializer.andThen(sourceSerializer)
         );

@@ -2,14 +2,17 @@ package cc.carm.lib.configuration.core.value.type;
 
 import cc.carm.lib.configuration.core.builder.map.ConfigMapBuilder;
 import cc.carm.lib.configuration.core.function.ConfigDataFunction;
-import cc.carm.lib.configuration.core.source.ConfigurationProvider;
 import cc.carm.lib.configuration.core.source.ConfigurationWrapper;
+import cc.carm.lib.configuration.core.value.ValueManifest;
 import cc.carm.lib.configuration.core.value.impl.CachedConfigValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -32,15 +35,17 @@ public class ConfiguredMap<K, V> extends CachedConfigValue<Map<K, V>> implements
     protected final @NotNull ConfigDataFunction<K, String> keySerializer;
     protected final @NotNull ConfigDataFunction<V, Object> valueSerializer;
 
-    public ConfiguredMap(@Nullable ConfigurationProvider<?> provider, @Nullable String sectionPath,
-                         @Nullable List<String> headerComments, @Nullable String inlineComments,
-                         @Nullable Map<K, V> defaultValue, @NotNull Supplier<? extends Map<K, V>> supplier,
+
+    public ConfiguredMap(@NotNull ValueManifest<Map<K, V>> manifest
+            ,
+                         @NotNull Supplier<? extends Map<K, V>> mapObjSupplier,
                          @NotNull Class<K> keyClass, @NotNull ConfigDataFunction<String, K> keyParser,
                          @NotNull Class<V> valueClass, @NotNull ConfigDataFunction<Object, V> valueParser,
                          @NotNull ConfigDataFunction<K, String> keySerializer,
                          @NotNull ConfigDataFunction<V, Object> valueSerializer) {
-        super(provider, sectionPath, headerComments, inlineComments, defaultValue);
-        this.supplier = supplier;
+        super(manifest
+            );
+        this.supplier = mapObjSupplier;
         this.keyClass = keyClass;
         this.valueClass = valueClass;
         this.keyParser = keyParser;

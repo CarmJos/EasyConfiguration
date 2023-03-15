@@ -1,6 +1,7 @@
 package cc.carm.lib.configuration.core.builder;
 
 import cc.carm.lib.configuration.core.source.ConfigurationProvider;
+import cc.carm.lib.configuration.core.value.ValueManifest;
 import cc.carm.lib.configuration.core.value.ConfigValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -64,6 +65,13 @@ public abstract class AbstractConfigBuilder<T, B extends AbstractConfigBuilder<T
 
     public @NotNull B defaults(@NotNull Supplier<@Nullable T> defaultValueSupplier) {
         return defaults(defaultValueSupplier.get());
+    }
+
+    protected @NotNull ValueManifest<T> buildManifest() {
+        return ValueManifest.of(
+                this.provider, this.path,
+                this.headerComments, this.inlineComment, this.defaultValue
+        );
     }
 
 }

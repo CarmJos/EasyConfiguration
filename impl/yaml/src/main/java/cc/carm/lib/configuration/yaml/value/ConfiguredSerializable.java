@@ -1,12 +1,11 @@
 package cc.carm.lib.configuration.yaml.value;
 
-import cc.carm.lib.configuration.yaml.YAMLConfigProvider;
+import cc.carm.lib.configuration.core.value.ValueManifest;
 import cc.carm.lib.configuration.yaml.YAMLValue;
 import org.bspfsystems.yamlconfiguration.serialization.ConfigurationSerializable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Optional;
 
 public class ConfiguredSerializable<T extends ConfigurationSerializable> extends YAMLValue<T> {
@@ -22,10 +21,8 @@ public class ConfiguredSerializable<T extends ConfigurationSerializable> extends
 
     protected final @NotNull Class<T> valueClass;
 
-    public ConfiguredSerializable(@Nullable YAMLConfigProvider provider, @Nullable String configPath,
-                                  @Nullable List<String> headerComments, @Nullable String inlineComments,
-                                  @NotNull Class<T> valueClass, @Nullable T defaultValue) {
-        super(provider, configPath, headerComments, inlineComments, defaultValue);
+    public ConfiguredSerializable(@NotNull ValueManifest<T> manifest, @NotNull Class<T> valueClass) {
+        super(manifest);
         this.valueClass = valueClass;
     }
 

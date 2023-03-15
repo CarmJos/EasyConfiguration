@@ -2,7 +2,7 @@ package cc.carm.lib.configuration.core.value.type;
 
 import cc.carm.lib.configuration.core.builder.list.ConfigListBuilder;
 import cc.carm.lib.configuration.core.function.ConfigDataFunction;
-import cc.carm.lib.configuration.core.source.ConfigurationProvider;
+import cc.carm.lib.configuration.core.value.ValueManifest;
 import cc.carm.lib.configuration.core.value.impl.CachedConfigValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,12 +22,10 @@ public class ConfiguredList<V> extends CachedConfigValue<List<V>> implements Lis
     protected final @NotNull ConfigDataFunction<Object, V> parser;
     protected final @NotNull ConfigDataFunction<V, Object> serializer;
 
-    public ConfiguredList(@Nullable ConfigurationProvider<?> provider, @Nullable String sectionPath,
-                          @Nullable List<String> headerComments, @Nullable String inlineComments,
-                          @NotNull Class<V> valueClass, @Nullable List<V> defaultValue,
+    public ConfiguredList(@NotNull ValueManifest<List<V>> manifest, @NotNull Class<V> valueClass,
                           @NotNull ConfigDataFunction<Object, V> parser,
                           @NotNull ConfigDataFunction<V, Object> serializer) {
-        super(provider, sectionPath, headerComments, inlineComments, defaultValue);
+        super(manifest);
         this.valueClass = valueClass;
         this.parser = parser;
         this.serializer = serializer;
@@ -179,7 +177,7 @@ public class ConfiguredList<V> extends CachedConfigValue<List<V>> implements Lis
     public void clear() {
         modifyList(List::clear);
     }
-    
+
     @Override
     public int indexOf(Object o) {
         return get().indexOf(o);

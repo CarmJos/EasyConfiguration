@@ -1,10 +1,9 @@
 package cc.carm.lib.configuration.core.value.impl;
 
-import cc.carm.lib.configuration.core.source.ConfigurationProvider;
 import cc.carm.lib.configuration.core.value.ConfigValue;
+import cc.carm.lib.configuration.core.value.ValueManifest;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public abstract class CachedConfigValue<T> extends ConfigValue<T> {
 
@@ -12,10 +11,8 @@ public abstract class CachedConfigValue<T> extends ConfigValue<T> {
     protected @Nullable T cachedValue;
     protected long parsedTime = -1;
 
-    public CachedConfigValue(@Nullable ConfigurationProvider<?> provider, @Nullable String sectionPath,
-                             @Nullable List<String> headerComments, @Nullable String inlineComments,
-                             @Nullable T defaultValue) {
-        super(provider, sectionPath, headerComments, inlineComments, defaultValue);
+    public CachedConfigValue(@NotNull ValueManifest<T> manifest) {
+        super(manifest);
     }
 
     protected T updateCache(T value) {

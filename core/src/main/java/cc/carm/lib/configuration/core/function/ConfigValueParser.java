@@ -91,91 +91,38 @@ public interface ConfigValueParser<T, R> {
     }
 
     @Contract(pure = true)
-    static @NotNull <T> ConfigValueParser<T, String> castToString(Class<T> clazz) {
-        return (input, defaultValue) -> {
-            if (input instanceof String) return (String) input;
-            else return input.toString();
-        };
-    }
-
-    @Contract(pure = true)
     static @NotNull ConfigValueParser<Object, Integer> intValue() {
-        return (input, defaultValue) -> {
-            if (input instanceof Integer) {
-                return (Integer) input;
-            } else if (input instanceof Number) {
-                return ((Number) input).intValue();
-            } else throw new IllegalArgumentException("Cannot cast value to " + Integer.class.getName());
-        };
+        return (input, defaultValue) -> ConfigDataFunction.intValue().parse(input);
     }
 
     @Contract(pure = true)
     static @NotNull ConfigValueParser<Object, Short> shortValue() {
-        return (input, defaultValue) -> {
-            if (input instanceof Short) {
-                return (Short) input;
-            } else if (input instanceof Number) {
-                return ((Number) input).shortValue();
-            } else throw new IllegalArgumentException("Cannot cast value to " + Short.class.getName());
-        };
+        return (input, defaultValue) -> ConfigDataFunction.shortValue().parse(input);
     }
 
     @Contract(pure = true)
     static @NotNull ConfigValueParser<Object, Double> doubleValue() {
-        return (input, defaultValue) -> {
-            if (input instanceof Double) {
-                return (Double) input;
-            } else if (input instanceof Number) {
-                return ((Number) input).doubleValue();
-            } else throw new IllegalArgumentException("Cannot cast value to " + Double.class.getName());
-        };
+        return (input, defaultValue) -> ConfigDataFunction.doubleValue().parse(input);
     }
 
     @Contract(pure = true)
     static @NotNull ConfigValueParser<Object, Byte> byteValue() {
-        return (input, defaultValue) -> {
-            if (input instanceof Byte) {
-                return (Byte) input;
-            } else if (input instanceof Number) {
-                return ((Number) input).byteValue();
-            } else throw new IllegalArgumentException("Cannot cast value to " + Byte.class.getName());
-        };
+        return (input, defaultValue) -> ConfigDataFunction.byteValue().parse(input);
     }
 
     @Contract(pure = true)
     static @NotNull ConfigValueParser<Object, Float> floatValue() {
-        return (input, defaultValue) -> {
-            if (input instanceof Float) {
-                return (Float) input;
-            } else if (input instanceof Number) {
-                return ((Number) input).floatValue();
-            } else throw new IllegalArgumentException("Cannot cast value to " + Float.class.getName());
-        };
+        return (input, defaultValue) -> ConfigDataFunction.floatValue().parse(input);
     }
 
     @Contract(pure = true)
     static @NotNull ConfigValueParser<Object, Long> longValue() {
-        return (input, defaultValue) -> {
-            if (input instanceof Long) {
-                return (Long) input;
-            } else if (input instanceof Number) {
-                return ((Number) input).longValue();
-            } else throw new IllegalArgumentException("Cannot cast value to " + Long.class.getName());
-        };
+        return (input, defaultValue) -> ConfigDataFunction.longValue().parse(input);
     }
 
     @Contract(pure = true)
     static @NotNull ConfigValueParser<Object, Boolean> booleanValue() {
-        return (input, defaultValue) -> {
-            if (input instanceof Boolean) {
-                return (Boolean) input;
-            } else if (input instanceof String) {
-                String s = (String) input;
-                return Boolean.parseBoolean(s) || "yes".equalsIgnoreCase(s);
-            } else if (input instanceof Integer) {
-                return ((Integer) input) == 1;
-            } else throw new IllegalArgumentException("Cannot cast value to " + Boolean.class.getName());
-        };
+        return (input, defaultValue) -> ConfigDataFunction.booleanValue().parse(input);
     }
 
 }
