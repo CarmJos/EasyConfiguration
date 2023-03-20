@@ -3,22 +3,21 @@ package cc.carm.lib.configuration.yaml;
 import cc.carm.lib.configuration.core.ConfigInitializer;
 import cc.carm.lib.configuration.core.source.ConfigurationComments;
 import cc.carm.lib.configuration.core.source.impl.FileConfigProvider;
+import cc.carm.lib.yamlcommentupdater.CommentedYAML;
+import cc.carm.lib.yamlcommentupdater.CommentedYAMLWriter;
+import org.bspfsystems.yamlconfiguration.configuration.ConfigurationSection;
+import org.bspfsystems.yamlconfiguration.file.FileConfiguration;
 import org.bspfsystems.yamlconfiguration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.util.List;
+import java.util.Set;
 
-public class YAMLConfigProvider extends FileConfigProvider<YAMLSectionWrapper> {
+public class YAMLConfigProvider extends FileConfigProvider<YAMLSectionWrapper> implements CommentedYAML {
 
-    protected static final char SEPARATOR = '.';
-
-    protected final @NotNull YAMLComments comments = new YAMLComments();
+    protected final @NotNull ConfigurationComments comments = new ConfigurationComments();
     protected YamlConfiguration configuration;
     protected ConfigInitializer<YAMLConfigProvider> initializer;
 
@@ -42,32 +41,50 @@ public class YAMLConfigProvider extends FileConfigProvider<YAMLSectionWrapper> {
     }
 
     @Override
-    public @Nullable ConfigurationComments getComments() {
+    public @NotNull ConfigurationComments getComments() {
         return this.comments;
     }
 
     @Override
-    @SuppressWarnings("SpellCheckingInspection")
     public void save() throws Exception {
-        configuration.save(getFile());
-
-        // tchristofferson/ConfigUpdater start
-        StringWriter writer = new StringWriter();
-        this.comments.writeComments(configuration, new BufferedWriter(writer));
-        String value = writer.toString(); // config contents
-
-        Path toUpdatePath = getFile().toPath();
-        if (!value.equals(new String(Files.readAllBytes(toUpdatePath), StandardCharsets.UTF_8))) {
-            // if updated contents are not the same as current file contents, update
-            Files.write(toUpdatePath, value.getBytes(StandardCharsets.UTF_8));
+        try {
+            CommentedYAMLWriter.writeWithComments(this, this.file);
+        } catch (Exception ex) {
+            configuration.save(file);
+            throw ex;
         }
-        // tchristofferson/ConfigUpdater end
-
     }
 
     @Override
     public @NotNull ConfigInitializer<YAMLConfigProvider> getInitializer() {
         return this.initializer;
+    }
+
+    @Override
+    public String serializeValue(@NotNull String key, @NotNull Object value) {
+        FileConfiguration temp = new YamlConfiguration();
+        temp.set(key, value);
+        return temp.saveToString();
+    }
+
+    @Override
+    public Set<String> getKeys(@Nullable String sectionKey, boolean deep) {
+        if (sectionKey == null) return configuration.getKeys(deep);
+
+        ConfigurationSection section = configuration.getConfigurationSection(sectionKey);
+        if (section == null) return null;
+
+        return section.getKeys(deep);
+    }
+
+    @Override
+    public @Nullable Object getValue(@NotNull String key) {
+        return configuration.get(key);
+    }
+
+    @Override
+    public @Nullable List<String> getHeaderComments(@Nullable String key) {
+        return comments.getHeaderComment(key);
     }
 
 }

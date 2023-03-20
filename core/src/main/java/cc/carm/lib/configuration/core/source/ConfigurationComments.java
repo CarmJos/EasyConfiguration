@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.*;
 
-public abstract class ConfigurationComments {
+public class ConfigurationComments {
 
     protected final @NotNull Map<String, List<String>> headerComments = new HashMap<>();
     protected final @NotNull Map<String, String> inlineComments = new HashMap<>();

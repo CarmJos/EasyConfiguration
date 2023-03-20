@@ -18,7 +18,7 @@ public class TestConfiguration extends ConfigurationRoot {
     public final ConfigValue<Double> CLASS_VALUE = ConfiguredValue.of(Double.class, 1.0D);
 
     @ConfigPath("test.user") // 通过注解规定配置文件中的路径，若不进行注解则以变量名自动生成。
-    @HeaderComment({"", "Section类型数据测试"}) // 通过注解给配置添加注释。
+    @HeaderComment({"Section类型数据测试"}) // 通过注解给配置添加注释。
     @InlineComment("Section数据也支持InlineComment注释")
     public final ConfigValue<TestModel> TEST_MODEL = ConfiguredSection
             .builder(TestModel.class)

@@ -16,10 +16,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 
-@HeaderComment({
-        "此处内容将显示在配置文件的最上方",
-        ""/*添加一个空行与其他配置的注释分割*/
-})
+@HeaderComment({"此处内容将显示在配置文件的最上方"})
 public class DemoConfiguration extends ConfigurationRoot {
 
     @ConfigPath(root = true)
@@ -36,7 +33,7 @@ public class DemoConfiguration extends ConfigurationRoot {
     public static final Class<?> OTHER = OtherConfiguration.class;
 
     @ConfigPath("user") // 通过注解规定配置文件中的路径，若不进行注解则以变量名自动生成。
-    @HeaderComment({"", "Section类型数据测试"}) // 通过注解给配置添加注释。
+    @HeaderComment({"Section类型数据测试"}) // 通过注解给配置添加注释。
     @InlineComment("Section数据也支持InlineComment注释")
     public static final ConfigValue<TestModel> MODEL_TEST = ConfiguredSection
             .builder(TestModel.class)
@@ -44,7 +41,7 @@ public class DemoConfiguration extends ConfigurationRoot {
             .parseValue((section, defaultValue) -> TestModel.deserialize(section))
             .serializeValue(TestModel::serialize).build();
 
-    @HeaderComment({"", "[ID - UUID]对照表", "", "用于测试Map类型的解析与序列化保存"})
+    @HeaderComment({"[ID - UUID]对照表", "", "用于测试Map类型的解析与序列化保存"})
     public static final ConfiguredMap<Integer, UUID> USERS = ConfiguredMap
             .builder(Integer.class, UUID.class).fromString()
             .parseKey(Integer::parseInt)

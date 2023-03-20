@@ -5,7 +5,7 @@
     <parent>
         <artifactId>easyconfiguration-parent</artifactId>
         <groupId>cc.carm.lib</groupId>
-        <version>3.5.0</version>
+        <version>3.5.1</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -29,12 +29,18 @@
         </dependency>
 
         <dependency>
+            <groupId>cc.carm.lib</groupId>
+            <artifactId>yamlcommentwriter</artifactId>
+            <version>1.0.1</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
             <groupId>${project.parent.groupId}</groupId>
             <artifactId>easyconfiguration-demo</artifactId>
             <version>${project.parent.version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.bspfsystems</groupId>
             <artifactId>yamlconfiguration</artifactId>

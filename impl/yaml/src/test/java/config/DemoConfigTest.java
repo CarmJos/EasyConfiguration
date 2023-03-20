@@ -21,6 +21,7 @@ public class DemoConfigTest {
 
     @Test
     public void onTest() {
+
         ConfigurationTest.testDemo(this.provider);
         ConfigurationTest.testInner(this.provider);
 
