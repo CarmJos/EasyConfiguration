@@ -36,14 +36,15 @@ public class DemoConfiguration extends ConfigurationRoot {
     @HeaderComment({"Section类型数据测试"}) // 通过注解给配置添加注释。
     @InlineComment("Section数据也支持InlineComment注释")
     public static final ConfigValue<TestModel> MODEL_TEST = ConfiguredSection
-            .builder(TestModel.class)
+            .builderOf(TestModel.class)
             .defaults(new TestModel("Carm", UUID.randomUUID()))
             .parseValue((section, defaultValue) -> TestModel.deserialize(section))
             .serializeValue(TestModel::serialize).build();
 
     @HeaderComment({"[ID - UUID]对照表", "", "用于测试Map类型的解析与序列化保存"})
     public static final ConfiguredMap<Integer, UUID> USERS = ConfiguredMap
-            .linkedOf(Integer.class, UUID.class).fromString()
+            .builderOf(Integer.class, UUID.class)
+            .asLinkedMap().fromString()
             .parseKey(Integer::parseInt)
             .parseValue(v -> Objects.requireNonNull(UUID.fromString(v)))
             .build();

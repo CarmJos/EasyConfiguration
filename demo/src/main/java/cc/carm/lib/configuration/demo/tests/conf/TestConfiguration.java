@@ -21,7 +21,7 @@ public class TestConfiguration extends ConfigurationRoot {
     @HeaderComment({"Section类型数据测试"}) // 通过注解给配置添加注释。
     @InlineComment("Section数据也支持InlineComment注释")
     public final ConfigValue<TestModel> TEST_MODEL = ConfiguredSection
-            .builder(TestModel.class)
+            .builderOf(TestModel.class)
             .defaults(new TestModel("Carm", UUID.randomUUID()))
             .parseValue((section, defaultValue) -> TestModel.deserialize(section))
             .serializeValue(TestModel::serialize).build();
