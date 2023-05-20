@@ -1,6 +1,6 @@
 package cc.carm.lib.configuration.core.value.type;
 
-import cc.carm.lib.configuration.core.builder.map.ConfigMapBuilder;
+import cc.carm.lib.configuration.core.builder.map.ConfigMapCreator;
 import cc.carm.lib.configuration.core.function.ConfigDataFunction;
 import cc.carm.lib.configuration.core.source.ConfigurationWrapper;
 import cc.carm.lib.configuration.core.value.ValueManifest;
@@ -19,8 +19,8 @@ import java.util.function.Supplier;
 
 public class ConfiguredMap<K, V> extends CachedConfigValue<Map<K, V>> implements Map<K, V> {
 
-    public static <K, V> @NotNull ConfigMapBuilder<LinkedHashMap<K, V>, K, V> builder(@NotNull Class<K> keyClass,
-                                                                                      @NotNull Class<V> valueClass) {
+    public static <K, V> @NotNull ConfigMapCreator<K, V> builderOf(@NotNull Class<K> keyClass,
+                                                                   @NotNull Class<V> valueClass) {
         return builder().asMap(keyClass, valueClass);
     }
 
@@ -36,15 +36,13 @@ public class ConfiguredMap<K, V> extends CachedConfigValue<Map<K, V>> implements
     protected final @NotNull ConfigDataFunction<V, Object> valueSerializer;
 
 
-    public ConfiguredMap(@NotNull ValueManifest<Map<K, V>> manifest
-            ,
+    public ConfiguredMap(@NotNull ValueManifest<Map<K, V>> manifest,
                          @NotNull Supplier<? extends Map<K, V>> mapObjSupplier,
                          @NotNull Class<K> keyClass, @NotNull ConfigDataFunction<String, K> keyParser,
                          @NotNull Class<V> valueClass, @NotNull ConfigDataFunction<Object, V> valueParser,
                          @NotNull ConfigDataFunction<K, String> keySerializer,
                          @NotNull ConfigDataFunction<V, Object> valueSerializer) {
-        super(manifest
-            );
+        super(manifest);
         this.supplier = mapObjSupplier;
         this.keyClass = keyClass;
         this.valueClass = valueClass;

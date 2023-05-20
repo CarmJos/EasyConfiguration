@@ -42,7 +42,7 @@ public class ConfigurationTest {
 
         System.out.println("> Clear List:");
         System.out.println(" Before: size :" + DemoConfiguration.Sub.That.OPERATORS.size());
-        DemoConfiguration.Sub.That.OPERATORS.modifyList(List::clear);
+        DemoConfiguration.Sub.That.OPERATORS.modify(List::clear);
         System.out.println(" After size :" + DemoConfiguration.Sub.That.OPERATORS.size());
 
         System.out.println("> Test Section:");

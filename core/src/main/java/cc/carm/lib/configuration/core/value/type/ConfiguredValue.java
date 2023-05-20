@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public class ConfiguredValue<V> extends CachedConfigValue<V> {
 
-    public static <V> ConfigValueBuilder<V> builder(Class<V> valueClass) {
+    public static <V> ConfigValueBuilder<V> builderOf(Class<V> valueClass) {
         return builder().asValue(valueClass);
     }
 
@@ -21,7 +21,7 @@ public class ConfiguredValue<V> extends CachedConfigValue<V> {
     }
 
     public static <V> ConfiguredValue<V> of(Class<V> valueClass, @Nullable V defaultValue) {
-        return builder(valueClass).fromObject().defaults(defaultValue).build();
+        return builderOf(valueClass).fromObject().defaults(defaultValue).build();
     }
 
     protected final @NotNull Class<V> valueClass;

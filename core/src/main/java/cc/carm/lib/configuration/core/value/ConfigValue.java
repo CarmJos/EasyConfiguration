@@ -15,14 +15,22 @@ public abstract class ConfigValue<T> extends ValueManifest<T> {
         return new ConfigBuilder();
     }
 
-    public ConfigValue(@NotNull ValueManifest<T> manifest) {
+    protected ConfigValue(@NotNull ValueManifest<T> manifest) {
         super(manifest.provider, manifest.configPath, manifest.headerComments, manifest.inlineComment, manifest.defaultValue);
     }
 
+    /**
+     * @param provider       配置文件提供者
+     * @param configPath     配置路径
+     * @param headerComments 头部注释内容
+     * @param inlineComments 行内注释内容
+     * @param defaultValue   默认参数值
+     * @deprecated 请使用 {@link #ConfigValue(ValueManifest)} 构造器。
+     */
     @Deprecated
-    public ConfigValue(@Nullable ConfigurationProvider<?> provider, @Nullable String configPath,
-                       @Nullable List<String> headerComments, @Nullable String inlineComments,
-                       @Nullable T defaultValue) {
+    protected ConfigValue(@Nullable ConfigurationProvider<?> provider, @Nullable String configPath,
+                          @Nullable List<String> headerComments, @Nullable String inlineComments,
+                          @Nullable T defaultValue) {
         super(provider, configPath, headerComments, inlineComments, defaultValue);
     }
 

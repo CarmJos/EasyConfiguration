@@ -14,8 +14,7 @@ import java.util.Optional;
 
 public class ConfiguredSection<V> extends CachedConfigValue<V> {
 
-
-    public static <V> @NotNull SectionValueBuilder<V> builder(@NotNull Class<V> valueClass) {
+    public static <V> @NotNull SectionValueBuilder<V> builderOf(@NotNull Class<V> valueClass) {
         return builder().asValue(valueClass).fromSection();
     }
 

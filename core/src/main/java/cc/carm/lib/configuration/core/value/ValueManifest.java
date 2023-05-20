@@ -9,6 +9,11 @@ import org.jetbrains.annotations.Unmodifiable;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * 配置值描述清单。用于描述一个配置值的相关基础信息。
+ *
+ * @param <T> 配置值类型
+ */
 public class ValueManifest<T> {
 
     public static <V> ValueManifest<V> of(@Nullable ConfigurationProvider<?> provider, @Nullable String configPath,
@@ -30,6 +35,13 @@ public class ValueManifest<T> {
 
     protected @Nullable T defaultValue;
 
+    /**
+     * @param provider       配置文件提供者
+     * @param configPath     配置路径
+     * @param headerComments 头部注释内容
+     * @param inlineComment  行内注释内容
+     * @param defaultValue   默认参数值
+     */
     public ValueManifest(@Nullable ConfigurationProvider<?> provider, @Nullable String configPath,
                          @Nullable List<String> headerComments, @Nullable String inlineComment,
                          @Nullable T defaultValue) {
@@ -40,12 +52,20 @@ public class ValueManifest<T> {
         this.defaultValue = defaultValue;
     }
 
+    /**
+     * 此方法用于 {@link cc.carm.lib.configuration.core.ConfigInitializer<T>} 工具对配置值进行统一初始化操作。
+     *
+     * @param provider       配置文件提供者
+     * @param configPath     配置路径
+     * @param headerComments 头部注释内容
+     * @param inlineComment  行内注释内容
+     */
     protected void initialize(@NotNull ConfigurationProvider<?> provider, @NotNull String configPath,
-                              @Nullable List<String> headerComments, @Nullable String inlineComments) {
+                              @Nullable List<String> headerComments, @Nullable String inlineComment) {
         if (this.provider == null) this.provider = provider;
         if (this.configPath == null) this.configPath = configPath;
         if (this.headerComments == null) this.headerComments = headerComments;
-        if (this.inlineComment == null) this.inlineComment = inlineComments;
+        if (this.inlineComment == null) this.inlineComment = inlineComment;
 
         if (getHeaderComments() != null) {
             this.provider.setHeaderComment(getConfigPath(), getHeaderComments());

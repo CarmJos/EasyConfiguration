@@ -13,8 +13,17 @@ import java.util.function.Function;
 
 public class ConfiguredList<V> extends CachedConfigValue<List<V>> implements List<V> {
 
-    public static <V> @NotNull ConfigListBuilder<V> builder(@NotNull Class<V> valueClass) {
+    public static <V> @NotNull ConfigListBuilder<V> builderOf(@NotNull Class<V> valueClass) {
         return builder().asList(valueClass);
+    }
+
+    public static <V> @NotNull ConfiguredList<V> of(@NotNull Class<V> valueClass, @NotNull Collection<V> defaults) {
+        return builderOf(valueClass).fromObject().defaults(defaults).build();
+    }
+
+    @SafeVarargs
+    public static <V> @NotNull ConfiguredList<V> of(@NotNull Class<V> valueClass, @NotNull V... defaults) {
+        return builderOf(valueClass).fromObject().defaults(defaults).build();
     }
 
     protected final @NotNull Class<V> valueClass;
@@ -57,14 +66,14 @@ public class ConfiguredList<V> extends CachedConfigValue<List<V>> implements Lis
         return get().get(index);
     }
 
-    public <T> @NotNull T modifyValue(Function<List<V>, T> function) {
+    public <T> @NotNull T handle(Function<List<V>, T> function) {
         List<V> list = get();
         T result = function.apply(list);
         set(list);
         return result;
     }
 
-    public @NotNull List<V> modifyList(Consumer<List<V>> consumer) {
+    public @NotNull List<V> modify(Consumer<List<V>> consumer) {
         List<V> list = get();
         consumer.accept(list);
         set(list);
@@ -91,7 +100,7 @@ public class ConfiguredList<V> extends CachedConfigValue<List<V>> implements Lis
 
     @Override
     public V set(int index, V element) {
-        return modifyValue(list -> list.set(index, element));
+        return handle(list -> list.set(index, element));
     }
 
     @Override
@@ -134,48 +143,48 @@ public class ConfiguredList<V> extends CachedConfigValue<List<V>> implements Lis
 
     @Override
     public boolean add(V v) {
-        modifyValue(list -> list.add(v));
+        handle(list -> list.add(v));
         return true;
     }
 
     @Override
     public void add(int index, V element) {
-        modifyList(list -> list.add(index, element));
+        modify(list -> list.add(index, element));
     }
 
     @Override
     public boolean addAll(@NotNull Collection<? extends V> c) {
-        return modifyValue(list -> list.addAll(c));
+        return handle(list -> list.addAll(c));
     }
 
     @Override
     public boolean addAll(int index, @NotNull Collection<? extends V> c) {
-        return modifyValue(list -> list.addAll(index, c));
+        return handle(list -> list.addAll(index, c));
     }
 
     @Override
     public boolean remove(Object o) {
-        return modifyValue(list -> list.remove(o));
+        return handle(list -> list.remove(o));
     }
 
     @Override
     public V remove(int index) {
-        return modifyValue(list -> list.remove(index));
+        return handle(list -> list.remove(index));
     }
 
     @Override
     public boolean removeAll(@NotNull Collection<?> c) {
-        return modifyValue(list -> list.removeAll(c));
+        return handle(list -> list.removeAll(c));
     }
 
     @Override
     public boolean retainAll(@NotNull Collection<?> c) {
-        return modifyValue(list -> list.retainAll(c));
+        return handle(list -> list.retainAll(c));
     }
 
     @Override
     public void clear() {
-        modifyList(List::clear);
+        modify(List::clear);
     }
 
     @Override

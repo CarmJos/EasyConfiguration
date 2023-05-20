@@ -41,6 +41,8 @@ public class DemoConfigTest {
         AbstractModel anyModel = ModelConfiguration.ANY_MODEL.get();
         if (anyModel != null) System.out.println(anyModel.getName());
 
+        ModelConfiguration.MODELS.forEach(System.out::println);
+
         System.out.println("----------------------------------------------------");
     }
 

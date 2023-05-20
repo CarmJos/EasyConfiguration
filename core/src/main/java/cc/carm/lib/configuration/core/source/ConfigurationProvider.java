@@ -11,11 +11,16 @@ import org.jetbrains.annotations.Unmodifiable;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * 配置文件提供者，用于为 {@link ConfigValue} 提供配置文件的源，以便实现读取、保存等操作。
+ *
+ * @param <W> 配置文件的原生功能类
+ */
 public abstract class ConfigurationProvider<W extends ConfigurationWrapper<?>> {
 
     protected long updateTime;
 
-    public ConfigurationProvider() {
+    protected ConfigurationProvider() {
         this.updateTime = System.currentTimeMillis();
     }
 

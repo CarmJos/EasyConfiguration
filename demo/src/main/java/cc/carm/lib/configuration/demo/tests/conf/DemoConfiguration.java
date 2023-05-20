@@ -43,7 +43,7 @@ public class DemoConfiguration extends ConfigurationRoot {
 
     @HeaderComment({"[ID - UUID]对照表", "", "用于测试Map类型的解析与序列化保存"})
     public static final ConfiguredMap<Integer, UUID> USERS = ConfiguredMap
-            .builder(Integer.class, UUID.class).fromString()
+            .linkedOf(Integer.class, UUID.class).fromString()
             .parseKey(Integer::parseInt)
             .parseValue(v -> Objects.requireNonNull(UUID.fromString(v)))
             .build();
@@ -58,14 +58,14 @@ public class DemoConfiguration extends ConfigurationRoot {
         @ConfigPath(value = "uuid-value", root = true)
         @InlineComment("This is an inline comment")
         public static final ConfigValue<UUID> UUID_CONFIG_VALUE = ConfiguredValue
-                .builder(UUID.class).fromString()
+                .builderOf(UUID.class).fromString()
                 .parseValue((data, defaultValue) -> UUID.fromString(data))
                 .build();
 
         public static class That extends ConfigurationRoot {
 
             public static final ConfiguredList<UUID> OPERATORS = ConfiguredList
-                    .builder(UUID.class).fromString()
+                    .builderOf(UUID.class).fromString()
                     .parseValue(s -> Objects.requireNonNull(UUID.fromString(s)))
                     .build();
 

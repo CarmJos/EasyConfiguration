@@ -14,7 +14,7 @@ public abstract class FileConfigProvider<W extends ConfigurationWrapper<?>> exte
 
     protected final @NotNull File file;
 
-    public FileConfigProvider(@NotNull File file) {
+    protected FileConfigProvider(@NotNull File file) {
         this.file = file;
     }
 
