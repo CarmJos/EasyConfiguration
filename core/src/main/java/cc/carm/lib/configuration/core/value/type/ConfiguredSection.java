@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
-import java.util.Optional;
 
 public class ConfiguredSection<V> extends CachedConfigValue<V> {
 
@@ -46,18 +45,21 @@ public class ConfiguredSection<V> extends CachedConfigValue<V> {
 
     @Override
     public @Nullable V get() {
-        if (isExpired()) { // 已过时的数据，需要重新解析一次。
-            ConfigurationWrapper<?> section = getConfiguration().getConfigurationSection(getConfigPath());
-            if (section == null) return useDefault();
-            try {
-                // 若未出现错误，则直接更新缓存并返回。
-                return updateCache(this.parser.parse(section, this.defaultValue));
-            } catch (Exception e) {
-                // 出现了解析错误，提示并返回默认值。
-                e.printStackTrace();
-                return useDefault();
-            }
-        } else return Optional.ofNullable(getCachedValue()).orElse(defaultValue);
+        if (!isExpired()) return getCachedOrDefault();
+        // 已过时的数据，需要重新解析一次。
+
+        ConfigurationWrapper<?> section = getConfiguration().getConfigurationSection(getConfigPath());
+        if (section == null) return getDefaultValue();
+
+        try {
+            // 若未出现错误，则直接更新缓存并返回。
+            return updateCache(this.parser.parse(section, this.defaultValue));
+        } catch (Exception e) {
+            // 出现了解析错误，提示并返回默认值。
+            e.printStackTrace();
+            return getDefaultValue();
+        }
+
     }
 
     @Override

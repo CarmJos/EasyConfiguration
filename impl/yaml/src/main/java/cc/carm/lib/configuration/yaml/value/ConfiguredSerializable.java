@@ -6,8 +6,6 @@ import org.bspfsystems.yamlconfiguration.serialization.ConfigurationSerializable
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
-
 public class ConfiguredSerializable<T extends ConfigurationSerializable> extends YAMLValue<T> {
 
     public static <V extends ConfigurationSerializable> ConfiguredSerializable<V> of(@NotNull Class<V> valueClass) {
@@ -28,16 +26,17 @@ public class ConfiguredSerializable<T extends ConfigurationSerializable> extends
 
     @Override
     public @Nullable T get() {
-        if (isExpired()) { // 已过时的数据，需要重新解析一次。
-            try {
-                // 若未出现错误，则直接更新缓存并返回。
-                return updateCache(getYAMLConfig().getSerializable(getConfigPath(), valueClass, getDefaultValue()));
-            } catch (Exception e) {
-                // 出现了解析错误，提示并返回默认值。
-                e.printStackTrace();
-                return useDefault();
-            }
-        } else return Optional.ofNullable(getCachedValue()).orElse(defaultValue);
+        if (!isExpired()) return getCachedOrDefault();
+
+        try {
+            // 若未出现错误，则直接更新缓存并返回。
+            return updateCache(getYAMLConfig().getSerializable(getConfigPath(), valueClass, getDefaultValue()));
+        } catch (Exception e) {
+            // 出现了解析错误，提示并返回默认值。
+            e.printStackTrace();
+            return getDefaultValue();
+        }
+
     }
 
     @Override

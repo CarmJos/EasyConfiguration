@@ -1,5 +1,6 @@
 package cc.carm.lib.configuration.core.value;
 
+import cc.carm.lib.configuration.core.ConfigInitializer;
 import cc.carm.lib.configuration.core.source.ConfigurationProvider;
 import cc.carm.lib.configuration.core.source.ConfigurationWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -13,6 +14,7 @@ import java.util.Optional;
  * 配置值描述清单。用于描述一个配置值的相关基础信息。
  *
  * @param <T> 配置值类型
+ * @author CarmJos
  */
 public class ValueManifest<T> {
 
@@ -53,7 +55,7 @@ public class ValueManifest<T> {
     }
 
     /**
-     * 此方法用于 {@link cc.carm.lib.configuration.core.ConfigInitializer<T>} 工具对配置值进行统一初始化操作。
+     * 此方法提供给 {@link ConfigInitializer}，以便对配置值的相关信息进行统一初始化操作。
      *
      * @param provider       配置文件提供者
      * @param configPath     配置路径

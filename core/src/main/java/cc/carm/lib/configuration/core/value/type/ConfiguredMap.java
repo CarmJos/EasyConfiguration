@@ -78,31 +78,30 @@ public class ConfiguredMap<K, V> extends CachedConfigValue<Map<K, V>> implements
 
     @Override
     public @NotNull Map<K, V> get() {
-        if (isExpired()) { // 已过时的数据，需要重新解析一次。
-            Map<K, V> map = supplier.get();
+        if (!isExpired()) return getCachedOrDefault(supplier.get());
 
-            ConfigurationWrapper<?> section = getConfiguration().getConfigurationSection(getConfigPath());
-            if (section == null) return useOrDefault(map);
+        // 已过时的数据，需要重新解析一次。
+        Map<K, V> map = supplier.get();
 
-            Set<String> keys = section.getKeys(false);
-            if (keys.isEmpty()) return useOrDefault(map);
+        ConfigurationWrapper<?> section = getConfiguration().getConfigurationSection(getConfigPath());
+        if (section == null) return getDefaultFirst(map);
 
-            for (String dataKey : keys) {
-                Object dataVal = section.get(dataKey);
-                if (dataVal == null) continue;
-                try {
-                    K key = keyParser.parse(dataKey);
-                    V value = valueParser.parse(dataVal);
-                    map.put(key, value);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        Set<String> keys = section.getKeys(false);
+        if (keys.isEmpty()) return getDefaultFirst(map);
+
+        for (String dataKey : keys) {
+            Object dataVal = section.get(dataKey);
+            if (dataVal == null) continue;
+            try {
+                K key = keyParser.parse(dataKey);
+                V value = valueParser.parse(dataVal);
+                map.put(key, value);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+        }
 
-            return updateCache(map);
-        } else if (getCachedValue() != null) return getCachedValue();
-        else if (getDefaultValue() != null) return getDefaultValue();
-        else return supplier.get();
+        return updateCache(map);
     }
 
     @Override

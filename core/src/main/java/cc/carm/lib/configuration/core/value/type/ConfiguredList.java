@@ -42,23 +42,22 @@ public class ConfiguredList<V> extends CachedConfigValue<List<V>> implements Lis
 
     @Override
     public @NotNull List<V> get() {
-        if (isExpired()) { // 已过时的数据，需要重新解析一次。
-            List<V> list = new ArrayList<>();
-            List<?> data = getConfiguration().contains(getConfigPath()) ?
-                    getConfiguration().getList(getConfigPath()) : null;
-            if (data == null) return useOrDefault(list);
-            for (Object dataVal : data) {
-                if (dataVal == null) continue;
-                try {
-                    list.add(parser.parse(dataVal));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        if (!isExpired()) return getCachedOrDefault(new ArrayList<>());
+
+        // 已过时的数据，需要重新解析一次。
+        List<V> list = new ArrayList<>();
+        List<?> data = getConfiguration().contains(getConfigPath()) ?
+                getConfiguration().getList(getConfigPath()) : null;
+        if (data == null) return getDefaultFirst(list);
+        for (Object dataVal : data) {
+            if (dataVal == null) continue;
+            try {
+                list.add(parser.parse(dataVal));
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            return updateCache(list);
-        } else if (getCachedValue() != null) return getCachedValue();
-        else if (getDefaultValue() != null) return getDefaultValue();
-        else return new ArrayList<>();
+        }
+        return updateCache(list);
     }
 
     @Override

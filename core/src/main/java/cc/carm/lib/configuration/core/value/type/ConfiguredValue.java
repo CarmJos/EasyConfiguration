@@ -8,8 +8,6 @@ import cc.carm.lib.configuration.core.value.impl.CachedConfigValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
-
 public class ConfiguredValue<V> extends CachedConfigValue<V> {
 
     public static <V> ConfigValueBuilder<V> builderOf(Class<V> valueClass) {
@@ -48,18 +46,20 @@ public class ConfiguredValue<V> extends CachedConfigValue<V> {
 
     @Override
     public V get() {
-        if (isExpired()) { // 已过时的数据，需要重新解析一次。
-            Object value = getValue();
-            if (value == null) return useDefault(); // 获取的值不存在，直接使用默认值。
-            try {
-                // 若未出现错误，则直接更新缓存并返回。
-                return updateCache(this.parser.parse(value, this.defaultValue));
-            } catch (Exception e) {
-                // 出现了解析错误，提示并返回默认值。
-                e.printStackTrace();
-                return useDefault();
-            }
-        } else return Optional.ofNullable(getCachedValue()).orElse(defaultValue);
+        if (!isExpired()) return getCachedOrDefault();
+        // 已过时的数据，需要重新解析一次。
+
+        Object value = getValue();
+        if (value == null) return getDefaultValue(); // 获取的值不存在，直接使用默认值。
+        try {
+            // 若未出现错误，则直接更新缓存并返回。
+            return updateCache(this.parser.parse(value, this.defaultValue));
+        } catch (Exception e) {
+            // 出现了解析错误，提示并返回默认值。
+            e.printStackTrace();
+            return getDefaultValue();
+        }
+
     }
 
     @Override
