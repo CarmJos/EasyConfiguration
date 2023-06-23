@@ -6,6 +6,10 @@ import java.io.File;
 import java.io.IOException;
 
 public class EasyConfiguration {
+
+    private EasyConfiguration() {
+    }
+
     public static HOCONFileConfigProvider from(File file, String source) {
         HOCONFileConfigProvider provider = new HOCONFileConfigProvider(file);
         try {
@@ -28,4 +32,5 @@ public class EasyConfiguration {
     public static HOCONFileConfigProvider from(String fileName, String source) {
         return from(new File(fileName), source);
     }
+
 }

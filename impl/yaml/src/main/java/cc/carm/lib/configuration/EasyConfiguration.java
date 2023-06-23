@@ -6,6 +6,9 @@ import java.io.File;
 import java.io.IOException;
 
 public class EasyConfiguration {
+    
+    private EasyConfiguration() {
+    }
 
     public static YAMLConfigProvider from(File file, String source) {
         YAMLConfigProvider provider = new YAMLConfigProvider(file);

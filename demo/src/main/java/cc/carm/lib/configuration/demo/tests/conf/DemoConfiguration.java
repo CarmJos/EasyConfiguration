@@ -12,6 +12,7 @@ import cc.carm.lib.configuration.core.value.type.ConfiguredSection;
 import cc.carm.lib.configuration.core.value.type.ConfiguredValue;
 import cc.carm.lib.configuration.demo.tests.model.TestModel;
 
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -24,6 +25,8 @@ public class DemoConfiguration extends ConfigurationRoot {
 
     @ConfigPath(root = true)
     public static final ConfigValue<Long> TEST_NUMBER = ConfiguredValue.of(Long.class, 1000000L);
+
+    public static final ConfigValue<ChronoUnit> TEST_ENUM = ConfiguredValue.of(ChronoUnit.class, ChronoUnit.DAYS);
 
     // 支持通过 Class<?> 变量标注子配置，一并注册。
     // 注意： 若对应类也有注解，则优先使用类的注解。

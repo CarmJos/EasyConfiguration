@@ -8,9 +8,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
-public abstract class HOCONUtils {
+public class HOCONUtils {
+
+    private HOCONUtils() {
+    }
+
     public static String getSimplePath(String path, char separator) {
         int index = path.lastIndexOf(separator);
         return (index == -1) ? path : path.substring(index + 1);
@@ -45,11 +50,11 @@ public abstract class HOCONUtils {
      * 下一次键名就是 "deep.key"
      *
      * @param parent Object
-     * @param deep 是否更深层获取
+     * @param deep   是否更深层获取
      * @param prefix 当前 Object 键名前缀
      * @return Object 中的所有键
      */
-    public static LinkedHashSet<String> getKeysFromObject(HOCONConfigWrapper parent, boolean deep, String prefix) {
+    public static Set<String> getKeysFromObject(HOCONConfigWrapper parent, boolean deep, String prefix) {
         return parent.getSource().entrySet().stream().collect(
                 LinkedHashSet::new,
                 (set, entry) -> {
@@ -68,7 +73,7 @@ public abstract class HOCONUtils {
      * 将 Object 保存为字符串
      * 并使用注释器打上注释
      *
-     * @param object Object
+     * @param object    Object
      * @param commenter 注释器
      * @return 保存的字符串
      */

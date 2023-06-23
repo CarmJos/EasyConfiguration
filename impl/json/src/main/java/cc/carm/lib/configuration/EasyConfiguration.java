@@ -7,6 +7,9 @@ import java.io.IOException;
 
 public class EasyConfiguration {
 
+    private EasyConfiguration() {
+    }
+
     public static JSONConfigProvider from(File file, String source) {
         JSONConfigProvider provider = new JSONConfigProvider(file);
         try {

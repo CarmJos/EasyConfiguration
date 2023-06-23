@@ -67,6 +67,9 @@ public interface ConfigValueParser<T, R> {
                 }
             } else if (Boolean.class.isAssignableFrom(valueClass)) {
                 input = booleanValue().parse(input, (Boolean) defaultValue);
+            } else if (Enum.class.isAssignableFrom(valueClass) && input instanceof String) {
+                String enumName = (String) input;
+                input = valueClass.getDeclaredMethod("valueOf", String.class).invoke(null, enumName);
             }
 
             if (valueClass.isInstance(input)) return valueClass.cast(input);
@@ -123,6 +126,21 @@ public interface ConfigValueParser<T, R> {
     @Contract(pure = true)
     static @NotNull ConfigValueParser<Object, Boolean> booleanValue() {
         return (input, defaultValue) -> ConfigDataFunction.booleanValue().parse(input);
+    }
+
+    @Contract(pure = true)
+    static @NotNull <E extends Enum<E>> ConfigValueParser<Object, E> enumValue(Class<E> enumClass) {
+        return (input, defaultValue) -> {
+            if (input instanceof Enum) {
+                return enumClass.cast(input);
+            } else if (input instanceof String) {
+                return Enum.valueOf(enumClass, (String) input);
+            } else if (input instanceof Number) {
+                return enumClass.getEnumConstants()[((Number) input).intValue()];
+            } else {
+                throw new IllegalArgumentException("Cannot cast value to " + enumClass.getName());
+            }
+        };
     }
 
 }

@@ -6,6 +6,7 @@ import cc.carm.lib.configuration.core.source.impl.FileConfigProvider;
 import cc.carm.lib.configuration.hocon.exception.HOCONGetValueException;
 import cc.carm.lib.configuration.hocon.util.HOCONUtils;
 import com.typesafe.config.*;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,7 +17,7 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.Set;
 
-public class HOCONFileConfigProvider extends FileConfigProvider<HOCONConfigWrapper> implements CommentedHOCON {
+public class HOCONFileConfigProvider extends FileConfigProvider<HOCONConfigWrapper> {
     protected final @NotNull ConfigurationComments comments = new ConfigurationComments();
     protected HOCONConfigWrapper configuration;
     protected ConfigInitializer<HOCONFileConfigProvider> initializer;
@@ -48,9 +49,10 @@ public class HOCONFileConfigProvider extends FileConfigProvider<HOCONConfigWrapp
 
     @Override
     protected void onReload() throws ConfigException {
-        this.configuration = new HOCONConfigWrapper(ConfigFactory.parseFile(this.file, ConfigParseOptions.defaults()
+        ConfigObject conf = ConfigFactory.parseFile(this.file, ConfigParseOptions.defaults()
                 .setSyntax(ConfigSyntax.CONF)
-                .setAllowMissing(false)).root());
+                .setAllowMissing(false)).root();
+        this.configuration = new HOCONConfigWrapper(conf);
     }
 
     @Override
@@ -63,7 +65,6 @@ public class HOCONFileConfigProvider extends FileConfigProvider<HOCONConfigWrapp
         return this.initializer;
     }
 
-    @Override
     public String serializeValue(@NotNull String key, @NotNull Object value) {
         // 带有 key=value 的新空对象
         return ConfigFactory.empty()
@@ -71,7 +72,11 @@ public class HOCONFileConfigProvider extends FileConfigProvider<HOCONConfigWrapp
                 .root().render();
     }
 
-    @Override
+    public @NotNull Set<String> getKeys() {
+        return getKeys(null, true);
+    }
+
+    @Contract("null,_->!null")
     public @Nullable Set<String> getKeys(@Nullable String sectionKey, boolean deep) {
         if (sectionKey == null) { // 当前路径
             return HOCONUtils.getKeysFromObject(this.configuration, deep, "");
@@ -91,12 +96,10 @@ public class HOCONFileConfigProvider extends FileConfigProvider<HOCONConfigWrapp
         return HOCONUtils.getKeysFromObject(section, deep, "");
     }
 
-    @Override
     public @Nullable Object getValue(@NotNull String key) {
         return this.configuration.get(key);
     }
 
-    @Override
     public @Nullable List<String> getHeaderComments(@Nullable String key) {
         return this.comments.getHeaderComment(key);
     }

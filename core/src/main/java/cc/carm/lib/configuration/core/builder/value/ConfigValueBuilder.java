@@ -46,7 +46,10 @@ public class ConfigValueBuilder<V> {
         return from(
                 Object.class, ConfigDataFunction.identity(),
                 ConfigValueParser.castObject(valueClass),
-                ConfigDataFunction.toObject(), ConfigDataFunction.toObject()
+                s -> {
+                    if (s instanceof Enum<?>) return ((Enum<?>) s).name();
+                    else return s;
+                }, ConfigDataFunction.toObject()
         );
     }
 
