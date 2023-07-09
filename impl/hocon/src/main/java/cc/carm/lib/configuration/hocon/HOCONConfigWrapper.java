@@ -47,9 +47,6 @@ public class HOCONConfigWrapper implements ConfigurationWrapper<Map<String, Obje
 
     @Override
     public void set(@NotNull String path, @Nullable Object value) {
-        // TEST start
-        System.out.println(path);
-        // TEST end
         if (value instanceof Map) {
             //noinspection unchecked
             value = new HOCONConfigWrapper(ConfigFactory.parseMap((Map<String, ?>) value).root());
