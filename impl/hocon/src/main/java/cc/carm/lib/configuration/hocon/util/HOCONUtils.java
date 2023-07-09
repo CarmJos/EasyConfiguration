@@ -37,7 +37,7 @@ public class HOCONUtils {
                 currentObject = new HOCONConfigWrapper(ConfigFactory.empty().root());
                 previousObject.setDirect(pathName, currentObject);
             }
-            currentPath = currentPath.substring(0, index);
+            currentPath = currentPath.substring(index + 1);
         }
 
         return currentObject;
