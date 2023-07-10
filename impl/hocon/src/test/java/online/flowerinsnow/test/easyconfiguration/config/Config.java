@@ -16,5 +16,10 @@ public class Config extends ConfigurationRoot {
     public static class TestObject extends ConfigurationRoot {
         @HeaderComment("测试字段 Boolean")
         public static final ConfiguredValue<Boolean> TEST_BOOLEAN = ConfiguredValue.of(Boolean.class, true);
+        @HeaderComment("inner")
+        public static class InnerObject extends ConfigurationRoot {
+            @HeaderComment("测试字段")
+            public static final ConfiguredValue<Boolean> TEST_BOOLEAN_1 = ConfiguredValue.of(Boolean.class, true);
+        }
     }
 }
