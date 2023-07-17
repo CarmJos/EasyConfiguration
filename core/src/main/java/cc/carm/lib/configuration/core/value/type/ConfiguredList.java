@@ -65,6 +65,10 @@ public class ConfiguredList<V> extends CachedConfigValue<List<V>> implements Lis
         return get().get(index);
     }
 
+    public @NotNull List<V> copy() {
+        return new ArrayList<>(get());
+    }
+
     public <T> @NotNull T handle(Function<List<V>, T> function) {
         List<V> list = get();
         T result = function.apply(list);
