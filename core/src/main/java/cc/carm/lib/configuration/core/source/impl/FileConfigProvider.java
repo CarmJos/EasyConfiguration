@@ -5,7 +5,10 @@ import cc.carm.lib.configuration.core.source.ConfigurationWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
@@ -36,12 +39,15 @@ public abstract class FileConfigProvider<W extends ConfigurationWrapper<?>> exte
         }
 
         if (sourcePath != null) {
-            saveResource(sourcePath, true);
+            try {
+                saveResource(sourcePath, true);
+            } catch (IllegalArgumentException ignored) {
+            }
         }
     }
 
     public void saveResource(@NotNull String resourcePath, boolean replace)
-            throws NullPointerException, IOException, IllegalArgumentException {
+            throws IOException, IllegalArgumentException {
         Objects.requireNonNull(resourcePath, "ResourcePath cannot be null");
         if (resourcePath.equals("")) throw new IllegalArgumentException("ResourcePath cannot be empty");
 
