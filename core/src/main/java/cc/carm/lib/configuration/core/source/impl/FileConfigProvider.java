@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
 import java.util.Objects;
 
 public abstract class FileConfigProvider<W extends ConfigurationWrapper<?>> extends ConfigurationProvider<W> {
@@ -35,10 +36,7 @@ public abstract class FileConfigProvider<W extends ConfigurationWrapper<?>> exte
         }
 
         if (sourcePath != null) {
-            try {
-                saveResource(sourcePath, true);
-            } catch (Exception ignored) {
-            }
+            saveResource(sourcePath, true);
         }
     }
 
@@ -48,28 +46,25 @@ public abstract class FileConfigProvider<W extends ConfigurationWrapper<?>> exte
         if (resourcePath.equals("")) throw new IllegalArgumentException("ResourcePath cannot be empty");
 
         resourcePath = resourcePath.replace('\\', '/');
-        InputStream in = getResource(resourcePath);
-        if (in == null) throw new IllegalArgumentException("The resource '" + resourcePath + "' not exists");
 
+        URL url = this.getClass().getClassLoader().getResource(resourcePath);
+        if (url == null) throw new IllegalArgumentException("The resource '" + resourcePath + "' not exists");
 
         int lastIndex = resourcePath.lastIndexOf('/');
-        File outDir = new File(file, resourcePath.substring(0, Math.max(lastIndex, 0)));
+        File outDir = new File(file.getParentFile(), resourcePath.substring(0, Math.max(lastIndex, 0)));
 
         if (!outDir.exists() && !outDir.mkdirs()) throw new IOException("Failed to create directory " + outDir);
         if (!file.exists() || replace) {
-            try {
-
-                OutputStream out = new FileOutputStream(file);
-                byte[] buf = new byte[1024];
-                int len;
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
+            try (OutputStream out = Files.newOutputStream(file.toPath())) {
+                URLConnection connection = url.openConnection();
+                connection.setUseCaches(false);
+                try (InputStream in = connection.getInputStream()) {
+                    byte[] buf = new byte[1024];
+                    int len;
+                    while ((len = in.read(buf)) > 0) {
+                        out.write(buf, 0, len);
+                    }
                 }
-                out.close();
-                in.close();
-
-            } catch (IOException ex) {
-                ex.printStackTrace();
             }
         }
     }
