@@ -32,6 +32,10 @@ public class SectionValueBuilder<V>
         return this;
     }
 
+    public @NotNull SectionValueBuilder<V> parseValue(ConfigDataFunction<ConfigurationWrapper<?>, V> valueParser) {
+        return parseValue((section, path) -> valueParser.parse(section));
+    }
+
     public @NotNull SectionValueBuilder<V> parseValue(ConfigValueParser<ConfigurationWrapper<?>, V> valueParser) {
         this.parser = valueParser;
         return this;

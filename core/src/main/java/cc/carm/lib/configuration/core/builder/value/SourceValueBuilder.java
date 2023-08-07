@@ -39,6 +39,10 @@ public class SourceValueBuilder<S, V> extends CommonConfigBuilder<V, SourceValue
         return this;
     }
 
+    public @NotNull SourceValueBuilder<S, V> parseValue(ConfigDataFunction<S, V> valueParser) {
+        return parseValue((section, path) -> valueParser.parse(section));
+    }
+
     public @NotNull SourceValueBuilder<S, V> parseValue(@NotNull ConfigValueParser<S, V> valueParser) {
         this.valueParser = valueParser;
         return this;
