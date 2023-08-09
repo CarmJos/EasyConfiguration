@@ -49,16 +49,15 @@ public abstract class FileConfigProvider<W extends ConfigurationWrapper<?>> exte
     public void saveResource(@NotNull String resourcePath, boolean replace)
             throws IOException, IllegalArgumentException {
         Objects.requireNonNull(resourcePath, "ResourcePath cannot be null");
-        if (resourcePath.equals("")) throw new IllegalArgumentException("ResourcePath cannot be empty");
+        if (resourcePath.isEmpty()) throw new IllegalArgumentException("ResourcePath cannot be empty");
 
         resourcePath = resourcePath.replace('\\', '/');
 
         URL url = this.getClass().getClassLoader().getResource(resourcePath);
         if (url == null) throw new IllegalArgumentException("The resource '" + resourcePath + "' not exists");
 
-        int lastIndex = resourcePath.lastIndexOf('/');
-        File outDir = new File(file.getParentFile(), resourcePath.substring(0, Math.max(lastIndex, 0)));
-
+        File outDir = file.getParentFile();
+        
         if (!outDir.exists() && !outDir.mkdirs()) throw new IOException("Failed to create directory " + outDir);
         if (!file.exists() || replace) {
             try (OutputStream out = Files.newOutputStream(file.toPath())) {
