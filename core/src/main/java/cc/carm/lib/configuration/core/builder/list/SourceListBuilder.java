@@ -12,7 +12,7 @@ import java.util.List;
 
 public class SourceListBuilder<S, V> extends CommonConfigBuilder<List<V>, SourceListBuilder<S, V>> {
 
-    protected final @NotNull Class<S> sourceClass;
+    protected final @NotNull Class<? super S> sourceClass;
     protected @NotNull ConfigDataFunction<Object, S> sourceParser;
 
     protected final @NotNull Class<V> valueClass;
@@ -21,7 +21,7 @@ public class SourceListBuilder<S, V> extends CommonConfigBuilder<List<V>, Source
     protected @NotNull ConfigDataFunction<V, S> valueSerializer;
     protected @NotNull ConfigDataFunction<S, Object> sourceSerializer;
 
-    public SourceListBuilder(@NotNull Class<S> sourceClass, @NotNull ConfigDataFunction<Object, S> sourceParser,
+    public SourceListBuilder(@NotNull Class<? super S> sourceClass, @NotNull ConfigDataFunction<Object, S> sourceParser,
                              @NotNull Class<V> valueClass, @NotNull ConfigDataFunction<S, V> valueParser,
                              @NotNull ConfigDataFunction<V, S> valueSerializer,
                              @NotNull ConfigDataFunction<S, Object> sourceSerializer) {

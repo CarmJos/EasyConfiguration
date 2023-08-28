@@ -48,6 +48,14 @@ public class ConfigMapBuilder<M extends Map<K, V>, K, V> {
         return fromString(ConfigDataFunction.castFromString(this.valueClass));
     }
 
+    public SectionMapBuilder<M, K, V> fromSection() {
+        return new SectionMapBuilder<>(
+                supplier,
+                keyClass, ConfigDataFunction.castFromString(keyClass),
+                valueClass, ConfigDataFunction.required(),
+                ConfigDataFunction.castToString(), ConfigDataFunction.required());
+    }
+
     public SourceMapBuilder<M, Object, K, V> fromObject(@NotNull ConfigDataFunction<Object, V> valueParser) {
         return from(Object.class, valueParser, ConfigDataFunction.toObject());
     }

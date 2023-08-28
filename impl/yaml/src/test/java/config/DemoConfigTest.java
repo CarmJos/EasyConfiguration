@@ -42,6 +42,8 @@ public class DemoConfigTest {
         if (anyModel != null) System.out.println(anyModel.getName());
 
         ModelConfiguration.MODELS.forEach(System.out::println);
+        ModelConfiguration.MODEL_MAP.forEach((v, anyModel1) -> System.out.println(v + " -> " + anyModel1.toString()));
+
 
         System.out.println("----------------------------------------------------");
     }
