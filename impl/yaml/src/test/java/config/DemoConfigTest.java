@@ -10,6 +10,8 @@ import config.source.ModelConfiguration;
 import org.bspfsystems.yamlconfiguration.serialization.ConfigurationSerialization;
 import org.junit.Test;
 
+import java.io.IOException;
+
 public class DemoConfigTest {
 
     static {
@@ -17,7 +19,7 @@ public class DemoConfigTest {
         ConfigurationSerialization.registerClass(AnyModel.class);
     }
 
-    protected final YAMLConfigProvider provider = EasyConfiguration.from("target/config.yml", "config.yml");
+    protected final YAMLConfigProvider provider = EasyConfiguration.from("target/config.yml", "test/test2/config.yml");
 
     @Test
     public void onTest() {
