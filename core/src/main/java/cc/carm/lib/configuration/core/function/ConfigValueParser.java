@@ -50,22 +50,21 @@ public interface ConfigValueParser<T, R> {
     @Contract(pure = true)
     static <V> @NotNull ConfigValueParser<Object, V> castObject(Class<V> valueClass) {
         return (input, defaultValue) -> {
-
             if (Number.class.isAssignableFrom(valueClass)) {
-                if (Long.class.isAssignableFrom(valueClass)) {
+                if (Long.class.isAssignableFrom(valueClass) || long.class.isAssignableFrom(valueClass)) {
                     input = longValue().parse(input, (Long) defaultValue);
-                } else if (Integer.class.isAssignableFrom(valueClass)) {
+                } else if (Integer.class.isAssignableFrom(valueClass) || int.class.isAssignableFrom(valueClass)) {
                     input = intValue().parse(input, (Integer) defaultValue);
-                } else if (Float.class.isAssignableFrom(valueClass)) {
+                } else if (Float.class.isAssignableFrom(valueClass) || float.class.isAssignableFrom(valueClass)) {
                     input = floatValue().parse(input, (Float) defaultValue);
-                } else if (Double.class.isAssignableFrom(valueClass)) {
+                } else if (Double.class.isAssignableFrom(valueClass) || double.class.isAssignableFrom(valueClass)) {
                     input = doubleValue().parse(input, (Double) defaultValue);
-                } else if (Byte.class.isAssignableFrom(valueClass)) {
+                } else if (Byte.class.isAssignableFrom(valueClass) || byte.class.isAssignableFrom(valueClass)) {
                     input = byteValue().parse(input, (Byte) defaultValue);
-                } else if (Short.class.isAssignableFrom(valueClass)) {
+                } else if (Short.class.isAssignableFrom(valueClass) || short.class.isAssignableFrom(valueClass)) {
                     input = shortValue().parse(input, (Short) defaultValue);
                 }
-            } else if (Boolean.class.isAssignableFrom(valueClass)) {
+            } else if (Boolean.class.isAssignableFrom(valueClass) || boolean.class.isAssignableFrom(valueClass)) {
                 input = booleanValue().parse(input, (Boolean) defaultValue);
             } else if (Enum.class.isAssignableFrom(valueClass) && input instanceof String) {
                 String enumName = (String) input;
