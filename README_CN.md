@@ -23,6 +23,8 @@ README LANGUAGES [ [English](README.md) | [**中文**](README_CN.md)  ]
 
 ## 特性 & 优势
 
+支持 [YAML](impl/yaml), [JSON](impl/json), [HOCON](impl/hocon) 和 [SQL](impl/sql) 等多种配置文件格式。
+
 - 基于类的配置文件初始化、加载、获取与更新机制，方便快捷。
 - 支持复杂配置的手动序列化、反序列化。
 - 提供多种builder形式，快速构建 `ConfigValue<?>` 对象。
@@ -107,6 +109,20 @@ README LANGUAGES [ [English](README.md) | [**中文**](README_CN.md)  ]
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>cc.carm.lib</groupId>
+            <artifactId>easyconfiguration-hocon</artifactId>
+            <version>[LATEST RELEASE]</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>cc.carm.lib</groupId>
+            <artifactId>easyconfiguration-sql</artifactId>
+            <version>[LATEST RELEASE]</version>
+            <scope>compile</scope>
+        </dependency>
+        
     </dependencies>
 </project>
 ```
@@ -150,6 +166,10 @@ dependencies {
      //基于JSON文件的实现版本，可用于全部Java环境。
     //需要注意的是，JSON不支持文件注释。
     api "cc.carm.lib:easyconfiguration-json:[LATEST RELEASE]"
+    
+    api "cc.carm.lib:easyconfiguration-hocon:[LATEST RELEASE]"
+    
+    api "cc.carm.lib:easyconfiguration-sql:[LATEST RELEASE]"
 
 }
 ```

@@ -1,4 +1,3 @@
-
 README LANGUAGES [ [**English**](README.md) | [中文](README_CN.md)  ]
 
 # EasyConfiguration
@@ -12,19 +11,23 @@ README LANGUAGES [ [**English**](README.md) | [中文](README_CN.md)  ]
 
 **Easy _(to make)_ Configurations!**
 
-A simple, easy-to-use and universal solution for managing configuration files. 
+A simple, easy-to-use and universal solution for managing configuration files.
 Enjoy the ease of use with customizable formats for loading, reading, and updating your configuration files.
 
 ## Features & Advantages
 
-- Class-based mechanism for initializing, loading, retrieving, and updating configuration files, ensuring convenience and efficiency.
+Supported [YAML](impl/yaml), [JSON](impl/json), [HOCON](impl/hocon) and [SQL](impl/sql) based configuration files
+format.
+
+- Class-based mechanism for initializing, loading, retrieving, and updating configuration files, ensuring convenience
+  and efficiency.
 - Supports manual serialization and deserialization of complex configurations.
 - Offers multiple builder forms for rapid construction of `ConfigValue<?>` objects.
 - Enables specification of configuration paths, comments, and more via annotations.
 
 ## Development
 
-For a detailed development guide, [CLICK HERE](.doc/README.md). 
+For a detailed development guide, [CLICK HERE](.doc/README.md).
 
 For the latest JavaDoc release, [CLICK HERE](https://CarmJos.github.io/EasyConfiguration).
 
@@ -42,6 +45,7 @@ For more examples, see the [Development Guide](.doc/README.md).
 <summary>Remote Repository Configuration</summary>
 
 ```xml
+
 <project>
     <repositories>
 
@@ -51,7 +55,7 @@ For more examples, see the [Development Guide](.doc/README.md).
             <name>Maven Central</name>
             <url>https://repo1.maven.org/maven2</url>
         </repository>
-  
+
         <repository>
             <!-- Using GitHub dependencies for real-time updates, configuration required (recommended). -->
             <id>EasyConfiguration</id>
@@ -69,6 +73,7 @@ For more examples, see the [Development Guide](.doc/README.md).
 <summary>Generic Native Dependency</summary>
 
 ```xml
+
 <project>
     <dependencies>
         <!-- Basic implementation part, requiring custom implementation of “Provider” and “Wrapper”. -->
@@ -111,10 +116,10 @@ repositories {
 
     // Using Maven Central Repository for secure and stable updates, though synchronization might be needed.
     mavenCentral()
-  
+
     // Using GitHub dependencies for real-time updates, configuration required (recommended).
     maven { url 'https://maven.pkg.github.com/CarmJos/EasyConfiguration' }
-    
+
 }
 ```
 
@@ -156,11 +161,11 @@ If you appreciate this plugin, consider supporting me with a donation!
 
 Thank you for supporting open-source projects!
 
-Many thanks to Jetbrains for kindly providing a license for us to work on this and other open-source projects.  
+Many thanks to Jetbrains for kindly providing a license for us to work on this and other open-source projects.
 
 [![](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg)](https://www.jetbrains.com/?from=https://github.com/ArtformGames/ResidenceList)
 
-
 ## Open Source License
 
-This project's source code is licensed under the [GNU LESSER GENERAL PUBLIC LICENSE](https://www.gnu.org/licenses/lgpl-3.0.html).
+This project's source code is licensed under
+the [GNU LESSER GENERAL PUBLIC LICENSE](https://www.gnu.org/licenses/lgpl-3.0.html).
