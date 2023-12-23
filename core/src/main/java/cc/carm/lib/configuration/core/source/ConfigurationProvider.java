@@ -1,7 +1,8 @@
 package cc.carm.lib.configuration.core.source;
 
 import cc.carm.lib.configuration.core.ConfigInitializer;
-import cc.carm.lib.configuration.core.ConfigurationRoot;
+import cc.carm.lib.configuration.core.Configuration;
+import cc.carm.lib.configuration.core.Configuration;
 import cc.carm.lib.configuration.core.value.ConfigValue;
 import cc.carm.lib.configuration.core.value.impl.CachedConfigValue;
 import org.jetbrains.annotations.NotNull;
@@ -101,49 +102,49 @@ public abstract class ConfigurationProvider<W extends ConfigurationWrapper<?>> {
     /**
      * 初始化指定类以及其子类的所有 {@link ConfigValue} 对象。
      *
-     * @param configClazz 配置文件类，须继承于 {@link ConfigurationRoot} 。
+     * @param configClazz 配置文件类，须继承于 {@link Configuration} 。
      */
-    public void initialize(Class<? extends ConfigurationRoot> configClazz) {
+    public void initialize(Class<? extends Configuration> configClazz) {
         initialize(configClazz, true);
     }
 
     /**
      * 初始化指定类以及其子类的所有 {@link ConfigValue} 对象。
      *
-     * @param configClazz  配置文件类，须继承于 {@link ConfigurationRoot} 。
+     * @param configClazz  配置文件类，须继承于 {@link Configuration} 。
      * @param saveDefaults 是否写入默认值(默认为 true)。
      */
-    public void initialize(Class<? extends ConfigurationRoot> configClazz, boolean saveDefaults) {
+    public void initialize(Class<? extends Configuration> configClazz, boolean saveDefaults) {
         this.getInitializer().initialize(configClazz, saveDefaults);
     }
 
     /**
      * 初始化指定类的所有 {@link ConfigValue} 对象。
      *
-     * @param configClazz    配置文件类，须继承于 {@link ConfigurationRoot} 。
+     * @param configClazz    配置文件类，须继承于 {@link Configuration} 。
      * @param saveDefaults   是否写入默认值(默认为 true)。
      * @param loadSubClasses 是否加载内部子类(默认为 true)。
      */
-    public void initialize(Class<? extends ConfigurationRoot> configClazz, boolean saveDefaults, boolean loadSubClasses) {
+    public void initialize(Class<? extends Configuration> configClazz, boolean saveDefaults, boolean loadSubClasses) {
         this.getInitializer().initialize(configClazz, saveDefaults, loadSubClasses);
     }
 
     /**
-     * 初始化指定实例的所有 {@link ConfigValue} 与内部 {@link ConfigurationRoot} 对象。
+     * 初始化指定实例的所有 {@link ConfigValue} 与内部 {@link Configuration} 对象。
      *
-     * @param config 配置文件实例类，须实现 {@link ConfigurationRoot} 。
+     * @param config 配置文件实例类，须实现 {@link Configuration} 。
      */
-    public void initialize(@NotNull ConfigurationRoot config) {
+    public void initialize(@NotNull Configuration config) {
         this.getInitializer().initialize(config, true);
     }
 
     /**
-     * 初始化指定实例的所有 {@link ConfigValue} 与内部 {@link ConfigurationRoot} 对象。
+     * 初始化指定实例的所有 {@link ConfigValue} 与内部 {@link Configuration} 对象。
      *
-     * @param config       配置文件实例类，须实现 {@link ConfigurationRoot} 。
+     * @param config       配置文件实例类，须实现 {@link Configuration} 。
      * @param saveDefaults 是否写入默认值(默认为 true)。
      */
-    public void initialize(@NotNull ConfigurationRoot config, boolean saveDefaults) {
+    public void initialize(@NotNull Configuration config, boolean saveDefaults) {
         this.getInitializer().initialize(config, saveDefaults);
     }
 

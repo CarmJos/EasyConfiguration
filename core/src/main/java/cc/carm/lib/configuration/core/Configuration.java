@@ -1,8 +1,8 @@
 package cc.carm.lib.configuration.core;
 
 /**
- * The root node of the configuration file class,
+ * The root interface of the configuration file interfaces,
  * which is used to label and record the configuration information.
  */
-public abstract class ConfigurationRoot implements Configuration {
+public interface Configuration {
 }

@@ -31,37 +31,55 @@ public class ConfiguredSection<V> extends CachedConfigValue<V> {
         this.serializer = serializer;
     }
 
+    /**
+     * @return Value's type class
+     */
     public @NotNull Class<V> getValueClass() {
         return valueClass;
     }
 
+    /**
+     * @return Value's parser, cast value from section.
+     */
     public @NotNull ConfigValueParser<ConfigurationWrapper<?>, V> getParser() {
         return parser;
     }
 
+    /**
+     * @return Value's serializer, serialize value to section.
+     */
     public @NotNull ConfigDataFunction<V, ? extends Map<String, Object>> getSerializer() {
         return serializer;
     }
 
+    /**
+     * @return Get the value that parsed from the configuration section.
+     */
     @Override
     public @Nullable V get() {
         if (!isExpired()) return getCachedOrDefault();
-        // 已过时的数据，需要重新解析一次。
+        // Data that is outdated and needs to be parsed again.
 
         ConfigurationWrapper<?> section = getConfiguration().getConfigurationSection(getConfigPath());
         if (section == null) return getDefaultValue();
 
         try {
-            // 若未出现错误，则直接更新缓存并返回。
+            // If there are no errors, update the cache and return.
             return updateCache(this.parser.parse(section, this.defaultValue));
         } catch (Exception e) {
-            // 出现了解析错误，提示并返回默认值。
+            // There was a parsing error, prompted and returned the default value.
             e.printStackTrace();
             return getDefaultValue();
         }
 
     }
 
+    /**
+     * Use the specified value to update the configuration section.
+     * Will use {@link #getSerializer()} to serialize the value to section.
+     *
+     * @param value The value that needs to be set in the configuration.
+     */
     @Override
     public void set(V value) {
         updateCache(value);

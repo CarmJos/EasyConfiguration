@@ -14,6 +14,11 @@ public class ConfiguredValue<V> extends CachedConfigValue<V> {
         return builder().asValue(valueClass);
     }
 
+    @SuppressWarnings("unchecked")
+    public static <V> ConfiguredValue<V> of(@NotNull V defaultValue) {
+        return of((Class<V>) defaultValue.getClass(), defaultValue);
+    }
+
     public static <V> ConfiguredValue<V> of(Class<V> valueClass) {
         return of(valueClass, null);
     }
@@ -36,32 +41,51 @@ public class ConfiguredValue<V> extends CachedConfigValue<V> {
         this.serializer = serializer;
     }
 
+    /**
+     * @return Value's type class
+     */
     public @NotNull Class<V> getValueClass() {
         return valueClass;
     }
 
+    /**
+     * @return Value's parser, cast value from base object.
+     */
     public @NotNull ConfigValueParser<Object, V> getParser() {
         return parser;
+    }
+
+    /**
+     * @return Value's serializer, serialize value to base object.
+     */
+    public @NotNull ConfigDataFunction<V, Object> getSerializer() {
+        return serializer;
     }
 
     @Override
     public V get() {
         if (!isExpired()) return getCachedOrDefault();
-        // 已过时的数据，需要重新解析一次。
+        // Data that is outdated and needs to be parsed again.
 
         Object value = getValue();
         if (value == null) return getDefaultValue(); // 获取的值不存在，直接使用默认值。
         try {
-            // 若未出现错误，则直接更新缓存并返回。
+            // If there are no errors, update the cache and return.
             return updateCache(this.parser.parse(value, this.defaultValue));
         } catch (Exception e) {
-            // 出现了解析错误，提示并返回默认值。
+            // There was a parsing error, prompted and returned the default value.
             e.printStackTrace();
             return getDefaultValue();
         }
 
     }
 
+    /**
+     * Set the value of the configuration path.
+     * Will use {@link #getSerializer()} to serialize the value.
+     *
+     * @param value The value to be set
+     */
     @Override
     public void set(V value) {
         updateCache(value);

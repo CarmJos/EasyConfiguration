@@ -43,8 +43,7 @@ public class ConfiguredList<V> extends CachedConfigValue<List<V>> implements Lis
     @Override
     public @NotNull List<V> get() {
         if (!isExpired()) return getCachedOrDefault(new ArrayList<>());
-
-        // 已过时的数据，需要重新解析一次。
+        // Data that is outdated and needs to be parsed again.
         List<V> list = new ArrayList<>();
         List<?> data = getConfiguration().contains(getConfigPath()) ?
                 getConfiguration().getList(getConfigPath()) : null;

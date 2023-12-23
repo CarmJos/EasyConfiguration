@@ -14,7 +14,7 @@ import java.util.List;
 
 /**
  * 配置文件类初始化方法
- * 用于初始化 {@link ConfigurationRoot} 中的每个 {@link ConfigValue} 对象
+ * 用于初始化 {@link Configuration} 中的每个 {@link ConfigValue} 对象
  *
  * @param <T> {@link ConfigurationProvider} 配置文件的数据来源
  * @author CarmJos
@@ -30,21 +30,21 @@ public class ConfigInitializer<T extends ConfigurationProvider<?>> {
     /**
      * 初始化指定类以及其子类的所有 {@link ConfigValue} 对象。
      *
-     * @param clazz        配置文件类，须继承于 {@link ConfigurationRoot} 。
+     * @param clazz        配置文件类，须继承于 {@link Configuration} 。
      * @param saveDefaults 是否写入默认值(默认为 true)。
      */
-    public void initialize(@NotNull Class<? extends ConfigurationRoot> clazz, boolean saveDefaults) {
+    public void initialize(@NotNull Class<? extends Configuration> clazz, boolean saveDefaults) {
         initialize(clazz, saveDefaults, true);
     }
 
     /**
      * 初始化指定类的所有 {@link ConfigValue} 对象。
      *
-     * @param clazz          配置文件类，须继承于 {@link ConfigurationRoot} 。
+     * @param clazz          配置文件类，须继承于 {@link Configuration} 。
      * @param saveDefaults   是否写入默认值(默认为 true)。
      * @param loadSubClasses 是否加载内部子类(默认为 true)。
      */
-    public void initialize(@NotNull Class<? extends ConfigurationRoot> clazz,
+    public void initialize(@NotNull Class<? extends Configuration> clazz,
                            boolean saveDefaults, boolean loadSubClasses) {
         initializeStaticClass(
                 clazz, null, null,
@@ -61,21 +61,21 @@ public class ConfigInitializer<T extends ConfigurationProvider<?>> {
     }
 
     /**
-     * 初始化指定实例的所有 {@link ConfigValue} 与内部 {@link ConfigurationRoot} 对象。
+     * 初始化指定实例的所有 {@link ConfigValue} 与内部 {@link Configuration} 对象。
      *
-     * @param config 配置文件实例类，须实现 {@link ConfigurationRoot} 。
+     * @param config 配置文件实例类，须实现 {@link Configuration} 。
      */
-    public void initialize(@NotNull ConfigurationRoot config) {
+    public void initialize(@NotNull Configuration config) {
         initialize(config, true);
     }
 
     /**
-     * 初始化指定实例的所有 {@link ConfigValue} 与内部 {@link ConfigurationRoot} 对象。
+     * 初始化指定实例的所有 {@link ConfigValue} 与内部 {@link Configuration} 对象。
      *
-     * @param config       配置文件实例类，须实现 {@link ConfigurationRoot} 。
+     * @param config       配置文件实例类，须实现 {@link Configuration} 。
      * @param saveDefaults 是否写入默认值(默认为 true)。
      */
-    public void initialize(@NotNull ConfigurationRoot config, boolean saveDefaults) {
+    public void initialize(@NotNull Configuration config, boolean saveDefaults) {
         initializeInstance(
                 config, null, null,
                 null, null, null,
@@ -92,7 +92,7 @@ public class ConfigInitializer<T extends ConfigurationProvider<?>> {
 
 
     // 针对实例类的初始化方法
-    private void initializeInstance(@NotNull ConfigurationRoot root,
+    private void initializeInstance(@NotNull Configuration root,
                                     @Nullable String parentPath, @Nullable String fieldName,
                                     @Nullable ConfigPath fieldPath,
                                     @Nullable HeaderComment fieldHeaderComments,
@@ -114,7 +114,7 @@ public class ConfigInitializer<T extends ConfigurationProvider<?>> {
                                        @Nullable HeaderComment fieldHeaderComments,
                                        @Nullable InlineComment fieldInlineComments,
                                        boolean saveDefaults, boolean loadSubClasses) {
-        if (!ConfigurationRoot.class.isAssignableFrom(clazz)) return; // 只解析继承了 ConfigurationRoot 的类
+        if (!Configuration.class.isAssignableFrom(clazz)) return; // 只解析继承了 ConfigurationRoot 的类
         String path = getClassPath(clazz, parentPath, fieldName, fieldPath);
         this.provider.setHeaderComment(path, getClassHeaderComments(clazz, fieldHeaderComments));
         if (path != null) this.provider.setInlineComment(path, readInlineComments(fieldInlineComments));
@@ -147,10 +147,10 @@ public class ConfigInitializer<T extends ConfigurationProvider<?>> {
                         field.getAnnotation(InlineComment.class),
                         saveDefaults
                 );
-            } else if (source instanceof ConfigurationRoot && object instanceof ConfigurationRoot) {
+            } else if (source instanceof Configuration && object instanceof Configuration) {
                 // 当且仅当 源字段与字段 均为ConfigurationRoot实例时，才对目标字段进行下一步初始化加载。
                 initializeInstance(
-                        (ConfigurationRoot) object, parent, field.getName(),
+                        (Configuration) object, parent, field.getName(),
                         field.getAnnotation(ConfigPath.class),
                         field.getAnnotation(HeaderComment.class),
                         field.getAnnotation(InlineComment.class),
