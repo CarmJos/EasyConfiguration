@@ -34,7 +34,7 @@ Check out some code demonstrations [HERE](demo/src/main/java/cc/carm/lib/configu
 
 For more examples, see the [Development Guide](.doc/README.md).
 
-### :book: Dependencies
+### Dependencies
 
 #### Maven Dependency
 
