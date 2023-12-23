@@ -1,10 +1,6 @@
-```text
-   ____                _____          ____                    __  _
-  / __/__ ____ __ __  / ___/__  ___  / _(_)__ ___ _________ _/ /_(_)__  ___
- / _// _ `(_-</ // / / /__/ _ \/ _ \/ _/ / _ `/ // / __/ _ `/ __/ / _ \/ _ \
-/___/\_,_/___/\_, /  \___/\___/_//_/_//_/\_, /\_,_/_/  \_,_/\__/_/\___/_//_/
-             /___/                      /___/
-```
+以下是上述中文文档的英文翻译，尽可能保留原意的同时，调整为更适合美国读者的表述方式：
+
+---
 
 # EasyConfiguration
 
@@ -15,54 +11,48 @@
 ![CodeSize](https://img.shields.io/github/languages/code-size/CarmJos/EasyConfiguration)
 ![](https://visitor-badge.glitch.me/badge?page_id=EasyConfiguration.readme)
 
-轻松(做)配置，简单便捷的通用配置文件加载、读取与更新工具，可自定义配置格式。
+**Easy _(to make)_ Configurations!**
 
-## 优势
+Introducing EasyConfiguration, your simple and universal solution for managing configuration files. Enjoy the ease of use with customizable formats for loading, reading, and updating your configuration files.
 
-- 基于类的配置文件初始化、加载、获取与更新机制，方便快捷。
-- 支持复杂配置的手动序列化、反序列化。
-- 提供多种builder形式，快速构建 `ConfigValue<?>` 对象。
-- 支持通过注解规定配置对应的路径、注释等信息。
+## Advantages
 
-## 开发
+- Class-based mechanism for initializing, loading, retrieving, and updating configuration files, ensuring convenience and efficiency.
+- Supports manual serialization and deserialization of complex configurations.
+- Offers multiple builder forms for rapid construction of `ConfigValue<?>` objects.
+- Enables specification of configuration paths, comments, and more via annotations.
 
-详细开发介绍请 [点击这里](.documentation/README.md) , JavaDoc(最新Release) 请 [点击这里](https://CarmJos.github.io/EasyConfiguration) 。
+## Development
 
-### 示例代码
+For a detailed development guide, [click here](.doc/README.md). For the latest JavaDoc release, [click here](https://CarmJos.github.io/EasyConfiguration).
 
-您可以 [点击这里](demo/src/main/java/cc/carm/lib/configuration/demo/DatabaseConfiguration.java) 查看部分代码演示，更多演示详见 [开发介绍](.documentation/README.md) 。
+### Code Samples
 
-### 依赖方式
+Check out some code demonstrations [here](demo/src/main/java/cc/carm/lib/configuration/demo/DatabaseConfiguration.java). For more examples, see the [development guide](.doc/README.md).
 
-#### Maven 依赖
+### Dependencies
+
+#### Maven Dependency
 
 <details>
-<summary>远程库配置</summary>
+<summary>Remote Repository Configuration</summary>
 
 ```xml
-
 <project>
     <repositories>
 
         <repository>
-            <!--采用Maven中心库，安全稳定，但版本更新需要等待同步-->
+            <!-- Using Maven Central Repository for secure and stable updates, though synchronization might be needed. -->
             <id>maven</id>
             <name>Maven Central</name>
             <url>https://repo1.maven.org/maven2</url>
         </repository>
   
         <repository>
-            <!--采用github依赖库，实时更新，但需要配置 (推荐) -->
+            <!-- Using GitHub dependencies for real-time updates, configuration required (recommended). -->
             <id>EasyConfiguration</id>
             <name>GitHub Packages</name>
             <url>https://maven.pkg.github.com/CarmJos/EasyConfiguration</url>
-        </repository>
-
-        <repository>
-            <!--采用我的私人依赖库，简单方便，但可能因为变故而无法使用-->
-            <id>carm-repo</id>
-            <name>Carm's Repo</name>
-            <url>https://repo.carm.cc/repository/maven-public/</url>
         </repository>
 
     </repositories>
@@ -72,13 +62,12 @@
 </details>
 
 <details>
-<summary>通用原生依赖</summary>
+<summary>Generic Native Dependency</summary>
 
 ```xml
-
 <project>
     <dependencies>
-        <!--基础实现部分，需要自行实现“Provider”与“Wrapper”。-->
+        <!-- Basic implementation part, requiring custom implementation of “Provider” and “Wrapper”. -->
         <dependency>
             <groupId>cc.carm.lib</groupId>
             <artifactId>easyconfiguration-core</artifactId>
@@ -86,7 +75,7 @@
             <scope>compile</scope>
         </dependency>
 
-        <!--基于YAML文件的实现版本，可用于全部Java环境。-->
+        <!-- YAML file-based implementation, compatible with all Java environments. -->
         <dependency>
             <groupId>cc.carm.lib</groupId>
             <artifactId>easyconfiguration-yaml</artifactId>
@@ -94,8 +83,7 @@
             <scope>compile</scope>
         </dependency>
 
-        <!--基于JSON文件的实现版本，可用于全部Java环境。-->
-        <!--需要注意的是，JSON不支持文件注释。-->
+        <!-- JSON file-based implementation, compatible with all Java environments. Note: JSON does not support file comments. -->
         <dependency>
             <groupId>cc.carm.lib</groupId>
             <artifactId>easyconfiguration-json</artifactId>
@@ -109,42 +97,39 @@
 
 </details>
 
-#### Gradle 依赖
+#### Gradle Dependency
 
 <details>
-<summary>远程库配置</summary>
+<summary>Remote Repository Configuration</summary>
 
 ```groovy
 repositories {
 
-    // 采用Maven中心库，安全稳定，但版本更新需要等待同步 
+    // Using Maven Central Repository for secure and stable updates, though synchronization might be needed.
     mavenCentral()
   
-    // 采用github依赖库，实时更新，但需要配置 (推荐)
+    // Using GitHub dependencies for real-time updates, configuration required (recommended).
     maven { url 'https://maven.pkg.github.com/CarmJos/EasyConfiguration' }
-
-    // 采用我的私人依赖库，简单方便，但可能因为变故而无法使用
-    maven { url 'https://repo.carm.cc/repository/maven-public/' }
+    
 }
 ```
 
 </details>
 
 <details>
-<summary>通用原生依赖</summary>
+<summary>Generic Native Dependency</summary>
 
 ```groovy
 
 dependencies {
 
-    //基础实现部分，需要自行实现“Provider”与“Wrapper”。
+    // Basic implementation part, requiring custom implementation of “Provider” and “Wrapper”.
     api "cc.carm.lib:easyconfiguration-core:[LATEST RELEASE]"
 
-    //基于YAML文件的实现版本，可用于全部Java环境。
+    // YAML file-based implementation, compatible with all Java environments.
     api "cc.carm.lib:easyconfiguration-yaml:[LATEST RELEASE]"
 
-     //基于JSON文件的实现版本，可用于全部Java环境。
-    //需要注意的是，JSON不支持文件注释。
+    // JSON file-based implementation, compatible with all Java environments. Note: JSON does not support file comments.
     api "cc.carm.lib:easyconfiguration-json:[LATEST RELEASE]"
 
 }
@@ -152,23 +137,25 @@ dependencies {
 
 </details>
 
-## 衍生项目
+## Derived Projects
 
-### [**MineConfiguration**](https://github.com/CarmJos/MineConfiguration) (by @CarmJos )
+### [**MineConfiguration**](https://github.com/CarmJos/MineConfiguration) (by @CarmJos)
 
 EasyConfiguration for MineCraft!
-开始在 MineCraft 相关服务器平台上轻松(做)配置吧！
+Easily manage configurations on MineCraft-related server platforms.
 
-目前支持 BungeeCord, Bukkit(Spigot) 服务端，后续将支持更多平台。
+Currently supports BungeeCord, Bukkit (Spigot) servers, with more platforms to be supported soon.
 
-## 支持与捐赠
+## Support and Donation
 
-若您觉得本插件做的不错，您可以通过捐赠支持我！
+If you appreciate this plugin, consider supporting me with a donation!
 
-感谢您对开源项目的支持！
+Thank you for supporting open-source projects!
 
-<img height=25% width=25% src="https://raw.githubusercontent.com/CarmJos/CarmJos/main/img/donate-code.jpg"  alt=""/>
+Many thanks to Jetbrains for kindly providing a license for us to work on this and other open-source projects.  
+[![](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg)](https://www.jetbrains.com/?from=https://github.com/ArtformGames/ResidenceList)
 
-## 开源协议
 
-本项目源码采用 [GNU LESSER GENERAL PUBLIC LICENSE](https://www.gnu.org/licenses/lgpl-3.0.html) 开源协议。
+## Open Source License
+
+This project's source code is licensed under the [GNU LESSER GENERAL PUBLIC LICENSE](https://www.gnu.org/licenses/lgpl-3.0.html).
