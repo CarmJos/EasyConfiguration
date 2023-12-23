@@ -1,6 +1,5 @@
-以下是上述中文文档的英文翻译，尽可能保留原意的同时，调整为更适合美国读者的表述方式：
 
----
+README LANGUAGES [ [**English**](README.md) | [中文](README_CN.md)  ]
 
 # EasyConfiguration
 

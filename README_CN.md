@@ -6,6 +6,8 @@
              /___/                      /___/
 ```
 
+README LANGUAGES [ [English](README.md) | [**中文**](README_CN.md)  ]
+
 # EasyConfiguration
 
 [![version](https://img.shields.io/github/v/release/CarmJos/EasyConfiguration)](https://github.com/CarmJos/EasyConfiguration/releases)
