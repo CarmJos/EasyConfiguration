@@ -41,6 +41,7 @@
             <version>${project.parent.version}</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.bspfsystems</groupId>
             <artifactId>yamlconfiguration</artifactId>

@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.LinkedHashMap;
 
 /**
@@ -37,6 +38,16 @@ public class JSONConfigProvider extends FileConfigProvider<JSONConfigWrapper> {
     }
 
     public void initializeConfig() {
+        onReload();
+    }
+
+    @Override
+    public @NotNull JSONConfigWrapper getConfiguration() {
+        return this.configuration;
+    }
+
+    @Override
+    protected void onReload() {
         LinkedHashMap<?, ?> map = null;
 
         try (FileInputStream is = new FileInputStream(file)) {
@@ -51,24 +62,13 @@ public class JSONConfigProvider extends FileConfigProvider<JSONConfigWrapper> {
     }
 
     @Override
-    public @NotNull JSONConfigWrapper getConfiguration() {
-        return this.configuration;
-    }
-
-    @Override
-    protected void onReload() throws Exception {
-        super.reload();
-        initializeConfig();
-    }
-
-    @Override
     public @Nullable ConfigurationComments getComments() {
         return null;
     }
 
     @Override
     public void save() throws Exception {
-        try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
+        try (Writer writer = new OutputStreamWriter(Files.newOutputStream(file.toPath()), StandardCharsets.UTF_8)) {
             gson.toJson(configuration.data, writer);
         }
     }

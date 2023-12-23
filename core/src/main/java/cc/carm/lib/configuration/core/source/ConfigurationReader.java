@@ -137,39 +137,43 @@ interface ConfigurationReader {
         return getWrapper().get(path, def, String.class);
     }
 
+    default <V> @NotNull List<V> getList(@NotNull String path, @NotNull ConfigValueParser<Object, V> parser) {
+        return parseList(getWrapper().getList(path), parser);
+    }
+
     @Unmodifiable
     default @NotNull List<String> getStringList(@NotNull String path) {
-        return parseList(getWrapper().getList(path), ConfigValueParser.castToString());
+        return getList(path, ConfigValueParser.castToString());
     }
 
     @Unmodifiable
     default @NotNull List<Integer> getIntegerList(@NotNull String path) {
-        return parseList(getWrapper().getList(path), ConfigValueParser.intValue());
+        return getList(path, ConfigValueParser.intValue());
     }
 
     @Unmodifiable
     default @NotNull List<Long> getLongList(@NotNull String path) {
-        return parseList(getWrapper().getList(path), ConfigValueParser.longValue());
+        return getList(path, ConfigValueParser.longValue());
     }
 
     @Unmodifiable
     default @NotNull List<Double> getDoubleList(@NotNull String path) {
-        return parseList(getWrapper().getList(path), ConfigValueParser.doubleValue());
+        return getList(path, ConfigValueParser.doubleValue());
     }
 
     @Unmodifiable
     default @NotNull List<Float> getFloatList(@NotNull String path) {
-        return parseList(getWrapper().getList(path), ConfigValueParser.floatValue());
+        return getList(path, ConfigValueParser.floatValue());
     }
 
     @Unmodifiable
     default @NotNull List<Byte> getByteList(@NotNull String path) {
-        return parseList(getWrapper().getList(path), ConfigValueParser.byteValue());
+        return getList(path, ConfigValueParser.byteValue());
     }
 
     @Unmodifiable
     default @NotNull List<Character> getCharList(@NotNull String path) {
-        return parseList(getWrapper().getList(path), ConfigValueParser.castObject(Character.class));
+        return getList(path, ConfigValueParser.castObject(Character.class));
     }
 
     @Unmodifiable
