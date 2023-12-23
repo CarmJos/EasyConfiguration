@@ -172,6 +172,7 @@ EasyConfiguration for MineCraft!
 <img height=25% width=25% src="https://raw.githubusercontent.com/CarmJos/CarmJos/main/img/donate-code.jpg"  alt=""/>
 
 万分感谢 Jetbrains 为我们提供了从事此项目和其他开源项目的许可！
+
 [![](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg)](https://www.jetbrains.com/?from=https://github.com/ArtformGames/ResidenceList)
 
 ## 开源协议

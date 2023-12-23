@@ -153,6 +153,7 @@ If you appreciate this plugin, consider supporting me with a donation!
 Thank you for supporting open-source projects!
 
 Many thanks to Jetbrains for kindly providing a license for us to work on this and other open-source projects.  
+
 [![](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg)](https://www.jetbrains.com/?from=https://github.com/ArtformGames/ResidenceList)
 
 
