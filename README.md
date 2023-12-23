@@ -13,7 +13,8 @@
 
 **Easy _(to make)_ Configurations!**
 
-Introducing EasyConfiguration, your simple and universal solution for managing configuration files. Enjoy the ease of use with customizable formats for loading, reading, and updating your configuration files.
+A simple, easy-to-use and universal solution for managing configuration files. 
+Enjoy the ease of use with customizable formats for loading, reading, and updating your configuration files.
 
 ## Advantages
 
