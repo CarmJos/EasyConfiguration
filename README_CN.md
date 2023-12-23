@@ -17,9 +17,11 @@ README LANGUAGES [ [English](README.md) | [**中文**](README_CN.md)  ]
 ![CodeSize](https://img.shields.io/github/languages/code-size/CarmJos/EasyConfiguration)
 ![](https://visitor-badge.glitch.me/badge?page_id=EasyConfiguration.readme)
 
-轻松(做)配置，简单便捷的通用配置文件加载、读取与更新工具，可自定义配置格式。
+**轻松(做)配置！**
 
-## 优势
+一款简单便捷的通用配置文件加载、读取与更新工具，可自定义配置的格式。
+
+## 特性 & 优势
 
 - 基于类的配置文件初始化、加载、获取与更新机制，方便快捷。
 - 支持复杂配置的手动序列化、反序列化。

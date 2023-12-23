@@ -15,7 +15,7 @@ README LANGUAGES [ [**English**](README.md) | [中文](README_CN.md)  ]
 A simple, easy-to-use and universal solution for managing configuration files. 
 Enjoy the ease of use with customizable formats for loading, reading, and updating your configuration files.
 
-## Advantages
+## Features & Advantages
 
 - Class-based mechanism for initializing, loading, retrieving, and updating configuration files, ensuring convenience and efficiency.
 - Supports manual serialization and deserialization of complex configurations.
@@ -24,13 +24,17 @@ Enjoy the ease of use with customizable formats for loading, reading, and updati
 
 ## Development
 
-For a detailed development guide, [click here](.doc/README.md). For the latest JavaDoc release, [click here](https://CarmJos.github.io/EasyConfiguration).
+For a detailed development guide, [CLICK HERE](.doc/README.md). 
+
+For the latest JavaDoc release, [CLICK HERE](https://CarmJos.github.io/EasyConfiguration).
 
 ### Code Samples
 
-Check out some code demonstrations [here](demo/src/main/java/cc/carm/lib/configuration/demo/DatabaseConfiguration.java). For more examples, see the [development guide](.doc/README.md).
+Check out some code demonstrations [HERE](demo/src/main/java/cc/carm/lib/configuration/demo/DatabaseConfiguration.java).
 
-### Dependencies
+For more examples, see the [Development Guide](.doc/README.md).
+
+### :book: Dependencies
 
 #### Maven Dependency
 
