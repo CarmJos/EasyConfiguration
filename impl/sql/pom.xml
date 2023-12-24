@@ -41,6 +41,13 @@
         </dependency>
 
         <dependency>
+            <groupId>cc.carm.lib</groupId>
+            <artifactId>easysql-beecp</artifactId>
+            <version>0.4.7</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>${project.parent.groupId}</groupId>
             <artifactId>easyconfiguration-demo</artifactId>
             <version>${project.parent.version}</version>
