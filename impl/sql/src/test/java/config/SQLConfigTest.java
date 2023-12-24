@@ -28,13 +28,9 @@ public class SQLConfigTest {
         ConfigurationTest.testDemo(provider);
         ConfigurationTest.testInner(provider);
 
-        System.out.println("----------------------------------------------------");
-        provider.getConfiguration().getValues(true).forEach((k, v) -> System.out.println(k + ": " + v));
-        System.out.println("----------------------------------------------------");
-        provider.getConfiguration().getValues(false).forEach((k, v) -> System.out.println(k + ": " + v));
-        System.out.println("----------------------------------------------------");
-
         ConfigurationTest.save(provider);
+
+        EasySQL.shutdownManager(manager);
     }
 
 }
