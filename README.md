@@ -35,9 +35,9 @@ format.
 
 ## Development
 
-For a detailed development guide, [CLICK HERE](.doc/README.md).
-
 For the latest JavaDoc release, [CLICK HERE](https://CarmJos.github.io/EasyConfiguration).
+
+For a detailed development guide, [CLICK HERE](.doc/README.md).
 
 ### Code Samples
 
