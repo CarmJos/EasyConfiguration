@@ -36,7 +36,31 @@ README LANGUAGES [ [English](README.md) | [**中文**](README_CN.md)  ]
 
 ### 示例代码
 
-您可以 [点击这里](demo/src/main/java/cc/carm/lib/configuration/demo/DatabaseConfiguration.java) 查看部分代码演示，更多演示详见 [开发介绍](.doc/README.md) 。
+您可以 [点击这里](demo/src/main/java/cc/carm/lib/configuration/demo/DatabaseConfiguration.java) 查看部分代码演示，更多复杂情况演示详见 [开发介绍](.doc/README.md) 。
+
+```java
+public class Sample {
+
+    @HeaderComment("Configurations for sample")
+    interface SampleConfig extends Configuration {
+        @HeaderComment("Configure your name!") // 头部注释
+        ConfiguredValue<String> NAME = ConfiguredValue.of("Joker");
+        @InlineComment("Enabled?") // 行内注释
+        ConfiguredValue<Boolean> ENABLED = ConfiguredValue.of(true);
+    }
+
+    public static void main(String[] args) {
+        // 1. 生成一个 “Provider” 用于给配置类提供源配置的文件。
+        ConfigurationProvider<?> provider = EasyConfiguration.from("config.yml");
+        // 2. 通过 “Provider” 初始化配置类或配置实例。
+        provider.initialize(SampleConfig.class);
+        // 3. 现在可以享受快捷方便的配置文件使用方式了~
+        SampleConfig.ENABLED.set(false);
+        System.out.println("Your name is " + SampleConfig.NAME.getNotNull() + " !");
+    }
+
+}
+```
 
 ### 依赖方式
 
