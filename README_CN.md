@@ -56,6 +56,7 @@ public class Sample {
             @HeaderComment("Configure your name!") // 头部注释
             ConfiguredValue<String> NAME = ConfiguredValue.of("Joker");
 
+            @ConfigPath("year") // 自定义配置路径，若不定义，则按照默认规则生成
             ConfiguredValue<Integer> AGE = ConfiguredValue.of(24);
         }
     }
@@ -81,7 +82,7 @@ enabled: true # Enabled?
 info:
   # Configure your name!
   name: Joker
-  age: 24
+  year: 24
 ```
 
 ### 依赖方式

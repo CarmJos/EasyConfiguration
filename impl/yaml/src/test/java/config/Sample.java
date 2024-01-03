@@ -2,6 +2,7 @@ package config;
 
 import cc.carm.lib.configuration.EasyConfiguration;
 import cc.carm.lib.configuration.core.Configuration;
+import cc.carm.lib.configuration.core.annotation.ConfigPath;
 import cc.carm.lib.configuration.core.annotation.HeaderComment;
 import cc.carm.lib.configuration.core.annotation.InlineComment;
 import cc.carm.lib.configuration.core.source.ConfigurationProvider;
@@ -18,7 +19,8 @@ public class Sample {
         interface INFO extends Configuration {
             @HeaderComment("Configure your name!") // Header comment
             ConfiguredValue<String> NAME = ConfiguredValue.of("Joker");
-            
+
+            @ConfigPath("year") // Custom path
             ConfiguredValue<Integer> AGE = ConfiguredValue.of(24);
         }
 

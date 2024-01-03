@@ -62,6 +62,7 @@ public class Sample {
       @HeaderComment("Configure your name!") // Header comment
       ConfiguredValue<String> NAME = ConfiguredValue.of("Joker");
 
+      @ConfigPath("year") // Custom path
       ConfiguredValue<Integer> AGE = ConfiguredValue.of(24);
       
     }
@@ -89,7 +90,7 @@ enabled: true # Enabled?
 info:
   # Configure your name!
   name: Joker
-  age: 24
+  year: 24
 ```
 
 ### Dependencies
