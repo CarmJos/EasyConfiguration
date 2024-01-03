@@ -41,8 +41,11 @@ For a detailed development guide, [CLICK HERE](.doc/README.md).
 
 ### Code Samples
 
-Check out some code demonstrations [HERE](demo/src/main/java/cc/carm/lib/configuration/demo/DatabaseConfiguration.java).
+To quickly demonstrate the applicability of the project, here are a few practical demonstrations:
+- [Database configuration.](demo/src/main/java/cc/carm/lib/configuration/demo/DatabaseConfiguration.java)
+- [Demonstration of all types of configuration instance classes.](demo/src/main/java/cc/carm/lib/configuration/demo/tests/conf/DemoConfiguration.java)
 
+Check out all code demonstrations [HERE](demo/src/main/java/cc/carm/lib/configuration/demo/DatabaseConfiguration.java).
 For more examples, see the [Development Guide](.doc/README.md).
 
 ```java

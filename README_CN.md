@@ -36,7 +36,11 @@ README LANGUAGES [ [English](README.md) | [**中文**](README_CN.md)  ]
 
 ### 示例代码
 
-您可以 [点击这里](demo/src/main/java/cc/carm/lib/configuration/demo/DatabaseConfiguration.java) 查看部分代码演示，更多复杂情况演示详见 [开发介绍](.doc/README.md) 。
+为快速的展示该项目的适用性，这里有几个实际演示：
+- [数据库配置文件实例](demo/src/main/java/cc/carm/lib/configuration/demo/DatabaseConfiguration.java)
+- [全种类配置实例类演示](demo/src/main/java/cc/carm/lib/configuration/demo/tests/conf/DemoConfiguration.java)
+
+您可以 [点击这里](demo/src/main/java/cc/carm/lib/configuration/demo) 直接查看现有的代码演示，更多复杂情况演示详见 [开发介绍](.doc/README.md) 。
 
 ```java
 public class Sample {
