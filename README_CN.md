@@ -52,12 +52,12 @@ public class Sample {
         ConfiguredValue<Boolean> ENABLED = ConfiguredValue.of(true);
 
         interface INFO extends Configuration {
+            
             @HeaderComment("Configure your name!") // 头部注释
             ConfiguredValue<String> NAME = ConfiguredValue.of("Joker");
 
             ConfiguredValue<Integer> AGE = ConfiguredValue.of(24);
         }
-
     }
 
     public static void main(String[] args) {
@@ -76,8 +76,7 @@ public class Sample {
 ```yaml
 # Configurations for sample
 
-# Enabled?
-enabled: true
+enabled: true # Enabled?
 
 info:
   # Configure your name!
