@@ -51,25 +51,45 @@ For more examples, see the [Development Guide](.doc/README.md).
 ```java
 public class Sample {
 
-    @HeaderComment("Configurations for sample")
-    interface SampleConfig extends Configuration {
-        @HeaderComment("Configure your name!") // Header comment
-        ConfiguredValue<String> NAME = ConfiguredValue.of("Joker");
-        @InlineComment("Enabled?") // Inline comment
-        ConfiguredValue<Boolean> ENABLED = ConfiguredValue.of(true);
+  @HeaderComment("Configurations for sample")
+  interface SampleConfig extends Configuration {
+
+    @InlineComment("Enabled?") // Inline comment
+    ConfiguredValue<Boolean> ENABLED = ConfiguredValue.of(true);
+
+    interface INFO extends Configuration {
+      @HeaderComment("Configure your name!") // Header comment
+      ConfiguredValue<String> NAME = ConfiguredValue.of("Joker");
+
+      ConfiguredValue<Integer> AGE = ConfiguredValue.of(24);
     }
 
-    public static void main(String[] args) {
-        // 1. Make a configuration provider from a file.
-        ConfigurationProvider<?> provider = EasyConfiguration.from("config.yml");
-        // 2. Initialize the configuration classes or instances.
-        provider.initialize(SampleConfig.class);
-        // 3. Enjoy using the configuration!
-        SampleConfig.ENABLED.set(false);
-        System.out.println("Your name is " + SampleConfig.NAME.getNotNull() + " !");
-    }
+  }
+
+  public static void main(String[] args) {
+    // 1. Make a configuration provider from a file.
+    ConfigurationProvider<?> provider = EasyConfiguration.from("config.yml");
+    // 2. Initialize the configuration classes or instances.
+    provider.initialize(SampleConfig.class);
+    // 3. Enjoy using the configuration!
+    SampleConfig.ENABLED.set(false);
+    System.out.println("Your name is " + SampleConfig.INFO.NAME.getNotNull() + " !");
+  }
 
 }
+
+```
+
+```yaml
+# Configurations for sample
+
+# Enabled?
+enabled: true
+
+info:
+  # Configure your name!
+  name: Joker
+  age: 24
 ```
 
 ### Dependencies

@@ -47,10 +47,17 @@ public class Sample {
 
     @HeaderComment("Configurations for sample")
     interface SampleConfig extends Configuration {
-        @HeaderComment("Configure your name!") // 头部注释
-        ConfiguredValue<String> NAME = ConfiguredValue.of("Joker");
+        
         @InlineComment("Enabled?") // 行内注释
         ConfiguredValue<Boolean> ENABLED = ConfiguredValue.of(true);
+
+        interface INFO extends Configuration {
+            @HeaderComment("Configure your name!") // 头部注释
+            ConfiguredValue<String> NAME = ConfiguredValue.of("Joker");
+
+            ConfiguredValue<Integer> AGE = ConfiguredValue.of(24);
+        }
+
     }
 
     public static void main(String[] args) {
@@ -60,10 +67,22 @@ public class Sample {
         provider.initialize(SampleConfig.class);
         // 3. 现在可以享受快捷方便的配置文件使用方式了~
         SampleConfig.ENABLED.set(false);
-        System.out.println("Your name is " + SampleConfig.NAME.getNotNull() + " !");
+        System.out.println("Your name is " + SampleConfig.INFO.NAME.getNotNull() + " !");
     }
 
 }
+```
+
+```yaml
+# Configurations for sample
+
+# Enabled?
+enabled: true
+
+info:
+  # Configure your name!
+  name: Joker
+  age: 24
 ```
 
 ### 依赖方式

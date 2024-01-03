@@ -11,10 +11,17 @@ public class Sample {
 
     @HeaderComment("Configurations for sample")
     interface SampleConfig extends Configuration {
-        @HeaderComment("Configure your name!") // Header comment
-        ConfiguredValue<String> NAME = ConfiguredValue.of("Joker");
+
         @InlineComment("Enabled?") // Inline comment
         ConfiguredValue<Boolean> ENABLED = ConfiguredValue.of(true);
+
+        interface INFO extends Configuration {
+            @HeaderComment("Configure your name!") // Header comment
+            ConfiguredValue<String> NAME = ConfiguredValue.of("Joker");
+            
+            ConfiguredValue<Integer> AGE = ConfiguredValue.of(24);
+        }
+
     }
 
     public static void main(String[] args) {
@@ -24,7 +31,7 @@ public class Sample {
         provider.initialize(SampleConfig.class);
         // 3. Enjoy using the configuration!
         SampleConfig.ENABLED.set(false);
-        System.out.println("Your name is " + SampleConfig.NAME.getNotNull() + " !");
+        System.out.println("Your name is " + SampleConfig.INFO.NAME.getNotNull() + " !");
     }
 
 }
