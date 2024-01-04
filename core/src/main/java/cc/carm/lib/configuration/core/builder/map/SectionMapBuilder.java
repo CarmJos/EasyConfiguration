@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 
 public class SectionMapBuilder<M extends Map<K, V>, K, V> extends CommonConfigBuilder<M, SectionMapBuilder<M, K, V>> {
 
-    protected final @NotNull Supplier<@NotNull M> supplier;
+    protected final @NotNull Supplier<? extends M> supplier;
 
     protected final @NotNull Class<K> keyClass;
     protected @NotNull ConfigDataFunction<String, K> keyParser;
@@ -26,7 +26,7 @@ public class SectionMapBuilder<M extends Map<K, V>, K, V> extends CommonConfigBu
     protected @NotNull ConfigDataFunction<K, String> keySerializer;
     protected @NotNull ConfigDataFunction<V, ? extends Map<String, Object>> valueSerializer;
 
-    public SectionMapBuilder(@NotNull Supplier<@NotNull M> supplier,
+    public SectionMapBuilder(@NotNull Supplier<? extends M> supplier,
                              @NotNull Class<K> keyClass, @NotNull ConfigDataFunction<String, K> keyParser,
                              @NotNull Class<V> valueClass, @NotNull ConfigDataFunction<ConfigurationWrapper<?>, V> valueParser,
                              @NotNull ConfigDataFunction<K, String> keySerializer,

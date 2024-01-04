@@ -8,12 +8,12 @@ import java.util.function.Supplier;
 
 public class ConfigMapBuilder<M extends Map<K, V>, K, V> {
 
-    protected final @NotNull Supplier<@NotNull M> supplier;
+    protected final @NotNull Supplier<? extends M> supplier;
 
     protected final @NotNull Class<K> keyClass;
     protected final @NotNull Class<V> valueClass;
 
-    public ConfigMapBuilder(@NotNull Supplier<@NotNull M> supplier, @NotNull Class<K> keyClass, @NotNull Class<V> valueClass) {
+    public ConfigMapBuilder(@NotNull Supplier<? extends M> supplier, @NotNull Class<K> keyClass, @NotNull Class<V> valueClass) {
         this.supplier = supplier;
         this.keyClass = keyClass;
         this.valueClass = valueClass;

@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 
 public class SourceMapBuilder<M extends Map<K, V>, S, K, V> extends CommonConfigBuilder<M, SourceMapBuilder<M, S, K, V>> {
 
-    protected final @NotNull Supplier<@NotNull M> supplier;
+    protected final @NotNull Supplier<? extends M> supplier;
 
     protected final @NotNull Class<K> keyClass;
     protected @NotNull ConfigDataFunction<String, K> keyParser;
@@ -27,7 +27,7 @@ public class SourceMapBuilder<M extends Map<K, V>, S, K, V> extends CommonConfig
     protected @NotNull ConfigDataFunction<V, S> valueSerializer;
     protected @NotNull ConfigDataFunction<S, Object> sourceSerializer;
 
-    public SourceMapBuilder(@NotNull Supplier<@NotNull M> supplier,
+    public SourceMapBuilder(@NotNull Supplier<? extends M> supplier,
                             @NotNull Class<K> keyClass, @NotNull ConfigDataFunction<String, K> keyParser,
                             @NotNull Class<S> sourceClass, @NotNull ConfigDataFunction<Object, S> sourceParser,
                             @NotNull Class<V> valueClass, @NotNull ConfigDataFunction<S, V> valueParser,

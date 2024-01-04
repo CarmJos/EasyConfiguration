@@ -2,10 +2,7 @@ package cc.carm.lib.configuration.core.builder.map;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.function.Supplier;
 
 public class ConfigMapCreator<K, V> {
@@ -18,7 +15,7 @@ public class ConfigMapCreator<K, V> {
         this.valueClass = valueClass;
     }
 
-    public <M extends Map<K, V>> @NotNull ConfigMapBuilder<M, K, V> asMap(Supplier<M> mapSuppler) {
+    public <M extends Map<K, V>> @NotNull ConfigMapBuilder<M, K, V> asMap(Supplier<? extends M> mapSuppler) {
         return new ConfigMapBuilder<>(mapSuppler, keyClass, valueClass);
     }
 
@@ -32,6 +29,10 @@ public class ConfigMapCreator<K, V> {
 
     public @NotNull ConfigMapBuilder<TreeMap<K, V>, K, V> asTreeMap() {
         return asMap(TreeMap::new);
+    }
+
+    public @NotNull ConfigMapBuilder<TreeMap<K, V>, K, V> asTreeMap(@NotNull Comparator<? super K> comparator) {
+        return asMap(() -> new TreeMap<>(comparator));
     }
 
 }
