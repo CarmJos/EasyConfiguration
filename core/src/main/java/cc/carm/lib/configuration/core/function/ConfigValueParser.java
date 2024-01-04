@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.UUID;
 
 @FunctionalInterface
 public interface ConfigValueParser<T, R> {
@@ -69,6 +70,8 @@ public interface ConfigValueParser<T, R> {
             } else if (Enum.class.isAssignableFrom(valueClass) && input instanceof String) {
                 String enumName = (String) input;
                 input = valueClass.getDeclaredMethod("valueOf", String.class).invoke(null, enumName);
+            } else if (UUID.class.isAssignableFrom(valueClass) && input instanceof String) {
+                input = UUID.fromString((String) input);
             }
 
             if (valueClass.isInstance(input)) return valueClass.cast(input);
