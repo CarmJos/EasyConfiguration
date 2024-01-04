@@ -11,9 +11,10 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * 配置值描述清单。用于描述一个配置值的相关基础信息。
+ * ConfigValue Manifests.
+ * The basic information that describes a configuration value.
  *
- * @param <T> 配置值类型
+ * @param <T> Value type
  * @author CarmJos
  */
 public class ValueManifest<T> {
@@ -38,11 +39,11 @@ public class ValueManifest<T> {
     protected @Nullable T defaultValue;
 
     /**
-     * @param provider       配置文件提供者
-     * @param configPath     配置路径
-     * @param headerComments 头部注释内容
-     * @param inlineComment  行内注释内容
-     * @param defaultValue   默认参数值
+     * @param provider       Provider of config files {@link ConfigurationProvider}
+     * @param configPath     Config path of this value
+     * @param headerComments Header comment contents
+     * @param inlineComment  Inline comment content
+     * @param defaultValue   The default value
      */
     public ValueManifest(@Nullable ConfigurationProvider<?> provider, @Nullable String configPath,
                          @Nullable List<String> headerComments, @Nullable String inlineComment,
@@ -55,12 +56,12 @@ public class ValueManifest<T> {
     }
 
     /**
-     * 此方法提供给 {@link ConfigInitializer}，以便对配置值的相关信息进行统一初始化操作。
+     * The initialize method for {@link ConfigInitializer}, which is used to initialize the value.
      *
-     * @param provider       配置文件提供者
-     * @param configPath     配置路径
-     * @param headerComments 头部注释内容
-     * @param inlineComment  行内注释内容
+     * @param provider       Provider of config files {@link ConfigurationProvider}
+     * @param configPath     Config path of this value
+     * @param headerComments Header comment contents
+     * @param inlineComment  Inline comment content
      */
     protected void initialize(@NotNull ConfigurationProvider<?> provider, @NotNull String configPath,
                               @Nullable List<String> headerComments, @Nullable String inlineComment) {

@@ -1,8 +1,8 @@
 package cc.carm.lib.configuration.core.builder;
 
 import cc.carm.lib.configuration.core.source.ConfigurationProvider;
-import cc.carm.lib.configuration.core.value.ValueManifest;
 import cc.carm.lib.configuration.core.value.ConfigValue;
+import cc.carm.lib.configuration.core.value.ValueManifest;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,7 +22,7 @@ public abstract class AbstractConfigBuilder<T, B extends AbstractConfigBuilder<T
 
     protected @Nullable T defaultValue;
 
-    public AbstractConfigBuilder(Class<? super P> providerClass) {
+    protected AbstractConfigBuilder(Class<? super P> providerClass) {
         this.providerClass = providerClass;
     }
 

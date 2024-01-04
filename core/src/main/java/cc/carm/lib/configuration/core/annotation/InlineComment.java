@@ -8,10 +8,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 行内注释，用于给对应配置的所在行添加注释，便于使用者阅读查看。
- * 如：
+ * Inline comments,
+ * add comments to the rows of the corresponding configurations for easy reading and viewing.
+ * e.g.
  * <blockquote><pre>
- * foo: "bar" # 注释内容
+ * foo: "bar" # Comment Contents
  * </pre></blockquote>
  */
 @Target({ElementType.FIELD})
@@ -19,13 +20,13 @@ import java.lang.annotation.Target;
 public @interface InlineComment {
 
     /**
-     * 注释内容，若内容长度为0则不会添加注释
-     * <p> 如 <b>"foobar"</b> 将被设定为
+     * If the content length is 0, the comment will not be added.
+     * <p> e.g. <b>"foobar"</b> will be set
      * <blockquote><pre>
      * foo: "bar" # foobar
      * </pre></blockquote>
      *
-     * @return 注释内容
+     * @return The content of this comment
      */
     @NotNull
     String value() default "";

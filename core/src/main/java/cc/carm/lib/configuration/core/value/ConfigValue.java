@@ -20,12 +20,12 @@ public abstract class ConfigValue<T> extends ValueManifest<T> {
     }
 
     /**
-     * @param provider       配置文件提供者
-     * @param configPath     配置路径
-     * @param headerComments 头部注释内容
-     * @param inlineComments 行内注释内容
-     * @param defaultValue   默认参数值
-     * @deprecated 请使用 {@link #ConfigValue(ValueManifest)} 构造器。
+     * @param provider       Provider of config files {@link ConfigurationProvider}
+     * @param configPath     Config path of this value
+     * @param headerComments Header comment contents
+     * @param inlineComments Inline comment contents
+     * @param defaultValue   The default value
+     * @deprecated Please use {@link #ConfigValue(ValueManifest)} instead.
      */
     @Deprecated
     protected ConfigValue(@Nullable ConfigurationProvider<?> provider, @Nullable String configPath,
@@ -104,11 +104,7 @@ public abstract class ConfigValue<T> extends ValueManifest<T> {
      * @return 获取当前值是否为默认值。
      */
     public boolean isDefault() {
-        T defaultValue = getDefaultValue();
-        T value = get();
-        if (defaultValue == null && value == null) return true;
-        else if (defaultValue != null && value != null) return defaultValue.equals(value);
-        else return false;
+        return Objects.equals(getDefaultValue(), get());
     }
 
 }

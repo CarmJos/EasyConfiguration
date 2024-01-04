@@ -5,7 +5,7 @@ import cc.carm.lib.configuration.core.source.ConfigurationProvider;
 public abstract class CommonConfigBuilder<T, B extends CommonConfigBuilder<T, B>>
         extends AbstractConfigBuilder<T, B, ConfigurationProvider<?>> {
 
-    public CommonConfigBuilder() {
+    protected CommonConfigBuilder() {
         super(ConfigurationProvider.class);
     }
 

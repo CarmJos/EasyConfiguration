@@ -8,11 +8,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 顶部注释，用于给对应配置的顶部添加注释，便于使用者阅读查看。
- * <p>如：
+ * Header Comments.
+ * Add a comment to the top of the corresponding configuration for easy reading and viewing.
+ * <p>e.g.
  * <blockquote><pre>
- * # 注释第一行
- * # 注释第二行
+ * # The first line of the comment
+ * # The second line of the comment
  * foo: "bar"
  * </pre></blockquote>
  */
@@ -21,9 +22,9 @@ import java.lang.annotation.Target;
 public @interface HeaderComment {
 
     /**
-     * 注释内容，若内容长度为0则会视为一个空行。
-     * <p> 如 <b>{"foo","","bar"}</b>
-     * 会被添加为
+     * If the content of the note is 0, it will be treated as a blank line.
+     * <p> e.g. <b>{"foo","","bar"}</b>
+     * Will be set as
      * <blockquote><pre>
      * # foo
      *
@@ -31,7 +32,7 @@ public @interface HeaderComment {
      * foo: "bar"
      * </pre></blockquote>
      *
-     * @return 注释内容
+     * @return The content of this comment
      */
     @NotNull
     String[] value() default "";

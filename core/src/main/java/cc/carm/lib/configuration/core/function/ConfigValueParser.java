@@ -50,22 +50,9 @@ public interface ConfigValueParser<T, R> {
 
     @Contract(pure = true)
     static <V> @NotNull ConfigValueParser<Object, V> castObject(Class<V> valueClass) {
-        return (input, defaultValue) -> {
-            if (Number.class.isAssignableFrom(valueClass)) {
-                if (Long.class.isAssignableFrom(valueClass) || long.class.isAssignableFrom(valueClass)) {
-                    input = longValue().parse(input, (Long) defaultValue);
-                } else if (Integer.class.isAssignableFrom(valueClass) || int.class.isAssignableFrom(valueClass)) {
-                    input = intValue().parse(input, (Integer) defaultValue);
-                } else if (Float.class.isAssignableFrom(valueClass) || float.class.isAssignableFrom(valueClass)) {
-                    input = floatValue().parse(input, (Float) defaultValue);
-                } else if (Double.class.isAssignableFrom(valueClass) || double.class.isAssignableFrom(valueClass)) {
-                    input = doubleValue().parse(input, (Double) defaultValue);
-                } else if (Byte.class.isAssignableFrom(valueClass) || byte.class.isAssignableFrom(valueClass)) {
-                    input = byteValue().parse(input, (Byte) defaultValue);
-                } else if (Short.class.isAssignableFrom(valueClass) || short.class.isAssignableFrom(valueClass)) {
-                    input = shortValue().parse(input, (Short) defaultValue);
-                }
-            } else if (Boolean.class.isAssignableFrom(valueClass) || boolean.class.isAssignableFrom(valueClass)) {
+        if (Number.class.isAssignableFrom(valueClass)) return castNumber(valueClass);
+        else return (input, defaultValue) -> {
+            if (Boolean.class.isAssignableFrom(valueClass) || boolean.class.isAssignableFrom(valueClass)) {
                 input = booleanValue().parse(input, (Boolean) defaultValue);
             } else if (Enum.class.isAssignableFrom(valueClass) && input instanceof String) {
                 String enumName = (String) input;
@@ -74,6 +61,28 @@ public interface ConfigValueParser<T, R> {
                 input = UUID.fromString((String) input);
             }
 
+            if (valueClass.isInstance(input)) return valueClass.cast(input);
+            else throw new IllegalArgumentException("Cannot cast value to " + valueClass.getName());
+        };
+    }
+
+
+    @Contract(pure = true)
+    static <V> @NotNull ConfigValueParser<Object, V> castNumber(Class<V> valueClass) {
+        return (input, defaultValue) -> {
+            if (Long.class.isAssignableFrom(valueClass) || long.class.isAssignableFrom(valueClass)) {
+                input = longValue().parse(input, (Long) defaultValue);
+            } else if (Integer.class.isAssignableFrom(valueClass) || int.class.isAssignableFrom(valueClass)) {
+                input = intValue().parse(input, (Integer) defaultValue);
+            } else if (Float.class.isAssignableFrom(valueClass) || float.class.isAssignableFrom(valueClass)) {
+                input = floatValue().parse(input, (Float) defaultValue);
+            } else if (Double.class.isAssignableFrom(valueClass) || double.class.isAssignableFrom(valueClass)) {
+                input = doubleValue().parse(input, (Double) defaultValue);
+            } else if (Byte.class.isAssignableFrom(valueClass) || byte.class.isAssignableFrom(valueClass)) {
+                input = byteValue().parse(input, (Byte) defaultValue);
+            } else if (Short.class.isAssignableFrom(valueClass) || short.class.isAssignableFrom(valueClass)) {
+                input = shortValue().parse(input, (Short) defaultValue);
+            }
             if (valueClass.isInstance(input)) return valueClass.cast(input);
             else throw new IllegalArgumentException("Cannot cast value to " + valueClass.getName());
         };

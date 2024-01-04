@@ -8,26 +8,26 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 用于标记对应类或参数的配置路径
+ * The configuration path used to mark the corresponding class or parameter.
  */
 @Target({ElementType.TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ConfigPath {
 
     /**
-     * 指定路径的值。
-     * 若不指定，则会通过 {@link ConfigInitializer#getPathFromName(String)} 自动生成当前路径的值。
+     * The path value of the current configuration.
+     * If not set,will generate the path by {@link ConfigInitializer#getPathFromName(String)}.
      *
-     * @return 路径的值
+     * @return The path value of the current configuration
      */
     String value() default "";
 
     /**
-     * 是否从根节点开始。
-     * <br>若为 false，则会自动添加上一个路径(如果有)到本节点的路径。
-     * <br>若为 true，则会从根节点开始直接设置本路径。
+     * Whether to start with the root node.
+     * <br>If false, the previous path (if any) to the node is automatically added.
+     * <br>If true, the path will be set directly from the root node.
      *
-     * @return 是否不继承上一路径，直接从根路径为开始
+     * @return Whether to start directly from the root path without inheriting the previous path
      */
     boolean root() default false;
 
