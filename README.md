@@ -57,6 +57,13 @@ public class Sample {
     @InlineComment("Enabled?") // Inline comment
     ConfiguredValue<Boolean> ENABLED = ConfiguredValue.of(true);
 
+    ConfiguredList<UUID> UUIDS = ConfiguredList.builderOf(UUID.class).fromString()
+            .parseValue(UUID::fromString).serializeValue(UUID::toString)
+            .defaults(
+                    UUID.fromString("00000000-0000-0000-0000-000000000000"),
+                    UUID.fromString("00000000-0000-0000-0000-000000000001")
+            ).build();
+    
     interface INFO extends Configuration {
         
       @HeaderComment("Configure your name!") // Header comment
@@ -86,6 +93,10 @@ public class Sample {
 # Configurations for sample
 
 enabled: true # Enabled?
+
+uuids:
+  - 00000000-0000-0000-0000-000000000000
+  - 00000000-0000-0000-0000-000000000001
 
 info:
   # Configure your name!

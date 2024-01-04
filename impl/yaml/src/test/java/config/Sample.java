@@ -6,7 +6,10 @@ import cc.carm.lib.configuration.core.annotation.ConfigPath;
 import cc.carm.lib.configuration.core.annotation.HeaderComment;
 import cc.carm.lib.configuration.core.annotation.InlineComment;
 import cc.carm.lib.configuration.core.source.ConfigurationProvider;
+import cc.carm.lib.configuration.core.value.type.ConfiguredList;
 import cc.carm.lib.configuration.core.value.type.ConfiguredValue;
+
+import java.util.UUID;
 
 public class Sample {
 
@@ -15,6 +18,13 @@ public class Sample {
 
         @InlineComment("Enabled?") // Inline comment
         ConfiguredValue<Boolean> ENABLED = ConfiguredValue.of(true);
+
+        ConfiguredList<UUID> UUIDS = ConfiguredList.builderOf(UUID.class).fromString()
+                .parseValue(UUID::fromString).serializeValue(UUID::toString)
+                .defaults(
+                        UUID.fromString("00000000-0000-0000-0000-000000000000"),
+                        UUID.fromString("00000000-0000-0000-0000-000000000001")
+                ).build();
 
         interface INFO extends Configuration {
             @HeaderComment("Configure your name!") // Header comment
