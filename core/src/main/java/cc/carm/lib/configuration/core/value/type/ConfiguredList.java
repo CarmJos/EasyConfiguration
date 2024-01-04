@@ -26,6 +26,15 @@ public class ConfiguredList<V> extends CachedConfigValue<List<V>> implements Lis
         return builderOf(valueClass).fromObject().defaults(defaults).build();
     }
 
+    @SafeVarargs
+    @SuppressWarnings("unchecked")
+    public static <V> @NotNull ConfiguredList<V> of(@NotNull V defaultValue, @NotNull V... moreDefaults) {
+        Collection<V> values = new ArrayList<>();
+        values.add(defaultValue);
+        values.addAll(Arrays.asList(moreDefaults));
+        return of((Class<V>) defaultValue.getClass(), values);
+    }
+
     protected final @NotNull Class<V> valueClass;
 
     protected final @NotNull ConfigDataFunction<Object, V> parser;
