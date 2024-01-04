@@ -49,10 +49,8 @@ Check out all code demonstrations [HERE](demo/src/main/java/cc/carm/lib/configur
 For more examples, see the [Development Guide](.doc/README.md).
 
 ```java
-public class Sample {
-
-  @HeaderComment("Configurations for sample")
-  interface SampleConfig extends Configuration {
+@HeaderComment("Configurations for sample")
+interface SampleConfig extends Configuration {
 
     @InlineComment("Enabled?") // Inline comment
     ConfiguredValue<Boolean> ENABLED = ConfiguredValue.of(true);
@@ -63,18 +61,21 @@ public class Sample {
                     UUID.fromString("00000000-0000-0000-0000-000000000000"),
                     UUID.fromString("00000000-0000-0000-0000-000000000001")
             ).build();
-    
+
     interface INFO extends Configuration {
         
-      @HeaderComment("Configure your name!") // Header comment
-      ConfiguredValue<String> NAME = ConfiguredValue.of("Joker");
+        @HeaderComment("Configure your name!") // Header comment
+        ConfiguredValue<String> NAME = ConfiguredValue.of("Joker");
 
-      @ConfigPath("year") // Custom path
-      ConfiguredValue<Integer> AGE = ConfiguredValue.of(24);
-      
+        @ConfigPath("year") // Custom path
+        ConfiguredValue<Integer> AGE = ConfiguredValue.of(24);
+    
     }
-  }
+}
+```
 
+```java
+public class Sample {
   public static void main(String[] args) {
     // 1. Make a configuration provider from a file.
     ConfigurationProvider<?> provider = EasyConfiguration.from("config.yml");
@@ -84,7 +85,6 @@ public class Sample {
     SampleConfig.ENABLED.set(false);
     System.out.println("Your name is " + SampleConfig.INFO.NAME.getNotNull() + " !");
   }
-
 }
 
 ```

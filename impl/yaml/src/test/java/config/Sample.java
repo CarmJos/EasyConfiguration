@@ -11,30 +11,30 @@ import cc.carm.lib.configuration.core.value.type.ConfiguredValue;
 
 import java.util.UUID;
 
-public class Sample {
+@HeaderComment("Configurations for sample")
+interface SampleConfig extends Configuration {
 
-    @HeaderComment("Configurations for sample")
-    interface SampleConfig extends Configuration {
+    @InlineComment("Enabled?") // Inline comment
+    ConfiguredValue<Boolean> ENABLED = ConfiguredValue.of(true);
 
-        @InlineComment("Enabled?") // Inline comment
-        ConfiguredValue<Boolean> ENABLED = ConfiguredValue.of(true);
+    ConfiguredList<UUID> UUIDS = ConfiguredList.builderOf(UUID.class).fromString()
+            .parseValue(UUID::fromString).serializeValue(UUID::toString)
+            .defaults(
+                    UUID.fromString("00000000-0000-0000-0000-000000000000"),
+                    UUID.fromString("00000000-0000-0000-0000-000000000001")
+            ).build();
 
-        ConfiguredList<UUID> UUIDS = ConfiguredList.builderOf(UUID.class).fromString()
-                .parseValue(UUID::fromString).serializeValue(UUID::toString)
-                .defaults(
-                        UUID.fromString("00000000-0000-0000-0000-000000000000"),
-                        UUID.fromString("00000000-0000-0000-0000-000000000001")
-                ).build();
+    interface INFO extends Configuration {
+        @HeaderComment("Configure your name!") // Header comment
+        ConfiguredValue<String> NAME = ConfiguredValue.of("Joker");
 
-        interface INFO extends Configuration {
-            @HeaderComment("Configure your name!") // Header comment
-            ConfiguredValue<String> NAME = ConfiguredValue.of("Joker");
-
-            @ConfigPath("year") // Custom path
-            ConfiguredValue<Integer> AGE = ConfiguredValue.of(24);
-        }
-
+        @ConfigPath("year") // Custom path
+        ConfiguredValue<Integer> AGE = ConfiguredValue.of(24);
     }
+
+}
+
+public class Sample {
 
     public static void main(String[] args) {
         // 1. Make a configuration provider from a file.

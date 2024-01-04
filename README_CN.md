@@ -42,32 +42,35 @@ README LANGUAGES [ [English](README.md) | [**中文**](README_CN.md)  ]
 
 您可以 [点击这里](demo/src/main/java/cc/carm/lib/configuration/demo) 直接查看现有的代码演示，更多复杂情况演示详见 [开发介绍](.doc/README.md) 。
 
+
+```java
+@HeaderComment("Configurations for sample")
+interface SampleConfig extends Configuration {
+
+    @InlineComment("Enabled?") // 行内注释
+    ConfiguredValue<Boolean> ENABLED = ConfiguredValue.of(true);
+
+    ConfiguredList<UUID> UUIDS = ConfiguredList.builderOf(UUID.class).fromString()
+            .parseValue(UUID::fromString).serializeValue(UUID::toString)
+            .defaults(
+                    UUID.fromString("00000000-0000-0000-0000-000000000000"),
+                    UUID.fromString("00000000-0000-0000-0000-000000000001")
+            ).build();
+
+    interface INFO extends Configuration {
+        
+        @HeaderComment("Configure your name!") // 头部注释
+        ConfiguredValue<String> NAME = ConfiguredValue.of("Joker");
+
+        @ConfigPath("year") // 自定义配置路径，若不定义，则按照默认规则生成
+        ConfiguredValue<Integer> AGE = ConfiguredValue.of(24);
+    
+    }
+}
+```
+
 ```java
 public class Sample {
-
-    @HeaderComment("Configurations for sample")
-    interface SampleConfig extends Configuration {
-        
-        @InlineComment("Enabled?") // 行内注释
-        ConfiguredValue<Boolean> ENABLED = ConfiguredValue.of(true);
-
-        ConfiguredList<UUID> UUIDS = ConfiguredList.builderOf(UUID.class).fromString()
-                .parseValue(UUID::fromString).serializeValue(UUID::toString)
-                .defaults(
-                        UUID.fromString("00000000-0000-0000-0000-000000000000"),
-                        UUID.fromString("00000000-0000-0000-0000-000000000001")
-                ).build();
-        
-        interface INFO extends Configuration {
-            
-            @HeaderComment("Configure your name!") // 头部注释
-            ConfiguredValue<String> NAME = ConfiguredValue.of("Joker");
-
-            @ConfigPath("year") // 自定义配置路径，若不定义，则按照默认规则生成
-            ConfiguredValue<Integer> AGE = ConfiguredValue.of(24);
-        }
-    }
-
     public static void main(String[] args) {
         // 1. 生成一个 “Provider” 用于给配置类提供源配置的文件。
         ConfigurationProvider<?> provider = EasyConfiguration.from("config.yml");
@@ -77,7 +80,6 @@ public class Sample {
         SampleConfig.ENABLED.set(false);
         System.out.println("Your name is " + SampleConfig.INFO.NAME.getNotNull() + " !");
     }
-
 }
 ```
 
