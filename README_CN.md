@@ -253,7 +253,7 @@ EasyConfiguration for MineCraft!
 
 万分感谢 Jetbrains 为我们提供了从事此项目和其他开源项目的许可！
 
-[![](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg)](https://www.jetbrains.com/?from=https://github.com/ArtformGames/ResidenceList)
+[![](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg)](https://www.jetbrains.com/?from=https://github.com/CarmJos/EasyConfiguration)
 
 ## 开源协议
 
