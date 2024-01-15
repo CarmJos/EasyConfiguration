@@ -1,5 +1,6 @@
 import cc.carm.lib.configuration.adapter.ValueAdapterRegistry;
-import cc.carm.lib.configuration.adapter.primitive.PrimitiveAdapter;
+import cc.carm.lib.configuration.adapter.strandard.EnumAdapter;
+import cc.carm.lib.configuration.adapter.strandard.PrimitiveAdapters;
 import cc.carm.lib.configuration.source.ConfigurationProvider;
 import org.junit.Test;
 
@@ -12,9 +13,25 @@ public class AdaptTest {
     public void test() throws Exception {
 
         ValueAdapterRegistry<?> registry = new ValueAdapterRegistry<>(new ConfigurationProvider());
-        registry.register(PrimitiveAdapter.of(Long.class, data -> Long.parseLong(data.toString())));
-        registry.register(PrimitiveAdapter.of(Integer.class, data -> Integer.parseInt(data.toString())));
-        registry.register(PrimitiveAdapter.of(long.class, data -> Long.parseLong(data.toString())));
+        registry.register(Long.class, PrimitiveAdapters.ofLong());
+        registry.register(long.class, PrimitiveAdapters.ofLong());
+        registry.register(Integer.class, PrimitiveAdapters.ofInteger());
+        registry.register(int.class, PrimitiveAdapters.ofInteger());
+        registry.register(Double.class, PrimitiveAdapters.ofDouble());
+        registry.register(double.class, PrimitiveAdapters.ofDouble());
+        registry.register(Float.class, PrimitiveAdapters.ofFloat());
+        registry.register(float.class, PrimitiveAdapters.ofFloat());
+        registry.register(Short.class, PrimitiveAdapters.ofShort());
+        registry.register(short.class, PrimitiveAdapters.ofShort());
+        registry.register(Byte.class, PrimitiveAdapters.ofByte());
+        registry.register(byte.class, PrimitiveAdapters.ofByte());
+        registry.register(Character.class, PrimitiveAdapters.ofCharacter());
+        registry.register(char.class, PrimitiveAdapters.ofCharacter());
+        registry.register(Boolean.class, PrimitiveAdapters.ofBoolean());
+        registry.register(boolean.class, PrimitiveAdapters.ofBoolean());
+        registry.register(String.class, PrimitiveAdapters.ofString());
+        registry.register(new EnumAdapter<>());
+
         registry.register(Long.class, Duration.class, Duration::ofSeconds, Duration::getSeconds);
         registry.register(
                 Duration.class, LocalTime.class,
@@ -25,8 +42,14 @@ public class AdaptTest {
         LocalTime v = registry.deserialize(LocalTime.class, "600");
         Object d = registry.serialize(v);
 
+
         System.out.println(v);
         System.out.println(d);
+        System.out.println(registry.deserialize(TestEnum.class, "b"));
+    }
+
+    enum TestEnum {
+        A, b, C
     }
 
 }
