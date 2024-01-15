@@ -1,5 +1,5 @@
 import cc.carm.lib.configuration.adapter.ValueAdapterRegistry;
-import cc.carm.lib.configuration.adapter.primitive.NumberAdapter;
+import cc.carm.lib.configuration.adapter.primitive.PrimitiveAdapter;
 import cc.carm.lib.configuration.source.ConfigurationProvider;
 import org.junit.Test;
 
@@ -12,8 +12,9 @@ public class AdaptTest {
     public void test() throws Exception {
 
         ValueAdapterRegistry<?> registry = new ValueAdapterRegistry<>(new ConfigurationProvider());
-        registry.register(NumberAdapter.of(Long.class, data -> Long.parseLong(data.toString())));
-        registry.register(NumberAdapter.of(long.class, data -> Long.parseLong(data.toString())));
+        registry.register(PrimitiveAdapter.of(Long.class, data -> Long.parseLong(data.toString())));
+        registry.register(PrimitiveAdapter.of(Integer.class, data -> Integer.parseInt(data.toString())));
+        registry.register(PrimitiveAdapter.of(long.class, data -> Long.parseLong(data.toString())));
         registry.register(Long.class, Duration.class, Duration::ofSeconds, Duration::getSeconds);
         registry.register(
                 Duration.class, LocalTime.class,

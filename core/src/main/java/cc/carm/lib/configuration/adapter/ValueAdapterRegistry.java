@@ -41,6 +41,7 @@ public class ValueAdapterRegistry<P extends ConfigurationProvider> {
         adapters.remove(typeClass);
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T deserialize(Class<T> type, Object value) throws Exception {
         if (value == null) return null;
         if (type == Object.class) return type.cast(value);
@@ -49,13 +50,13 @@ public class ValueAdapterRegistry<P extends ConfigurationProvider> {
         if (adapter == null) throw new RuntimeException("No adapter for type " + type.getName());
 
         // CHECK IF VALUE IS ADAPTED FROM GIVEN VALUE'S TYPE
-        if (adapter.isAdaptedFrom(value)) return type.cast(adapter.deserializeObject(provider, value));
+        if (adapter.isAdaptedFrom(value)) return (T) adapter.deserializeObject(provider, value);
 
         // OTHERWISE, WE NEED TO DESERIALIZE ONE BY ONE
         Object baseValue = deserialize(adapter.getBaseType(), value);
         if (baseValue == null) return null; // Null check
 
-        return type.cast(adapter.deserializeObject(provider, baseValue));
+        return (T) adapter.deserializeObject(provider, baseValue);
     }
 
     public <T> Object serialize(T value) throws Exception {
