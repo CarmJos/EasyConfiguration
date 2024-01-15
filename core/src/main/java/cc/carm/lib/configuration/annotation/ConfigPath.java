@@ -1,4 +1,4 @@
-package cc.carm.lib.configuration.core.annotation;
+package cc.carm.lib.configuration.annotation;
 
 import cc.carm.lib.configuration.core.ConfigInitializer;
 

@@ -1,17 +1,17 @@
 package cc.carm.lib.configuration.demo.tests.conf;
 
-import cc.carm.lib.configuration.core.ConfigurationRoot;
-import cc.carm.lib.configuration.core.annotation.ConfigPath;
-import cc.carm.lib.configuration.core.annotation.HeaderComment;
-import cc.carm.lib.configuration.core.annotation.InlineComment;
-import cc.carm.lib.configuration.core.value.ConfigValue;
-import cc.carm.lib.configuration.core.value.type.ConfiguredSection;
-import cc.carm.lib.configuration.core.value.type.ConfiguredValue;
+import cc.carm.lib.configuration.core.Configuration;
+import cc.carm.lib.configuration.annotation.ConfigPath;
+import cc.carm.lib.configuration.annotation.HeaderComment;
+import cc.carm.lib.configuration.annotation.InlineComment;
+import cc.carm.lib.configuration.value.ConfigValue;
+import cc.carm.lib.configuration.value.standard.ConfiguredSection;
+import cc.carm.lib.configuration.value.standard.ConfiguredValue;
 import cc.carm.lib.configuration.demo.tests.model.TestModel;
 
 import java.util.UUID;
 
-public class TestConfiguration extends ConfigurationRoot {
+public class TestConfiguration implements Configuration {
 
     public final TestInnerConfiguration INNER = new TestInnerConfiguration();
 

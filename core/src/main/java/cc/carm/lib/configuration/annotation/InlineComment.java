@@ -1,4 +1,4 @@
-package cc.carm.lib.configuration.core.annotation;
+package cc.carm.lib.configuration.annotation;
 
 import org.jetbrains.annotations.NotNull;
 

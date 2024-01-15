@@ -4,7 +4,7 @@ import cc.carm.lib.configuration.core.builder.CommonConfigBuilder;
 import cc.carm.lib.configuration.core.function.ConfigDataFunction;
 import cc.carm.lib.configuration.core.function.ConfigValueParser;
 import cc.carm.lib.configuration.core.source.ConfigurationWrapper;
-import cc.carm.lib.configuration.core.value.type.ConfiguredSection;
+import cc.carm.lib.configuration.value.standard.ConfiguredSection;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;

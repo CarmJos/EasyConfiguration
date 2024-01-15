@@ -1,8 +1,8 @@
 package cc.carm.lib.configuration.yaml;
 
 import cc.carm.lib.configuration.core.source.ConfigurationProvider;
-import cc.carm.lib.configuration.core.value.ValueManifest;
-import cc.carm.lib.configuration.core.value.impl.CachedConfigValue;
+import cc.carm.lib.configuration.value.ValueManifest;
+import cc.carm.lib.configuration.value.impl.CachedConfigValue;
 import cc.carm.lib.configuration.yaml.builder.YAMLConfigBuilder;
 import org.jetbrains.annotations.NotNull;
 

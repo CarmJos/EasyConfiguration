@@ -2,7 +2,7 @@ package cc.carm.lib.configuration.core.builder.list;
 
 import cc.carm.lib.configuration.core.builder.CommonConfigBuilder;
 import cc.carm.lib.configuration.core.function.ConfigDataFunction;
-import cc.carm.lib.configuration.core.value.type.ConfiguredList;
+import cc.carm.lib.configuration.value.standard.ConfiguredList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

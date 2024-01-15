@@ -1,11 +1,11 @@
 package sample;
 
 import cc.carm.lib.configuration.core.Configuration;
-import cc.carm.lib.configuration.core.annotation.ConfigPath;
-import cc.carm.lib.configuration.core.annotation.HeaderComment;
-import cc.carm.lib.configuration.core.annotation.InlineComment;
-import cc.carm.lib.configuration.core.value.type.ConfiguredList;
-import cc.carm.lib.configuration.core.value.type.ConfiguredValue;
+import cc.carm.lib.configuration.annotation.ConfigPath;
+import cc.carm.lib.configuration.annotation.HeaderComment;
+import cc.carm.lib.configuration.annotation.InlineComment;
+import cc.carm.lib.configuration.value.standard.ConfiguredList;
+import cc.carm.lib.configuration.value.standard.ConfiguredValue;
 
 import java.util.UUID;
 

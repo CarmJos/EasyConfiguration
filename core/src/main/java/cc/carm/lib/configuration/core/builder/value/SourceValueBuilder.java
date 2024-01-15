@@ -3,7 +3,7 @@ package cc.carm.lib.configuration.core.builder.value;
 import cc.carm.lib.configuration.core.builder.CommonConfigBuilder;
 import cc.carm.lib.configuration.core.function.ConfigDataFunction;
 import cc.carm.lib.configuration.core.function.ConfigValueParser;
-import cc.carm.lib.configuration.core.value.type.ConfiguredValue;
+import cc.carm.lib.configuration.value.standard.ConfiguredValue;
 import org.jetbrains.annotations.NotNull;
 
 public class SourceValueBuilder<S, V> extends CommonConfigBuilder<V, SourceValueBuilder<S, V>> {

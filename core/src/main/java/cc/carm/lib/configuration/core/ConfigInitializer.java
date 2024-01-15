@@ -1,10 +1,10 @@
 package cc.carm.lib.configuration.core;
 
-import cc.carm.lib.configuration.core.annotation.ConfigPath;
-import cc.carm.lib.configuration.core.annotation.HeaderComment;
-import cc.carm.lib.configuration.core.annotation.InlineComment;
+import cc.carm.lib.configuration.annotation.ConfigPath;
+import cc.carm.lib.configuration.annotation.HeaderComment;
+import cc.carm.lib.configuration.annotation.InlineComment;
 import cc.carm.lib.configuration.core.source.ConfigurationProvider;
-import cc.carm.lib.configuration.core.value.ConfigValue;
+import cc.carm.lib.configuration.value.ConfigValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

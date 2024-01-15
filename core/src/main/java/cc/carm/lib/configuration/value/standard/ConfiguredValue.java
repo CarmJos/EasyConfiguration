@@ -1,10 +1,10 @@
-package cc.carm.lib.configuration.core.value.type;
+package cc.carm.lib.configuration.value.standard;
 
 import cc.carm.lib.configuration.core.builder.value.ConfigValueBuilder;
 import cc.carm.lib.configuration.core.function.ConfigDataFunction;
 import cc.carm.lib.configuration.core.function.ConfigValueParser;
-import cc.carm.lib.configuration.core.value.ValueManifest;
-import cc.carm.lib.configuration.core.value.impl.CachedConfigValue;
+import cc.carm.lib.configuration.value.ValueManifest;
+import cc.carm.lib.configuration.value.impl.CachedConfigValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

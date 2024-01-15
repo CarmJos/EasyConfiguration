@@ -1,4 +1,4 @@
-package cc.carm.lib.configuration.core.value;
+package cc.carm.lib.configuration.value;
 
 import cc.carm.lib.configuration.core.ConfigInitializer;
 import cc.carm.lib.configuration.core.source.ConfigurationProvider;

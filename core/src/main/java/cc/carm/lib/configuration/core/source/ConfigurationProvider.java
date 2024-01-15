@@ -2,9 +2,8 @@ package cc.carm.lib.configuration.core.source;
 
 import cc.carm.lib.configuration.core.ConfigInitializer;
 import cc.carm.lib.configuration.core.Configuration;
-import cc.carm.lib.configuration.core.Configuration;
-import cc.carm.lib.configuration.core.value.ConfigValue;
-import cc.carm.lib.configuration.core.value.impl.CachedConfigValue;
+import cc.carm.lib.configuration.value.ConfigValue;
+import cc.carm.lib.configuration.value.impl.CachedConfigValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;

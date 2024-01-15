@@ -1,6 +1,6 @@
 package cc.carm.lib.configuration.yaml.value;
 
-import cc.carm.lib.configuration.core.value.ValueManifest;
+import cc.carm.lib.configuration.value.ValueManifest;
 import cc.carm.lib.configuration.yaml.YAMLValue;
 import org.bspfsystems.yamlconfiguration.serialization.ConfigurationSerializable;
 import org.jetbrains.annotations.NotNull;

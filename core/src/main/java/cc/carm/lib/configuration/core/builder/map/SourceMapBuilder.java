@@ -2,8 +2,8 @@ package cc.carm.lib.configuration.core.builder.map;
 
 import cc.carm.lib.configuration.core.builder.CommonConfigBuilder;
 import cc.carm.lib.configuration.core.function.ConfigDataFunction;
-import cc.carm.lib.configuration.core.value.ValueManifest;
-import cc.carm.lib.configuration.core.value.type.ConfiguredMap;
+import cc.carm.lib.configuration.value.ValueManifest;
+import cc.carm.lib.configuration.value.standard.ConfiguredMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;

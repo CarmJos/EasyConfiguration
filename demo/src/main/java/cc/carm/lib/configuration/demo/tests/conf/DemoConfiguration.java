@@ -2,15 +2,14 @@ package cc.carm.lib.configuration.demo.tests.conf;
 
 import cc.carm.lib.configuration.core.ConfigInitializer;
 import cc.carm.lib.configuration.core.Configuration;
-import cc.carm.lib.configuration.core.ConfigurationRoot;
-import cc.carm.lib.configuration.core.annotation.ConfigPath;
-import cc.carm.lib.configuration.core.annotation.HeaderComment;
-import cc.carm.lib.configuration.core.annotation.InlineComment;
-import cc.carm.lib.configuration.core.value.ConfigValue;
-import cc.carm.lib.configuration.core.value.type.ConfiguredList;
-import cc.carm.lib.configuration.core.value.type.ConfiguredMap;
-import cc.carm.lib.configuration.core.value.type.ConfiguredSection;
-import cc.carm.lib.configuration.core.value.type.ConfiguredValue;
+import cc.carm.lib.configuration.annotation.ConfigPath;
+import cc.carm.lib.configuration.annotation.HeaderComment;
+import cc.carm.lib.configuration.annotation.InlineComment;
+import cc.carm.lib.configuration.value.ConfigValue;
+import cc.carm.lib.configuration.value.standard.ConfiguredList;
+import cc.carm.lib.configuration.value.standard.ConfiguredMap;
+import cc.carm.lib.configuration.value.standard.ConfiguredSection;
+import cc.carm.lib.configuration.value.standard.ConfiguredValue;
 import cc.carm.lib.configuration.demo.tests.model.TestModel;
 
 import java.time.temporal.ChronoUnit;
@@ -56,7 +55,7 @@ public interface DemoConfiguration extends Configuration {
      * 支持内部类的直接注册。
      * 注意，需要使用 {@link ConfigInitializer#initialize(Class, boolean, boolean)} 方法，并设定第三个参数为 true。
      */
-    class Sub extends ConfigurationRoot {
+    class Sub implements Configuration {
 
         @ConfigPath(value = "uuid-value", root = true)
         @InlineComment("This is an inline comment")
@@ -65,7 +64,7 @@ public interface DemoConfiguration extends Configuration {
                 .parseValue((data, defaultValue) -> UUID.fromString(data))
                 .build();
 
-        public static class That extends ConfigurationRoot {
+        public static class That implements Configuration {
 
             public static final ConfiguredList<UUID> OPERATORS = ConfiguredList
                     .builderOf(UUID.class).fromString()

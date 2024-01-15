@@ -1,9 +1,9 @@
-package cc.carm.lib.configuration.core.value.impl;
+package cc.carm.lib.configuration.value.impl;
 
 import cc.carm.lib.configuration.core.builder.map.ConfigMapCreator;
 import cc.carm.lib.configuration.core.function.ConfigDataFunction;
 import cc.carm.lib.configuration.core.source.ConfigurationWrapper;
-import cc.carm.lib.configuration.core.value.ValueManifest;
+import cc.carm.lib.configuration.value.ValueManifest;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
