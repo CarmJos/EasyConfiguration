@@ -21,4 +21,9 @@ public class EnumAdapter<P extends ConfigurationProvider> extends ValueAdapter<P
         return Enum.valueOf(clazz, data);
     }
 
+    @Override
+    public boolean isAdapterOf(Class<?> clazz) {
+        return clazz.isEnum();
+    }
+
 }

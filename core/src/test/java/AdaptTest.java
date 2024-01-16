@@ -12,7 +12,7 @@ public class AdaptTest {
     @Test
     public void test() throws Exception {
 
-        ValueAdapterRegistry<?> registry = new ValueAdapterRegistry<>(new ConfigurationProvider());
+        ValueAdapterRegistry<ConfigurationProvider> registry = new ValueAdapterRegistry<>();
         registry.register(Long.class, PrimitiveAdapters.ofLong());
         registry.register(long.class, PrimitiveAdapters.ofLong());
         registry.register(Integer.class, PrimitiveAdapters.ofInteger());
@@ -36,16 +36,19 @@ public class AdaptTest {
         registry.register(
                 Duration.class, LocalTime.class,
                 duration -> LocalTime.now().plus(duration),
-                data -> Duration.between(data, LocalTime.now())
+                data -> Duration.between(LocalTime.now(), data)
         );
 
-        LocalTime v = registry.deserialize(LocalTime.class, "600");
-        Object d = registry.serialize(v);
+        ConfigurationProvider provider = new ConfigurationProvider();
 
+        LocalTime v = registry.deserialize(provider, LocalTime.class, "600");
+        Object d = registry.serialize(provider, v);
 
         System.out.println(v);
         System.out.println(d);
-        System.out.println(registry.deserialize(TestEnum.class, "b"));
+        System.out.println(registry.deserialize(provider, TestEnum.class, "b"));
+        System.out.println(registry.serialize(provider, TestEnum.C).getClass());
+
     }
 
     enum TestEnum {

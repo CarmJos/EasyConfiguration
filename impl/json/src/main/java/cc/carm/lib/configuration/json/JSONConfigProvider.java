@@ -1,7 +1,6 @@
 package cc.carm.lib.configuration.json;
 
-import cc.carm.lib.configuration.core.ConfigInitializer;
-import cc.carm.lib.configuration.core.source.ConfigurationComments;
+import cc.carm.lib.configuration.source.comment.ConfigurationComments;
 import cc.carm.lib.configuration.core.source.ConfigurationProvider;
 import cc.carm.lib.configuration.core.source.impl.FileConfigProvider;
 import com.google.gson.Gson;

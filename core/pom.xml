@@ -18,6 +18,19 @@
     <artifactId>easyconfiguration-core</artifactId>
     <packaging>jar</packaging>
 
+    <dependencies>
+        <dependency>
+            <groupId>cc.carm.lib</groupId>
+            <artifactId>easyoptions</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>cc.carm.lib</groupId>
+            <artifactId>easyannotation</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>

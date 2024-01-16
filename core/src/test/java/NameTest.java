@@ -1,4 +1,3 @@
-import cc.carm.lib.configuration.core.ConfigInitializer;
 import org.junit.Test;
 
 public class NameTest {

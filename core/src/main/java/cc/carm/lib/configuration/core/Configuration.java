@@ -5,4 +5,5 @@ package cc.carm.lib.configuration.core;
  * which is used to label and record the configuration information.
  */
 public interface Configuration {
+
 }

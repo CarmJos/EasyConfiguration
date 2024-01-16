@@ -3,19 +3,16 @@ package cc.carm.lib.configuration.adapter;
 import cc.carm.lib.configuration.adapter.strandard.PrimitiveAdapters;
 import cc.carm.lib.configuration.core.function.ConfigDataFunction;
 import cc.carm.lib.configuration.source.ConfigurationProvider;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class ValueAdapterRegistry<P extends ConfigurationProvider> {
 
-    protected final @NotNull P provider;
     protected final Map<Class<?>, ValueAdapter<P, ?, ?>> adapters = new HashMap<>();
-
-    public ValueAdapterRegistry(@NotNull P provider) {
-        this.provider = provider;
-    }
 
     public void register(@NotNull ValueAdapter<P, ?, ?> adapter) {
         adapters.put(adapter.getValueClass(), adapter);
@@ -46,30 +43,31 @@ public class ValueAdapterRegistry<P extends ConfigurationProvider> {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T deserialize(Class<T> type, Object value) throws Exception {
-        if (value == null) return null;
-        if (type == Object.class) return type.cast(value);
+    @Contract("_,_,null -> null")
+    public <T> T deserialize(@NotNull P provider, @NotNull Class<T> type, @Nullable Object source) throws Exception {
+        if (source == null) return null; // Null check
+        if (type.isInstance(source)) return type.cast(source); // Not required to deserialize
 
         ValueAdapter<P, ?, ?> adapter = getAdapter(type);
         if (adapter == null) throw new RuntimeException("No adapter for type " + type.getName());
 
-        // CHECK IF VALUE IS ADAPTED FROM GIVEN VALUE'S TYPE
-        if (adapter.isAdaptedFrom(value)) {
-            return (T) adapter.deserializeObject(provider, type, value);
+        // Check if value is adapted from given value's type
+        if (adapter.isAdaptedFrom(source)) {
+            return (T) adapter.deserializeObject(provider, type, source);
         }
 
-        // OTHERWISE, WE NEED TO DESERIALIZE ONE BY ONE
-        Object baseValue = deserialize(adapter.getBaseClass(), value);
+        // Otherwise, we need to deserialize one by one.
+        Object baseValue = deserialize(provider, adapter.getBaseClass(), source);
         if (baseValue == null) return null; // Null check
 
         return (T) adapter.deserializeObject(provider, type, baseValue);
     }
 
-    public <T> Object serialize(T value) throws Exception {
-        if (value == null) return null;
+    @Contract("_,null -> null")
+    public <T> Object serialize(@NotNull P provider, @Nullable T value) throws Exception {
+        if (value == null) return null; // Null check
 
-        Class<?> valueClass = value.getClass();
-        ValueAdapter<P, ?, ?> adapter = adapters.get(valueClass);
+        ValueAdapter<P, ?, ?> adapter = getAdapter(value.getClass());
         if (adapter == null) return value; // No adapters, try to return the original value
 
         if (adapter instanceof PrimitiveAdapters) {
@@ -79,12 +77,14 @@ public class ValueAdapterRegistry<P extends ConfigurationProvider> {
         }
 
         // Otherwise, we need to serialize one by one.
-        return serialize(adapter.serializeObject(provider, value));
+        return serialize(provider, adapter.serializeObject(provider, value));
     }
 
     public ValueAdapter<P, ?, ?> getAdapter(Class<?> clazz) {
-        ValueAdapter<P, ?, ?> byClass = adapters.get(clazz);
-        if (byClass != null) return byClass;
+        return adapters.getOrDefault(clazz, findAdapter(clazz));
+    }
+
+    public ValueAdapter<P, ?, ?> findAdapter(Class<?> clazz) {
         return adapters.values().stream().filter(adapter -> adapter.isAdapterOf(clazz)).findFirst().orElse(null);
     }
 

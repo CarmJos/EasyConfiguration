@@ -1,7 +1,6 @@
 package cc.carm.lib.configuration.yaml;
 
-import cc.carm.lib.configuration.core.ConfigInitializer;
-import cc.carm.lib.configuration.core.source.ConfigurationComments;
+import cc.carm.lib.configuration.source.comment.ConfigurationComments;
 import cc.carm.lib.configuration.core.source.impl.FileConfigProvider;
 import cc.carm.lib.yamlcommentupdater.CommentedYAML;
 import cc.carm.lib.yamlcommentupdater.CommentedYAMLWriter;
@@ -26,6 +25,7 @@ public class YAMLConfigProvider extends FileConfigProvider<YAMLSectionWrapper> i
     }
 
     public void initializeConfig() {
+        ConfigurationOptions
         this.configuration = YamlConfiguration.loadConfiguration(file);
         this.initializer = new ConfigInitializer<>(this);
     }

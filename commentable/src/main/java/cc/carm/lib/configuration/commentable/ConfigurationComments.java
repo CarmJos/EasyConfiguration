@@ -1,4 +1,4 @@
-package cc.carm.lib.configuration.core.source;
+package cc.carm.lib.configuration.commentable;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,14 +20,12 @@ public class ConfigurationComments {
     }
 
     public void setHeaderComments(@Nullable String path, @Nullable List<String> comments) {
-
         if (comments == null) {
             getHeaderComments().remove(path);
         } else {
             getHeaderComments().put(path, comments);
         }
     }
-
 
     public void setInlineComment(@NotNull String path, @Nullable String comment) {
         if (comment == null) {
@@ -46,6 +44,5 @@ public class ConfigurationComments {
     public @Nullable String getInlineComment(@NotNull String path) {
         return getInlineComments().get(path);
     }
-
 
 }

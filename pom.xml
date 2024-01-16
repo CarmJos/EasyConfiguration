@@ -23,6 +23,7 @@
         <module>impl/json</module>
         <module>impl/sql</module>
         <module>impl/hocon</module>
+        <module>commentable</module>
     </modules>
 
     <name>EasyConfiguration</name>

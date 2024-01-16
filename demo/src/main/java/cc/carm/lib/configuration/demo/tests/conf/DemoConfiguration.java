@@ -1,6 +1,5 @@
 package cc.carm.lib.configuration.demo.tests.conf;
 
-import cc.carm.lib.configuration.core.ConfigInitializer;
 import cc.carm.lib.configuration.core.Configuration;
 import cc.carm.lib.configuration.annotation.ConfigPath;
 import cc.carm.lib.configuration.annotation.HeaderComment;

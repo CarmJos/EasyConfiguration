@@ -1,6 +1,5 @@
 package cc.carm.lib.configuration.value;
 
-import cc.carm.lib.configuration.core.ConfigInitializer;
 import cc.carm.lib.configuration.core.source.ConfigurationProvider;
 import cc.carm.lib.configuration.core.source.ConfigurationWrapper;
 import org.jetbrains.annotations.NotNull;
