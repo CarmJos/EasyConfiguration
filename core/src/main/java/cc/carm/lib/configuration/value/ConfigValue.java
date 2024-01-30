@@ -1,43 +1,20 @@
 package cc.carm.lib.configuration.value;
 
-import cc.carm.lib.configuration.core.builder.ConfigBuilder;
-import cc.carm.lib.configuration.core.source.ConfigurationProvider;
+import cc.carm.lib.configuration.source.ConfigurationProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 public abstract class ConfigValue<T> extends ValueManifest<T> {
 
-    public static @NotNull ConfigBuilder builder() {
-        return new ConfigBuilder();
-    }
+//    public static @NotNull ConfigBuilder builder() {
+//        return new ConfigBuilder();
+//    }
 
     protected ConfigValue(@NotNull ValueManifest<T> manifest) {
-        super(manifest.provider, manifest.configPath, manifest.headerComments, manifest.inlineComment, manifest.defaultValue);
-    }
-
-    /**
-     * @param provider       Provider of config files {@link ConfigurationProvider}
-     * @param configPath     Config path of this value
-     * @param headerComments Header comment contents
-     * @param inlineComments Inline comment contents
-     * @param defaultValue   The default value
-     * @deprecated Please use {@link #ConfigValue(ValueManifest)} instead.
-     */
-    @Deprecated
-    protected ConfigValue(@Nullable ConfigurationProvider<?> provider, @Nullable String configPath,
-                          @Nullable List<String> headerComments, @Nullable String inlineComments,
-                          @Nullable T defaultValue) {
-        super(provider, configPath, headerComments, inlineComments, defaultValue);
-    }
-
-    public void initialize(@NotNull ConfigurationProvider<?> provider, boolean saveDefault, @NotNull String configPath,
-                           @Nullable List<String> headerComments, @Nullable String inlineComments) {
-        this.initialize(provider, configPath, headerComments, inlineComments);
-        if (saveDefault) setDefault();
+        super(manifest.metadata, manifest.provider, manifest.defaultSupplier);
     }
 
     /**
@@ -53,8 +30,8 @@ public abstract class ConfigValue<T> extends ValueManifest<T> {
      *
      * @return 设定值或默认值
      */
-    public @Nullable T getOrDefault() {
-        return getOptional().orElse(getDefaultValue());
+    public T getOrDefault() {
+        return optional().orElse(defaults());
     }
 
     /**
@@ -64,10 +41,10 @@ public abstract class ConfigValue<T> extends ValueManifest<T> {
      * @throws NullPointerException 对应数据为空时抛出
      */
     public @NotNull T getNotNull() {
-        return Objects.requireNonNull(getOrDefault(), "Value(" + configPath + ") is null.");
+        return Objects.requireNonNull(getOrDefault(), "Value(" + path() + ") is null.");
     }
 
-    public @NotNull Optional<@Nullable T> getOptional() {
+    public @NotNull Optional<@Nullable T> optional() {
         return Optional.ofNullable(get());
     }
 
@@ -94,8 +71,8 @@ public abstract class ConfigValue<T> extends ValueManifest<T> {
      * @param override 是否覆盖已设定的值
      */
     public void setDefault(boolean override) {
-        if (!override && getConfiguration().contains(getConfigPath())) return;
-        Optional.ofNullable(getDefaultValue()).ifPresent(this::set);
+        if (!override && config().contains(path())) return;
+        Optional.ofNullable(defaults()).ifPresent(this::set);
     }
 
     /**
@@ -104,7 +81,7 @@ public abstract class ConfigValue<T> extends ValueManifest<T> {
      * @return 获取当前值是否为默认值。
      */
     public boolean isDefault() {
-        return Objects.equals(getDefaultValue(), get());
+        return Objects.equals(defaults(), get());
     }
 
 }

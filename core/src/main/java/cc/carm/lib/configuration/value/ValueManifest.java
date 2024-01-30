@@ -1,124 +1,150 @@
 package cc.carm.lib.configuration.value;
 
-import cc.carm.lib.configuration.core.source.ConfigurationProvider;
-import cc.carm.lib.configuration.core.source.ConfigurationWrapper;
+import cc.carm.lib.configuration.source.ConfigurationProvider;
+import cc.carm.lib.configuration.source.ConfigurationSource;
+import cc.carm.lib.configuration.value.meta.ValueMetaList;
+import cc.carm.lib.configuration.value.meta.ValueMetaType;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.List;
-import java.util.Optional;
+import java.lang.reflect.Type;
+import java.util.Map;
+import java.util.function.Supplier;
 
-/**
- * ConfigValue Manifests.
- * The basic information that describes a configuration value.
- *
- * @param <T> Value type
- * @author CarmJos
- */
 public class ValueManifest<T> {
 
-    public static <V> ValueManifest<V> of(@Nullable ConfigurationProvider<?> provider, @Nullable String configPath,
-                                          @Nullable List<String> headerComments, @Nullable String inlineComments) {
-        return new ValueManifest<>(provider, configPath, headerComments, inlineComments, null);
-    }
-
-    public static <V> ValueManifest<V> of(@Nullable ConfigurationProvider<?> provider, @Nullable String configPath,
-                                          @Nullable List<String> headerComments, @Nullable String inlineComments,
-                                          @Nullable V defaultValue) {
-        return new ValueManifest<>(provider, configPath, headerComments, inlineComments, defaultValue);
-    }
-
+    protected final @NotNull Map<ValueMetaType<?>, Object> metadata;
     protected @Nullable ConfigurationProvider<?> provider;
-    protected @Nullable String configPath;
+    protected @NotNull Supplier<@Nullable T> defaultSupplier;
 
-    protected @Nullable List<String> headerComments;
-    protected @Nullable String inlineComment;
-
-    protected @Nullable T defaultValue;
-
-    /**
-     * @param provider       Provider of config files {@link ConfigurationProvider}
-     * @param configPath     Config path of this value
-     * @param headerComments Header comment contents
-     * @param inlineComment  Inline comment content
-     * @param defaultValue   The default value
-     */
-    public ValueManifest(@Nullable ConfigurationProvider<?> provider, @Nullable String configPath,
-                         @Nullable List<String> headerComments, @Nullable String inlineComment,
-                         @Nullable T defaultValue) {
+    public ValueManifest(@NotNull Map<ValueMetaType<?>, Object> metadata,
+                         @Nullable ConfigurationProvider<?> provider, @NotNull Supplier<@Nullable T> defaultSupplier) {
+        this.metadata = metadata;
         this.provider = provider;
-        this.configPath = configPath;
-        this.headerComments = headerComments;
-        this.inlineComment = inlineComment;
-        this.defaultValue = defaultValue;
+        this.defaultSupplier = defaultSupplier;
     }
 
-    /**
-     * The initialize method for {@link ConfigInitializer}, which is used to initialize the value.
-     *
-     * @param provider       Provider of config files {@link ConfigurationProvider}
-     * @param configPath     Config path of this value
-     * @param headerComments Header comment contents
-     * @param inlineComment  Inline comment content
-     */
-    protected void initialize(@NotNull ConfigurationProvider<?> provider, @NotNull String configPath,
-                              @Nullable List<String> headerComments, @Nullable String inlineComment) {
-        if (this.provider == null) this.provider = provider;
-        if (this.configPath == null) this.configPath = configPath;
-        if (this.headerComments == null) this.headerComments = headerComments;
-        if (this.inlineComment == null) this.inlineComment = inlineComment;
-
-        if (getHeaderComments() != null) {
-            this.provider.setHeaderComment(getConfigPath(), getHeaderComments());
-        }
-        if (getInlineComment() != null) {
-            this.provider.setInlineComment(getConfigPath(), getInlineComment());
-        }
+    public @Nullable T defaults() {
+        return this.defaultSupplier.get();
     }
 
-    public @Nullable T getDefaultValue() {
-        return this.defaultValue;
+    public void defaults(@Nullable T defaultValue) {
+        defaults(() -> defaultValue);
     }
 
-    public void setDefaultValue(@Nullable T defaultValue) {
-        this.defaultValue = defaultValue;
+    public void defaults(@NotNull Supplier<@Nullable T> defaultValue) {
+        this.defaultSupplier = defaultValue;
     }
 
-    public @NotNull ConfigurationProvider<?> getProvider() {
-        return Optional.ofNullable(this.provider)
-                .orElseThrow(() -> new IllegalStateException("Value(" + configPath + ") does not have a provider."));
+    public @NotNull ConfigurationProvider<?> provider() {
+        if (this.provider != null) return this.provider;
+        throw new IllegalStateException("Value does not have a provider.");
     }
 
-    public final @NotNull ConfigurationWrapper<?> getConfiguration() {
-        try {
-            return getProvider().getConfiguration();
-        } catch (Exception ex) {
-            throw new IllegalStateException("Value(" + configPath + ") has not been initialized", ex);
-        }
+    public @NotNull ConfigurationSource<?, ?> config() {
+        return provider().source();
     }
 
-    public @NotNull String getConfigPath() {
-        return Optional.ofNullable(this.configPath)
-                .orElseThrow(() -> new IllegalStateException("No section path provided."));
+    public @NotNull String path() {
+        String path = getMeta(ValueMetaList.PATH);
+        if (path != null) return path;
+        else throw new IllegalStateException("No section path provided.");
     }
 
     protected Object getValue() {
-        String path = getConfigPath(); // 当未指定路径时，优先抛出异常
-        return getConfiguration().get(path);
+        return config().get(path());
     }
 
     protected void setValue(@Nullable Object value) {
-        getConfiguration().set(getConfigPath(), value);
+        config().set(path(), value);
     }
 
-    public @Nullable String getInlineComment() {
-        return inlineComment;
+    public Map<ValueMetaType<?>, Object> metadata() {
+        return metadata;
     }
 
-    @Unmodifiable
-    public @Nullable List<String> getHeaderComments() {
-        return headerComments;
+    /**
+     * Get the value of option.
+     *
+     * @param type         {@link ValueMetaType}
+     * @param defaultValue Default value if the value of option is not set.
+     * @param <V>          Value type
+     * @return Value of option
+     */
+    @SuppressWarnings("unchecked")
+    @Contract("_, !null -> !null")
+    public <V> @Nullable V getMeta(@NotNull ValueMetaType<V> type, @Nullable V defaultValue) {
+        return (V) metadata().getOrDefault(type, type.getDefault(this, defaultValue));
+    }
+
+    /**
+     * Get the value of option.
+     *
+     * @param type {@link ValueMetaType}
+     * @param <V>  Value type
+     * @return Value of option
+     */
+    public <V> @Nullable V getMeta(@NotNull ValueMetaType<V> type) {
+        return getMeta(type, null);
+    }
+
+    public boolean hasMeta(@NotNull ValueMetaType<?> type) {
+        return metadata().containsKey(type) || type.hasDefaults(this);
+    }
+
+    /**
+     * Set the value of meta, if the value is null, the meta will be removed.
+     * <br> Will only be changed in current holder.
+     *
+     * @param type  {@link ValueMetaType}
+     * @param value Value of meta
+     * @param <V>   Value type
+     * @return Previous value of meta
+     */
+    @SuppressWarnings("unchecked")
+    public <V> @Nullable V setMeta(@NotNull ValueMetaType<V> type, @Nullable V value) {
+        if (value == null || type.isDefault(this, value)) {
+            return (V) metadata().remove(type);
+        } else {
+            return (V) metadata().put(type, value);
+        }
+    }
+
+    /**
+     * Set the value of meta, if the value is null, the meta will not be changed.
+     * <br> Will only be changed in current holder.
+     *
+     * @param type  {@link ValueMetaType}
+     * @param value Value of meta
+     * @param <V>   Value type
+     */
+    public <V> void setMetaIfAbsent(@NotNull ValueMetaType<V> type, @Nullable V value) {
+        if (value == null || type.isDefault(this, value)) {
+            metadata().remove(type);
+        } else {
+            metadata().putIfAbsent(type, value);
+        }
+    }
+
+    /**
+     * Set the value of meta, if the value is null, the meta will not be changed.
+     * <br> Will only be changed in current holder.
+     *
+     * @param type  {@link ValueMetaType}
+     * @param value Value of meta
+     * @param <V>   Value type
+     */
+    @SuppressWarnings("unchecked")
+    public <V> @Nullable V setMetaIfPresent(@NotNull ValueMetaType<V> type, @Nullable V value) {
+        Object exists = metadata().get(type);
+        if (exists == null) return null;
+
+        if (value == null || type.isDefault(this, value)) {
+            return (V) metadata().remove(type);
+        } else {
+            return (V) metadata().put(type, value);
+        }
     }
 
 

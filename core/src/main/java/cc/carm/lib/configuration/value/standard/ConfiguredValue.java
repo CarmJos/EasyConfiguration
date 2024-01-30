@@ -1,31 +1,29 @@
 package cc.carm.lib.configuration.value.standard;
 
-import cc.carm.lib.configuration.core.builder.value.ConfigValueBuilder;
-import cc.carm.lib.configuration.core.function.ConfigDataFunction;
-import cc.carm.lib.configuration.core.function.ConfigValueParser;
+import cc.carm.lib.configuration.function.ConfigDataFunction;
+import cc.carm.lib.configuration.function.ConfigValueParser;
 import cc.carm.lib.configuration.value.ValueManifest;
 import cc.carm.lib.configuration.value.impl.CachedConfigValue;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class ConfiguredValue<V> extends CachedConfigValue<V> {
 
-    public static <V> ConfigValueBuilder<V> builderOf(Class<V> valueClass) {
-        return builder().asValue(valueClass);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <V> ConfiguredValue<V> of(@NotNull V defaultValue) {
-        return of((Class<V>) defaultValue.getClass(), defaultValue);
-    }
-
-    public static <V> ConfiguredValue<V> of(Class<V> valueClass) {
-        return of(valueClass, null);
-    }
-
-    public static <V> ConfiguredValue<V> of(Class<V> valueClass, @Nullable V defaultValue) {
-        return builderOf(valueClass).fromObject().defaults(defaultValue).build();
-    }
+//    public static <V> ConfigValueBuilder<V> builderOf(Class<V> valueClass) {
+//        return builder().asValue(valueClass);
+//    }
+//
+//    @SuppressWarnings("unchecked")
+//    public static <V> ConfiguredValue<V> of(@NotNull V defaultValue) {
+//        return of((Class<V>) defaultValue.getClass(), defaultValue);
+//    }
+//
+//    public static <V> ConfiguredValue<V> of(Class<V> valueClass) {
+//        return of(valueClass, null);
+//    }
+//
+//    public static <V> ConfiguredValue<V> of(Class<V> valueClass, @Nullable V defaultValue) {
+//        return builderOf(valueClass).fromObject().defaults(defaultValue).build();
+//    }
 
     protected final @NotNull Class<V> valueClass;
 
@@ -68,14 +66,15 @@ public class ConfiguredValue<V> extends CachedConfigValue<V> {
         // Data that is outdated and needs to be parsed again.
 
         Object value = getValue();
-        if (value == null) return getDefaultValue(); // 获取的值不存在，直接使用默认值。
+        if (value == null) return defaults();
+
         try {
             // If there are no errors, update the cache and return.
-            return updateCache(this.parser.parse(value, this.defaultValue));
+            return updateCache(this.parser.parse(provider(), value, defaults()));
         } catch (Exception e) {
             // There was a parsing error, prompted and returned the default value.
             e.printStackTrace();
-            return getDefaultValue();
+            return defaults();
         }
 
     }

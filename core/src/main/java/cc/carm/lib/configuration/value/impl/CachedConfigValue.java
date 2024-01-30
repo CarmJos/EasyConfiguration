@@ -7,8 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class CachedConfigValue<T> extends ConfigValue<T> {
-
-
+    
     protected @Nullable T cachedValue;
     protected long parsedTime = -1;
 
@@ -27,11 +26,11 @@ public abstract class CachedConfigValue<T> extends ConfigValue<T> {
     }
 
     public boolean isExpired() {
-        return this.parsedTime <= 0 || getProvider().isExpired(this.parsedTime);
+        return this.parsedTime <= 0 || config().isExpired(this.parsedTime);
     }
 
     protected final T getDefaultFirst(@Nullable T value) {
-        return updateCache(this.defaultValue == null ? value : this.defaultValue);
+        return updateCache(this.defaultSupplier == null ? value : this.defaultSupplier);
     }
 
     protected @Nullable T getCachedOrDefault() {
@@ -41,7 +40,7 @@ public abstract class CachedConfigValue<T> extends ConfigValue<T> {
     @Contract("!null->!null")
     protected T getCachedOrDefault(@Nullable T emptyValue) {
         if (getCachedValue() != null) return getCachedValue();
-        else if (getDefaultValue() != null) return getDefaultValue();
+        else if (defaults() != null) return defaults();
         else return emptyValue;
     }
 

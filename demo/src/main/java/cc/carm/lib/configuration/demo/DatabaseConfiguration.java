@@ -1,6 +1,6 @@
 package cc.carm.lib.configuration.demo;
 
-import cc.carm.lib.configuration.core.Configuration;
+import cc.carm.lib.configuration.source.Configuration;
 import cc.carm.lib.configuration.annotation.ConfigPath;
 import cc.carm.lib.configuration.annotation.HeaderComment;
 import cc.carm.lib.configuration.value.ConfigValue;

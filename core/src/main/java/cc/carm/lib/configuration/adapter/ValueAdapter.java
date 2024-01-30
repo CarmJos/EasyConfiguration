@@ -5,12 +5,10 @@ import cc.carm.lib.configuration.source.ConfigurationProvider;
 /**
  * Value adapter, used to convert the value of the configuration file into the objects.
  *
- * @param <P> The type of the configuration provider.
  * @param <B> The type of the base data
  * @param <V> The type of the target value
  */
-public abstract class ValueAdapter<P extends ConfigurationProvider, B, V>
-        implements ValueSerializer<P, B, V>, ValueDeserializer<P, B, V> {
+public abstract class ValueAdapter<B, V> implements ValueSerializer<B, V>, ValueDeserializer<B, V> {
 
     protected final Class<? super B> baseType;
     protected final Class<? super V> valueType;
@@ -36,17 +34,17 @@ public abstract class ValueAdapter<P extends ConfigurationProvider, B, V>
         return isAdaptedFrom(object.getClass());
     }
 
-    public boolean isAdapterOf(Class<?> clazz) {
+    public boolean isAdaptedTo(Class<?> clazz) {
         return clazz == valueType;
     }
 
     @SuppressWarnings("unchecked")
-    protected final V deserializeObject(P provider, Class<?> valueClass, Object data) throws Exception {
+    protected final V deserializeObject(ConfigurationProvider<?> provider, Class<?> valueClass, Object data) throws Exception {
         return deserialize(provider, (Class<? extends V>) valueClass, (B) data);
     }
 
     @SuppressWarnings("unchecked")
-    protected final B serializeObject(P provider, Object value) throws Exception {
+    protected final B serializeObject(ConfigurationProvider<?> provider, Object value) throws Exception {
         return serialize(provider, (V) value);
     }
 

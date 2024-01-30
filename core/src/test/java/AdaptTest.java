@@ -2,6 +2,9 @@ import cc.carm.lib.configuration.adapter.ValueAdapterRegistry;
 import cc.carm.lib.configuration.adapter.strandard.EnumAdapter;
 import cc.carm.lib.configuration.adapter.strandard.PrimitiveAdapters;
 import cc.carm.lib.configuration.source.ConfigurationProvider;
+import cc.carm.lib.configuration.loader.ConfigurationLoader;
+import cc.carm.lib.easyoptions.OptionHolder;
+import cc.carm.test.config.TestSource;
 import org.junit.Test;
 
 import java.time.Duration;
@@ -12,7 +15,7 @@ public class AdaptTest {
     @Test
     public void test() throws Exception {
 
-        ValueAdapterRegistry<ConfigurationProvider> registry = new ValueAdapterRegistry<>();
+        ValueAdapterRegistry registry = new ValueAdapterRegistry();
         registry.register(Long.class, PrimitiveAdapters.ofLong());
         registry.register(long.class, PrimitiveAdapters.ofLong());
         registry.register(Integer.class, PrimitiveAdapters.ofInteger());
@@ -30,7 +33,7 @@ public class AdaptTest {
         registry.register(Boolean.class, PrimitiveAdapters.ofBoolean());
         registry.register(boolean.class, PrimitiveAdapters.ofBoolean());
         registry.register(String.class, PrimitiveAdapters.ofString());
-        registry.register(new EnumAdapter<>());
+        registry.register(new EnumAdapter());
 
         registry.register(Long.class, Duration.class, Duration::ofSeconds, Duration::getSeconds);
         registry.register(
@@ -39,7 +42,7 @@ public class AdaptTest {
                 data -> Duration.between(LocalTime.now(), data)
         );
 
-        ConfigurationProvider provider = new ConfigurationProvider();
+        ConfigurationProvider<TestSource> provider = new ConfigurationProvider<>(new TestSource(), new ConfigurationLoader(), registry, new OptionHolder());
 
         LocalTime v = registry.deserialize(provider, LocalTime.class, "600");
         Object d = registry.serialize(provider, v);

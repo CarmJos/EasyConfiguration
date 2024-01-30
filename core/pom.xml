@@ -22,12 +22,7 @@
         <dependency>
             <groupId>cc.carm.lib</groupId>
             <artifactId>easyoptions</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>cc.carm.lib</groupId>
-            <artifactId>easyannotation</artifactId>
-            <version>1.0.0</version>
+            <version>1.1.0</version>
         </dependency>
     </dependencies>
 

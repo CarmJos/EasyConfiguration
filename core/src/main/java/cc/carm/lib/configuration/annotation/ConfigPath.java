@@ -1,5 +1,7 @@
 package cc.carm.lib.configuration.annotation;
 
+import cc.carm.lib.configuration.loader.PathGenerator;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -14,7 +16,7 @@ public @interface ConfigPath {
 
     /**
      * The path value of the current configuration.
-     * If not set,will generate the path by {@link cc.carm.lib.configuration.source.path.PathGenerator}.
+     * If not set,will generate the path by {@link PathGenerator}.
      *
      * @return The path value of the current configuration
      */

@@ -1,6 +1,5 @@
 package cc.carm.lib.configuration.demo.tests.model;
 
-import cc.carm.lib.configuration.core.source.ConfigurationWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;

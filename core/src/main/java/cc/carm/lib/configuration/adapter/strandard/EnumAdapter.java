@@ -5,24 +5,24 @@ import cc.carm.lib.configuration.source.ConfigurationProvider;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
-public class EnumAdapter<P extends ConfigurationProvider> extends ValueAdapter<P, String, Enum> {
+public class EnumAdapter extends ValueAdapter<String, Enum> {
 
     public EnumAdapter() {
         super(String.class, Enum.class);
     }
 
     @Override
-    public String serialize(@NotNull P provider, @NotNull Enum value) throws Exception {
+    public String serialize(@NotNull ConfigurationProvider<?> provider, @NotNull Enum value) throws Exception {
         return value.name();
     }
 
     @Override
-    public Enum deserialize(@NotNull P provider, @NotNull Class<? extends Enum> clazz, @NotNull String data) throws Exception {
+    public Enum deserialize(@NotNull ConfigurationProvider<?> provider, @NotNull Class<? extends Enum> clazz, @NotNull String data) throws Exception {
         return Enum.valueOf(clazz, data);
     }
 
     @Override
-    public boolean isAdapterOf(Class<?> clazz) {
+    public boolean isAdaptedTo(Class<?> clazz) {
         return clazz.isEnum();
     }
 

@@ -1,6 +1,5 @@
 package cc.carm.lib.configuration.demo.tests;
 
-import cc.carm.lib.configuration.core.source.ConfigurationProvider;
 import cc.carm.lib.configuration.demo.tests.conf.DemoConfiguration;
 import cc.carm.lib.configuration.demo.tests.conf.TestConfiguration;
 import cc.carm.lib.configuration.demo.tests.model.TestModel;
