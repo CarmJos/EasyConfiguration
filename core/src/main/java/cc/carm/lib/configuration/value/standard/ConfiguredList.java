@@ -4,6 +4,7 @@ import cc.carm.lib.configuration.adapter.ValueAdapter;
 import cc.carm.lib.configuration.adapter.ValueParser;
 import cc.carm.lib.configuration.adapter.ValueSerializer;
 import cc.carm.lib.configuration.adapter.ValueType;
+import cc.carm.lib.configuration.builder.list.ConfigListBuilder;
 import cc.carm.lib.configuration.value.ValueManifest;
 import cc.carm.lib.configuration.value.impl.CachedConfigValue;
 import org.jetbrains.annotations.NotNull;
@@ -16,12 +17,20 @@ import java.util.function.Supplier;
 
 public class ConfiguredList<V> extends CachedConfigValue<List<V>> implements List<V> {
 
+    public static <T> @NotNull ConfigListBuilder<T> builderOf(@NotNull Class<T> type) {
+        return builderOf(ValueType.of(type));
+    }
+
+    public static <T> @NotNull ConfigListBuilder<T> builderOf(@NotNull ValueType<T> type) {
+        return new ConfigListBuilder<>(type);
+    }
+
     protected final @NotNull Supplier<? extends List<V>> constructor;
     protected final @NotNull ValueAdapter<V> paramAdapter;
 
-    private ConfiguredList(@NotNull ValueManifest<List<V>> manifest,
-                           @NotNull Supplier<? extends List<V>> constructor,
-                           @NotNull ValueAdapter<V> paramAdapter) {
+    public ConfiguredList(@NotNull ValueManifest<List<V>> manifest,
+                          @NotNull Supplier<? extends List<V>> constructor,
+                          @NotNull ValueAdapter<V> paramAdapter) {
         super(manifest);
         this.constructor = constructor;
         this.paramAdapter = paramAdapter;

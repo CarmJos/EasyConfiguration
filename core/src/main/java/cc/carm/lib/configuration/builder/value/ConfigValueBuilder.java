@@ -1,7 +1,6 @@
 package cc.carm.lib.configuration.builder.value;
 
 import cc.carm.lib.configuration.adapter.ValueType;
-import cc.carm.lib.configuration.function.ConfigDataFunction;
 import cc.carm.lib.configuration.function.ConfigValueHandler;
 import cc.carm.lib.configuration.source.section.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
@@ -17,11 +16,11 @@ public class ConfigValueBuilder<V> {
     }
 
     public @NotNull <S> SourceValueBuilder<S, V> from(@NotNull Class<S> clazz) {
-        return new SourceValueBuilder<>(ValueType.of(clazz), this.type);
+        return from(ValueType.of(clazz));
     }
 
     public @NotNull <S> SourceValueBuilder<S, V> from(@NotNull ValueType<S> sourceType) {
-        return new SourceValueBuilder<>(sourceType, this.type);
+        return from(sourceType, ConfigValueHandler.required(), ConfigValueHandler.required());
     }
 
     public @NotNull <S> SourceValueBuilder<S, V> from(@NotNull ValueType<S> sourceType,
@@ -35,11 +34,13 @@ public class ConfigValueBuilder<V> {
     }
 
     public @NotNull SectionValueBuilder<V> fromSection() {
-        return new SectionValueBuilder<>(this.type);
+        return fromSection(ConfigValueHandler.required(), ConfigValueHandler.required());
     }
 
-    public @NotNull SectionValueBuilder<V> fromSection(@NotNull ConfigValueHandler<ConfigurationSection, V> valueParser,
-                                                       @NotNull ConfigValueHandler<V, ? extends Map<Object, Object>> valueSerializer) {
+    public @NotNull SectionValueBuilder<V> fromSection(
+            @NotNull ConfigValueHandler<ConfigurationSection, V> valueParser,
+            @NotNull ConfigValueHandler<V, ? extends Map<Object, Object>> valueSerializer
+    ) {
         return new SectionValueBuilder<>(this.type, valueParser, valueSerializer);
     }
 

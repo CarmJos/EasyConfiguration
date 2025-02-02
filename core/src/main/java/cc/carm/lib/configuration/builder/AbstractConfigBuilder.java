@@ -1,5 +1,6 @@
 package cc.carm.lib.configuration.builder;
 
+import cc.carm.lib.configuration.adapter.ValueType;
 import cc.carm.lib.configuration.source.ConfigurationProvider;
 import cc.carm.lib.configuration.value.ConfigValue;
 import cc.carm.lib.configuration.value.ValueManifest;
@@ -8,44 +9,53 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
-public abstract class AbstractConfigBuilder<T, B extends AbstractConfigBuilder<T, B, P>, P extends ConfigurationProvider<?>> {
+public abstract class AbstractConfigBuilder<
+        TYPE, RESULT extends ConfigValue<TYPE>, PROVIDER extends ConfigurationProvider<?>,
+        SELF extends AbstractConfigBuilder<TYPE, RESULT, PROVIDER, SELF>
+        > {
 
-    protected final Class<? super P> providerClass;
+    protected final Class<? super PROVIDER> providerClass;
+    protected final ValueType<TYPE> type;
 
-    protected @Nullable P provider;
+    protected @Nullable PROVIDER provider;
     protected @Nullable String path;
 
-    protected @NotNull Supplier<T> defaultValueSupplier = () -> null;
+    protected @NotNull Supplier<TYPE> defaultValueSupplier = () -> null;
 
-    protected AbstractConfigBuilder(Class<? super P> providerClass) {
+    protected AbstractConfigBuilder(Class<? super PROVIDER> providerClass, ValueType<TYPE> type) {
         this.providerClass = providerClass;
+        this.type = type;
     }
 
-    protected abstract @NotNull B self();
+    public @NotNull ValueType<TYPE> type() {
+        return type;
+    }
 
-    public abstract @NotNull ConfigValue<?> build();
+    protected abstract @NotNull SELF self();
 
-    public @NotNull B from(@Nullable P provider) {
+    public abstract @NotNull RESULT build();
+
+    public @NotNull SELF from(@Nullable PROVIDER provider) {
         this.provider = provider;
         return self();
     }
 
-    public @NotNull B path(@Nullable String path) {
+    public @NotNull SELF path(@Nullable String path) {
         this.path = path;
         return self();
     }
 
-    public @NotNull B defaults(@Nullable T defaultValue) {
+    public @NotNull SELF defaults(@Nullable TYPE defaultValue) {
         return defaults(() -> defaultValue);
     }
 
-    public @NotNull B defaults(@NotNull Supplier<@Nullable T> supplier) {
+    public @NotNull SELF defaults(@NotNull Supplier<@Nullable TYPE> supplier) {
         this.defaultValueSupplier = supplier;
         return self();
     }
 
-    protected @NotNull ValueManifest<T> buildManifest() {
-        return null;
+    protected @NotNull ValueManifest<TYPE> buildManifest() {
+        return new ValueManifest<>(type(), this.provider, this.path, this.defaultValueSupplier);
     }
 
 }

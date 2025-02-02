@@ -24,10 +24,10 @@ public class ValueAdapter<TYPE>
 
     public ValueAdapter(@NotNull ValueType<TYPE> type,
                         @Nullable ValueSerializer<TYPE> serializer,
-                        @Nullable ValueParser<TYPE> deserializer) {
+                        @Nullable ValueParser<TYPE> parser) {
         this.type = type;
         this.serializer = serializer;
-        this.deserializer = deserializer;
+        this.deserializer = parser;
     }
 
     public @NotNull ValueType<TYPE> type() {
@@ -42,12 +42,14 @@ public class ValueAdapter<TYPE>
         return deserializer;
     }
 
-    public void serializer(@Nullable ValueSerializer<TYPE> serializer) {
+    public ValueAdapter<TYPE> serializer(@Nullable ValueSerializer<TYPE> serializer) {
         this.serializer = serializer;
+        return this;
     }
 
-    public void parser(@Nullable ValueParser<TYPE> deserializer) {
+    public ValueAdapter<TYPE> parser(@Nullable ValueParser<TYPE> deserializer) {
         this.deserializer = deserializer;
+        return this;
     }
 
     @Override
