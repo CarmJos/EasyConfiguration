@@ -38,7 +38,7 @@ public class ValueAdapter<TYPE>
         return serializer;
     }
 
-    public @Nullable ValueParser<TYPE> deserializer() {
+    public @Nullable ValueParser<TYPE> parser() {
         return deserializer;
     }
 
@@ -46,7 +46,7 @@ public class ValueAdapter<TYPE>
         this.serializer = serializer;
     }
 
-    public void deserializer(@Nullable ValueParser<TYPE> deserializer) {
+    public void parser(@Nullable ValueParser<TYPE> deserializer) {
         this.deserializer = deserializer;
     }
 
@@ -57,9 +57,9 @@ public class ValueAdapter<TYPE>
     }
 
     @Override
-    public TYPE deserialize(@NotNull ConfigurationProvider<?> provider, @NotNull ValueType<? super TYPE> type, @NotNull Object value) throws Exception {
+    public TYPE parse(@NotNull ConfigurationProvider<?> provider, @NotNull ValueType<? super TYPE> type, @NotNull Object value) throws Exception {
         if (deserializer == null) throw new UnsupportedOperationException("Deserializer is not supported");
-        return deserializer.deserialize(provider, type, value);
+        return deserializer.parse(provider, type, value);
     }
 
     @Override

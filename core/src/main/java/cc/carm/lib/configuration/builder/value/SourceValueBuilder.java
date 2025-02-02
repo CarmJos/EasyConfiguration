@@ -52,7 +52,7 @@ public class SourceValueBuilder<S, V> extends CommonConfigBuilder<V, SourceValue
 
     @Override
     public @NotNull ConfiguredValue<V> build() {
-        return new ConfiguredValue<>(
+        return ConfiguredValue.of(
                 buildManifest(),
                 (p, type, data) -> {
                     S source = p.deserialize(this.sourceType, data);

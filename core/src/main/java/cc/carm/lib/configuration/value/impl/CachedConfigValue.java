@@ -1,5 +1,8 @@
 package cc.carm.lib.configuration.value.impl;
 
+import cc.carm.lib.configuration.adapter.ValueAdapter;
+import cc.carm.lib.configuration.adapter.ValueParser;
+import cc.carm.lib.configuration.adapter.ValueSerializer;
 import cc.carm.lib.configuration.value.ConfigValue;
 import cc.carm.lib.configuration.value.ValueManifest;
 import org.jetbrains.annotations.Contract;
@@ -53,6 +56,26 @@ public abstract class CachedConfigValue<T> extends ConfigValue<T> {
         if (getCachedValue() != null) return getCachedValue();
         else if (defaults() != null) return defaults();
         else return emptyValue;
+    }
+
+    /**
+     * @return Value's parser, parse base object to value.
+     */
+    protected <O> @Nullable ValueParser<O> parserFor(@NotNull ValueAdapter<O> adapter) {
+        if (adapter.parser() != null) return adapter.parser();
+        ValueAdapter<O> registered = provider().adapters().adapterOf(adapter.type());
+        if (registered == null) return null;
+        return registered.parser();
+    }
+
+    /**
+     * @return Value's serializer, parse value to base object.
+     */
+    protected <O> @Nullable ValueSerializer<O> serializerFor(@NotNull ValueAdapter<O> adapter) {
+        if (adapter.serializer() != null) return adapter.serializer();
+        ValueAdapter<O> registered = provider().adapters().adapterOf(adapter.type());
+        if (registered == null) return null;
+        return registered.serializer();
     }
 
 }

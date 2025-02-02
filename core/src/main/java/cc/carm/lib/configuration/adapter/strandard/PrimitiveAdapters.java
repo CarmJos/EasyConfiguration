@@ -18,7 +18,7 @@ public class PrimitiveAdapters<T> extends ValueAdapter<T> {
     public static ValueAdapter<Enum<?>> ofEnum() {
         ValueAdapter<Enum<?>> adapter = new ValueAdapter<>(new ValueType<Enum<?>>() {
         });
-        adapter.deserializer((provider, type, data) -> Enum.valueOf((Class<Enum>) type.getRawType(), data.toString()));
+        adapter.parser((provider, type, data) -> Enum.valueOf((Class<Enum>) type.getRawType(), data.toString()));
         adapter.serializer((provider, type, value) -> value.name());
         return adapter;
     }

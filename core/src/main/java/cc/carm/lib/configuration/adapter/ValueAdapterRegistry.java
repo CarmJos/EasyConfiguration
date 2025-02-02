@@ -27,7 +27,7 @@ public class ValueAdapterRegistry {
         if (fromAdapter == null) throw new IllegalArgumentException("No adapter for type " + from);
         register(to,
                 serializer == null ? null : (provider, type, value) -> fromAdapter.serialize(provider, from, serializer.handle(value)),
-                parser == null ? null : (provider, type, data) -> parser.handle(fromAdapter.deserialize(provider, from, data))
+                parser == null ? null : (provider, type, data) -> parser.handle(fromAdapter.parse(provider, from, data))
         );
     }
 
@@ -55,7 +55,7 @@ public class ValueAdapterRegistry {
     public <T> void register(@NotNull ValueType<T> type, @NotNull ValueParser<T> deserializer) {
         ValueAdapter<T> existing = adapterOf(type);
         if (existing != null) {
-            existing.deserializer(deserializer);
+            existing.parser(deserializer);
         } else {
             register(new ValueAdapter<>(type, null, deserializer));
         }
@@ -66,7 +66,7 @@ public class ValueAdapterRegistry {
         ValueAdapter<T> existing = adapterOf(type);
         if (existing != null) {
             if (serializer != null) existing.serializer(serializer);
-            if (deserializer != null) existing.deserializer(deserializer);
+            if (deserializer != null) existing.parser(deserializer);
         } else {
             register(new ValueAdapter<>(type, serializer, deserializer));
         }
@@ -81,7 +81,7 @@ public class ValueAdapterRegistry {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> ValueAdapter<T> adapterOf(@NotNull ValueType<T> type) {
+    public <T> @Nullable ValueAdapter<T> adapterOf(@NotNull ValueType<T> type) {
         ValueAdapter<?> matched = adapters.stream().filter(adapter -> adapter.type().equals(type)).findFirst().orElse(null);
         if (matched != null) return (ValueAdapter<T>) matched;
 
@@ -110,7 +110,7 @@ public class ValueAdapterRegistry {
         if (type.isInstance(source)) return type.cast(source); // Not required to deserialize
         ValueAdapter<T> adapter = adapterOf(type);
         if (adapter == null) throw new RuntimeException("No adapter for type " + type);
-        return adapter.deserialize(provider, type, source);
+        return adapter.parse(provider, type, source);
     }
 
     @Contract("_,null -> null")

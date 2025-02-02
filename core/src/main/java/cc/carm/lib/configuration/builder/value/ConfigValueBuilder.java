@@ -34,44 +34,12 @@ public class ConfigValueBuilder<V> {
         return from(String.class);
     }
 
-    public @NotNull SourceValueBuilder<Integer, V> fromInteger() {
-        return from(Integer.class);
-    }
-
-    public @NotNull SourceValueBuilder<Long, V> fromLong() {
-        return from(Long.class);
-    }
-
-    public @NotNull SourceValueBuilder<Double, V> fromDouble() {
-        return from(Double.class);
-    }
-
-    public @NotNull SourceValueBuilder<Float, V> fromFloat() {
-        return from(Float.class);
-    }
-
-    public @NotNull SourceValueBuilder<Boolean, V> fromBoolean() {
-        return from(Boolean.class);
-    }
-
-    public @NotNull SourceValueBuilder<Character, V> fromCharacter() {
-        return from(Character.class);
-    }
-
-    public @NotNull SourceValueBuilder<Byte, V> fromByte() {
-        return from(Byte.class);
-    }
-
-    public @NotNull SourceValueBuilder<Short, V> fromShort() {
-        return from(Short.class);
-    }
-
     public @NotNull SectionValueBuilder<V> fromSection() {
         return new SectionValueBuilder<>(this.type);
     }
 
     public @NotNull SectionValueBuilder<V> fromSection(@NotNull ConfigValueHandler<ConfigurationSection, V> valueParser,
-                                                       @NotNull ConfigValueHandler<V, ? extends Map<String, Object>> valueSerializer) {
+                                                       @NotNull ConfigValueHandler<V, ? extends Map<Object, Object>> valueSerializer) {
         return new SectionValueBuilder<>(this.type, valueParser, valueSerializer);
     }
 

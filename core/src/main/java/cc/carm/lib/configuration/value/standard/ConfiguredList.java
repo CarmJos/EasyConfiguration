@@ -1,5 +1,6 @@
 package cc.carm.lib.configuration.value.standard;
 
+import cc.carm.lib.configuration.adapter.ValueAdapter;
 import cc.carm.lib.configuration.adapter.ValueParser;
 import cc.carm.lib.configuration.adapter.ValueSerializer;
 import cc.carm.lib.configuration.adapter.ValueType;
@@ -11,54 +12,65 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class ConfiguredList<V> extends CachedConfigValue<List<V>> implements List<V> {
 
-    protected final @NotNull ValueType<V> valueType;
-    protected final @Nullable ValueParser<V> parser;
-    protected final @Nullable ValueSerializer<V> serializer;
+    protected final @NotNull Supplier<? extends List<V>> constructor;
+    protected final @NotNull ValueAdapter<V> paramAdapter;
 
-    private ConfiguredList(@NotNull ValueManifest<List<V>> manifest, @NotNull ValueType<V> valueType,
-                           @Nullable ValueParser<V> parser, @Nullable ValueSerializer<V> serializer) {
+    private ConfiguredList(@NotNull ValueManifest<List<V>> manifest,
+                           @NotNull Supplier<? extends List<V>> constructor,
+                           @NotNull ValueAdapter<V> paramAdapter) {
         super(manifest);
-        this.valueType = valueType;
-        this.parser = parser;
-        this.serializer = serializer;
+        this.constructor = constructor;
+        this.paramAdapter = paramAdapter;
+    }
+
+    /**
+     * @return Adapter of this value.
+     */
+    public @NotNull ValueAdapter<V> adapter() {
+        return this.paramAdapter;
+    }
+
+    public @NotNull ValueType<V> paramType() {
+        return adapter().type();
     }
 
     /**
      * @return Value's parser, parse base object to value.
      */
     public @Nullable ValueParser<V> parser() {
-        return parser;
+        return parserFor(adapter());
     }
 
     /**
      * @return Value's serializer, parse value to base object.
      */
     public @Nullable ValueSerializer<V> serializer() {
-        return serializer;
+        return serializerFor(adapter());
     }
 
-    public @NotNull ValueType<V> valueType() {
-        return valueType;
+    private @NotNull List<V> createList() {
+        return constructor.get();
     }
 
     @Override
     public @NotNull List<V> get() {
-        if (!isExpired()) return getCachedOrDefault(new ArrayList<>());
+        if (!isExpired()) return getCachedOrDefault(createList());
         // Data that is outdated and needs to be parsed again.
-        List<V> list = new ArrayList<>();
+        List<V> list = createList();
         List<?> data = config().contains(path()) ? config().getList(path()) : null;
         if (data == null) return getDefaultFirst(list);
 
-        ValueParser<V> parser = this.parser;
+        ValueParser<V> parser = parser();
         if (parser == null) return getDefaultFirst(list);
 
         for (Object dataVal : data) {
             if (dataVal == null) continue;
             try {
-                list.add(parser.deserialize(provider(), valueType(), dataVal));
+                list.add(parser.parse(provider(), paramType(), dataVal));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -80,7 +92,7 @@ public class ConfiguredList<V> extends CachedConfigValue<List<V>> implements Lis
         for (V val : value) {
             if (val == null) continue;
             try {
-                data.add(serializer.serialize(provider(), valueType, val));
+                data.add(serializer.serialize(provider(), paramType(), val));
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

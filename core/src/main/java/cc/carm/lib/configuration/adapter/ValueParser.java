@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 @FunctionalInterface
 public interface ValueParser<TYPE> {
 
-    TYPE deserialize(
+    TYPE parse(
             @NotNull ConfigurationProvider<?> provider,
             @NotNull ValueType<? super TYPE> type, @NotNull Object data
     ) throws Exception;

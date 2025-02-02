@@ -1,10 +1,10 @@
 package cc.carm.lib.configuration.value.standard;
 
+import cc.carm.lib.configuration.adapter.ValueAdapter;
 import cc.carm.lib.configuration.adapter.ValueParser;
 import cc.carm.lib.configuration.adapter.ValueSerializer;
 import cc.carm.lib.configuration.adapter.ValueType;
 import cc.carm.lib.configuration.builder.value.ConfigValueBuilder;
-import cc.carm.lib.configuration.source.ConfigurationProvider;
 import cc.carm.lib.configuration.value.ValueManifest;
 import cc.carm.lib.configuration.value.impl.CachedConfigValue;
 import org.jetbrains.annotations.NotNull;
@@ -49,32 +49,42 @@ public class ConfiguredValue<V> extends CachedConfigValue<V> {
     public static <V> ConfiguredValue<V> of(@NotNull ValueManifest<V> manifest,
                                             @Nullable ValueParser<V> parser,
                                             @Nullable ValueSerializer<V> serializer) {
-        return new ConfiguredValue<>(manifest, parser, serializer);
+        ValueAdapter<V> adapter = new ValueAdapter<>(manifest.type());
+        adapter.parser(parser);
+        adapter.serializer(serializer);
+        return of(manifest, adapter);
     }
 
-    protected final @Nullable ValueParser<V> parser;
-    protected final @Nullable ValueSerializer<V> serializer;
+    public static <V> ConfiguredValue<V> of(@NotNull ValueManifest<V> manifest, @NotNull ValueAdapter<V> adapter) {
+        return new ConfiguredValue<>(manifest, adapter);
+    }
 
-    public ConfiguredValue(@NotNull ValueManifest<V> manifest,
-                           @Nullable ValueParser<V> parser,
-                           @Nullable ValueSerializer<V> serializer) {
+    protected final @NotNull ValueAdapter<V> adapter;
+
+    public ConfiguredValue(@NotNull ValueManifest<V> manifest, @NotNull ValueAdapter<V> adapter) {
         super(manifest);
-        this.parser = parser;
-        this.serializer = serializer;
+        this.adapter = adapter;
+    }
+
+    /**
+     * @return Adapter of this value.
+     */
+    public @NotNull ValueAdapter<V> adapter() {
+        return adapter;
     }
 
     /**
      * @return Value's parser, parse base object to value.
      */
     public @Nullable ValueParser<V> parser() {
-        return parser;
+        return parserFor(adapter());
     }
 
     /**
      * @return Value's serializer, parse value to base object.
      */
     public @Nullable ValueSerializer<V> serializer() {
-        return serializer;
+        return serializerFor(adapter());
     }
 
     @Override
@@ -90,7 +100,7 @@ public class ConfiguredValue<V> extends CachedConfigValue<V> {
 
         try {
             // If there are no errors, update the cache and return.
-            return updateCache(parser.deserialize(provider(), type(), data));
+            return updateCache(parser.parse(provider(), type(), data));
         } catch (Exception e) {
             // There was a parsing error, prompted and returned the default value.
             e.printStackTrace();

@@ -17,7 +17,7 @@ public class SectionValueBuilder<V> extends CommonConfigBuilder<V, SectionValueB
     protected final @NotNull ValueType<V> valueType;
 
     protected @NotNull ConfigValueHandler<ConfigurationSection, V> parser;
-    protected @NotNull ConfigValueHandler<V, ? extends Map<String, Object>> serializer;
+    protected @NotNull ConfigValueHandler<V, ? extends Map<Object, Object>> serializer;
 
     public SectionValueBuilder(@NotNull ValueType<V> valueType) {
         this(valueType, ConfigValueHandler.required(), ConfigValueHandler.required());
@@ -25,7 +25,7 @@ public class SectionValueBuilder<V> extends CommonConfigBuilder<V, SectionValueB
 
     public SectionValueBuilder(@NotNull ValueType<V> valueType,
                                @NotNull ConfigValueHandler<ConfigurationSection, V> parser,
-                               @NotNull ConfigValueHandler<V, ? extends Map<String, Object>> serializer) {
+                               @NotNull ConfigValueHandler<V, ? extends Map<Object, Object>> serializer) {
         this.valueType = valueType;
         this.parser = parser;
         this.serializer = serializer;
@@ -45,18 +45,18 @@ public class SectionValueBuilder<V> extends CommonConfigBuilder<V, SectionValueB
         return this;
     }
 
-    public @NotNull SectionValueBuilder<V> serialize(ConfigDataFunction<V, ? extends Map<String, Object>> serializer) {
+    public @NotNull SectionValueBuilder<V> serialize(ConfigDataFunction<V, ? extends Map<Object, Object>> serializer) {
         return serialize((p, value) -> serializer.handle(value));
     }
 
-    public @NotNull SectionValueBuilder<V> serialize(ConfigValueHandler<V, ? extends Map<String, Object>> serializer) {
+    public @NotNull SectionValueBuilder<V> serialize(ConfigValueHandler<V, ? extends Map<Object, Object>> serializer) {
         this.serializer = serializer;
         return this;
     }
 
-    public @NotNull SectionValueBuilder<V> serialize(Consumer<Map<String, Object>> serializer) {
+    public @NotNull SectionValueBuilder<V> serialize(Consumer<Map<Object, Object>> serializer) {
         return serialize((p, value) -> {
-            Map<String, Object> map = new LinkedHashMap<>();
+            Map<Object, Object> map = new LinkedHashMap<>();
             serializer.accept(map);
             return map;
         });
@@ -64,7 +64,7 @@ public class SectionValueBuilder<V> extends CommonConfigBuilder<V, SectionValueB
 
     @Override
     public @NotNull ConfiguredValue<V> build() {
-        return new ConfiguredValue<>(
+        return ConfiguredValue.of(
                 buildManifest(),
                 (p, type, data) -> {
                     ConfigurationSection section = p.deserialize(ConfigurationSection.class, data);
@@ -72,7 +72,7 @@ public class SectionValueBuilder<V> extends CommonConfigBuilder<V, SectionValueB
                     return this.parser.handle(p, section);
                 },
                 (p, type, data) -> {
-                    Map<String, Object> map = this.serializer.handle(p, data);
+                    Map<Object, Object> map = this.serializer.handle(p, data);
                     return map == null || map.isEmpty() ? null : map; // Map is a type of original data
                 }
         );
