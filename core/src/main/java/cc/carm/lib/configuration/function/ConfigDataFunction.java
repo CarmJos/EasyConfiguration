@@ -9,11 +9,11 @@ import java.util.Objects;
 @FunctionalInterface
 public interface ConfigDataFunction<T, R> {
 
-    @NotNull R parse(@NotNull T data) throws Exception;
+    @NotNull R handle(@NotNull T data) throws Exception;
 
     default <V> @NotNull ConfigDataFunction<T, V> andThen(@NotNull ConfigDataFunction<? super R, V> after) {
         Objects.requireNonNull(after);
-        return data -> after.parse(parse(data));
+        return data -> after.handle(handle(data));
     }
 
     @Contract(pure = true)

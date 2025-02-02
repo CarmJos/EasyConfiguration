@@ -4,16 +4,16 @@ import cc.carm.lib.configuration.source.ConfigurationProvider;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Value serializer, convert target value to base data.
+ * Value deserializer, convert base data to target value.
  *
- * @param <TYPE> The type of value
+ * @param <TYPE> The type of target value
  */
 @FunctionalInterface
-public interface ValueSerializer<TYPE> {
+public interface ValueParser<TYPE> {
 
-    Object serialize(
+    TYPE deserialize(
             @NotNull ConfigurationProvider<?> provider,
-            @NotNull ValueType<? super TYPE> type, @NotNull TYPE value
+            @NotNull ValueType<? super TYPE> type, @NotNull Object data
     ) throws Exception;
 
 }

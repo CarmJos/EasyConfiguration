@@ -1,52 +1,77 @@
 package cc.carm.lib.configuration.adapter;
 
 import cc.carm.lib.configuration.source.ConfigurationProvider;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 /**
  * Value adapter, used to convert the value of the configuration file into the objects.
  *
- * @param <B> The type of the base data
- * @param <V> The type of the target value
+ * @param <TYPE> The type of the target value
  */
-public abstract class ValueAdapter<B, V> implements ValueSerializer<B, V>, ValueDeserializer<B, V> {
+public class ValueAdapter<TYPE>
+        implements ValueSerializer<TYPE>, ValueParser<TYPE> {
 
-    protected final Class<? super B> baseType;
-    protected final Class<? super V> valueType;
+    protected final @NotNull ValueType<TYPE> type;
+    protected @Nullable ValueSerializer<TYPE> serializer;
+    protected @Nullable ValueParser<TYPE> deserializer;
 
-    protected ValueAdapter(Class<? super B> baseType, Class<? super V> valueType) {
-        this.baseType = baseType;
-        this.valueType = valueType;
+    public ValueAdapter(@NotNull ValueType<TYPE> type) {
+        this(type, null, null);
     }
 
-    public Class<? super B> getBaseClass() {
-        return baseType;
+    public ValueAdapter(@NotNull ValueType<TYPE> type,
+                        @Nullable ValueSerializer<TYPE> serializer,
+                        @Nullable ValueParser<TYPE> deserializer) {
+        this.type = type;
+        this.serializer = serializer;
+        this.deserializer = deserializer;
     }
 
-    public Class<? super V> getValueClass() {
-        return valueType;
+    public @NotNull ValueType<TYPE> type() {
+        return type;
     }
 
-    public boolean isAdaptedFrom(Class<?> clazz) {
-        return clazz.isAssignableFrom(valueType);
+    public @Nullable ValueSerializer<TYPE> serializer() {
+        return serializer;
     }
 
-    public boolean isAdaptedFrom(Object object) {
-        return isAdaptedFrom(object.getClass());
+    public @Nullable ValueParser<TYPE> deserializer() {
+        return deserializer;
     }
 
-    public boolean isAdaptedTo(Class<?> clazz) {
-        return clazz == valueType;
+    public void serializer(@Nullable ValueSerializer<TYPE> serializer) {
+        this.serializer = serializer;
     }
 
-    @SuppressWarnings("unchecked")
-    protected final V deserializeObject(ConfigurationProvider<?> provider, Class<?> valueClass, Object data) throws Exception {
-        return deserialize(provider, (Class<? extends V>) valueClass, (B) data);
+    public void deserializer(@Nullable ValueParser<TYPE> deserializer) {
+        this.deserializer = deserializer;
     }
 
-    @SuppressWarnings("unchecked")
-    protected final B serializeObject(ConfigurationProvider<?> provider, Object value) throws Exception {
-        return serialize(provider, (V) value);
+    @Override
+    public Object serialize(@NotNull ConfigurationProvider<?> provider, @NotNull ValueType<? super TYPE> type, @NotNull TYPE value) throws Exception {
+        if (serializer == null) throw new UnsupportedOperationException("Serializer is not supported");
+        return serializer.serialize(provider, type, value);
     }
 
+    @Override
+    public TYPE deserialize(@NotNull ConfigurationProvider<?> provider, @NotNull ValueType<? super TYPE> type, @NotNull Object value) throws Exception {
+        if (deserializer == null) throw new UnsupportedOperationException("Deserializer is not supported");
+        return deserializer.deserialize(provider, type, value);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof ValueAdapter)) return false;
+        ValueAdapter<?> that = (ValueAdapter<?>) o;
+        return Objects.equals(type, that.type);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(type);
+    }
 }
 

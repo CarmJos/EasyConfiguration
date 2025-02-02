@@ -1,4 +1,4 @@
-package cc.carm.lib.configuration.loader;
+package cc.carm.lib.configuration.source.loader;
 
 import cc.carm.lib.configuration.source.ConfigurationProvider;
 import org.jetbrains.annotations.NotNull;

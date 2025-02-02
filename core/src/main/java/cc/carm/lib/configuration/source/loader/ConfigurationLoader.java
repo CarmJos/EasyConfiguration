@@ -1,11 +1,14 @@
-package cc.carm.lib.configuration.loader;
+package cc.carm.lib.configuration.source.loader;
 
 import cc.carm.lib.configuration.Configuration;
 import cc.carm.lib.configuration.source.ConfigurationProvider;
-import cc.carm.lib.configuration.option.ConfigurationOptions;
+import cc.carm.lib.configuration.source.option.ConfigurationOptions;
+import cc.carm.lib.configuration.value.ConfigValue;
+import cc.carm.lib.configuration.value.ValueManifest;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 
@@ -14,6 +17,20 @@ import java.util.Arrays;
  * used to load configuration values from {@link Configuration} classes.
  */
 public class ConfigurationLoader {
+
+    public static final Field PATH_FIELD;
+    public static final Field PROVIDER_FIELD;
+
+    static {
+        try {
+            PATH_FIELD = ValueManifest.class.getDeclaredField("path");
+            PATH_FIELD.setAccessible(true);
+            PROVIDER_FIELD = ValueManifest.class.getDeclaredField("provider");
+            PROVIDER_FIELD.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     protected PathGenerator pathGenerator;
 
@@ -83,13 +100,15 @@ public class ConfigurationLoader {
             field.setAccessible(true);
             Object object = field.get(source);
 //
-//            if (object instanceof ConfigValue<?>) {
-//                // 目标是 ConfigValue 实例，进行具体的初始化注入
-//
-//            } else
-
-            if (source instanceof Configuration && object instanceof Configuration) {
-                // 当且仅当 源字段与字段 均为ConfigurationRoot实例时，才对目标字段进行下一步初始化加载。
+            if (object instanceof ConfigValue<?>) {
+                // 目标是 ConfigValue 实例，进行具体的初始化注入
+                ConfigValue<?> value = (ConfigValue<?>) object;
+                String path = getFieldPath(provider, parent, field);
+                if (path == null) return;
+                insertIfAbsent(value, PATH_FIELD, path);
+                insertIfAbsent(value, PROVIDER_FIELD, provider);
+            } else if (source instanceof Configuration && object instanceof Configuration) {
+                // 当且仅当 源字段与字段 均为Configuration实例时，才对目标字段进行下一步初始化加载。
                 initializeInstance(provider, (Configuration) object, parent, field);
             } else if (source instanceof Class<?> && object instanceof Class<?>) {
                 // 当且仅当 源字段与字段 均为静态类时，才对目标字段进行下一步初始化加载。
@@ -97,9 +116,16 @@ public class ConfigurationLoader {
             }
 
             // 以上判断实现以下规范：
-            // - 实例类中仅加载 ConfigValue实例 与 ConfigurationRoot实例
-            // - 静态类中仅加载 静态ConfigValue实例 与 静态ConfigurationRoot类
+            // - 实例类中仅加载 ConfigValue实例 与 Configuration实例
+            // - 静态类中仅加载 静态ConfigValue实例 与 静态Configuration类
 
+        } catch (IllegalAccessException ignored) {
+        }
+    }
+
+    private void insertIfAbsent(@NotNull ValueManifest<?> value, @NotNull Field field, @NotNull Object obj) {
+        try {
+            if (field.get(obj) == null) field.set(obj, value);
         } catch (IllegalAccessException ignored) {
         }
     }

@@ -23,7 +23,7 @@
 
         <!--        <module>demo</module>-->
 <!--        <module>providers/yaml</module>-->
-<!--        <module>providers/gson</module>-->
+        <module>providers/gson</module>
 <!--        <module>providers/sql</module>-->
 <!--        <module>providers/hocon</module>-->
     </modules>

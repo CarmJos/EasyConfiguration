@@ -1,8 +1,8 @@
-package cc.carm.lib.configuration.loader;
+package cc.carm.lib.configuration.source.loader;
 
 import cc.carm.lib.configuration.annotation.ConfigPath;
 import cc.carm.lib.configuration.source.ConfigurationProvider;
-import cc.carm.lib.configuration.option.ConfigurationOptions;
+import cc.carm.lib.configuration.source.option.ConfigurationOptions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

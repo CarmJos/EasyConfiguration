@@ -31,12 +31,12 @@ public abstract class AbstractConfigBuilder<T, B extends AbstractConfigBuilder<T
 
     public @NotNull B from(@Nullable P provider) {
         this.provider = provider;
-        return getThis();
+        return self();
     }
 
     public @NotNull B path(@Nullable String path) {
         this.path = path;
-        return getThis();
+        return self();
     }
 
     public @NotNull B comments(@NotNull String... comments) {
@@ -49,17 +49,17 @@ public abstract class AbstractConfigBuilder<T, B extends AbstractConfigBuilder<T
 
     public @NotNull B headerComments(@NotNull List<String> comments) {
         this.headerComments = comments;
-        return getThis();
+        return self();
     }
 
     public @NotNull B inlineComment(@NotNull String comment) {
         this.inlineComment = comment;
-        return getThis();
+        return self();
     }
 
     public @NotNull B defaults(@Nullable T defaultValue) {
         this.defaultValue = defaultValue;
-        return getThis();
+        return self();
     }
 
     public @NotNull B defaults(@NotNull Supplier<@Nullable T> defaultValueSupplier) {

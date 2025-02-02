@@ -1,28 +1,54 @@
 package cc.carm.lib.configuration.value;
 
+import cc.carm.lib.configuration.adapter.ValueType;
 import cc.carm.lib.configuration.source.ConfigurationProvider;
-import cc.carm.lib.configuration.source.ConfigurationSource;
-import cc.carm.lib.configuration.value.meta.ValueMetaList;
-import cc.carm.lib.configuration.value.meta.ValueMetaType;
-import org.jetbrains.annotations.Contract;
+import cc.carm.lib.configuration.source.section.ConfigurationSource;
+import cc.carm.lib.configuration.meta.PathMetadata;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.function.Supplier;
 
 public class ValueManifest<T> {
 
-    protected final @NotNull Map<ValueMetaType<?>, Object> metadata;
+    protected final @NotNull ValueType<T> type;
     protected @Nullable ConfigurationProvider<?> provider;
+    protected @Nullable String path; // Section path
+
     protected @NotNull Supplier<@Nullable T> defaultSupplier;
 
-    public ValueManifest(@NotNull Map<ValueMetaType<?>, Object> metadata,
-                         @Nullable ConfigurationProvider<?> provider, @NotNull Supplier<@Nullable T> defaultSupplier) {
-        this.metadata = metadata;
+    public ValueManifest(ValueType<T> type) {
+        this(type, null, null, () -> null);
+    }
+
+    public ValueManifest(@NotNull T defaultValue) {
+        this(ValueType.of(defaultValue), null, null, () -> defaultValue);
+    }
+
+    public ValueManifest(@NotNull ValueType<T> type, @NotNull Supplier<@Nullable T> defaultSupplier) {
+        this(type, null, null, defaultSupplier);
+    }
+
+    public ValueManifest(@NotNull ValueType<T> type,
+                         @Nullable ConfigurationProvider<?> provider, @Nullable String path,
+                         @NotNull Supplier<@Nullable T> defaultSupplier) {
+        this.type = type;
         this.provider = provider;
+        this.path = path;
         this.defaultSupplier = defaultSupplier;
+    }
+
+    public @NotNull ValueType<T> type() {
+        return this.type;
+    }
+
+    public void provider(@NotNull ConfigurationProvider<?> provider) {
+        this.provider = provider;
+    }
+
+    public void path(@NotNull String path) {
+        this.path = path;
     }
 
     public @Nullable T defaults() {
@@ -37,6 +63,15 @@ public class ValueManifest<T> {
         this.defaultSupplier = defaultValue;
     }
 
+    public boolean hasDefaults() {
+        return this.defaultSupplier.get() != null;
+    }
+
+    public @NotNull String path() {
+        if (path != null) return path;
+        else throw new IllegalStateException("No section path provided.");
+    }
+
     public @NotNull ConfigurationProvider<?> provider() {
         if (this.provider != null) return this.provider;
         throw new IllegalStateException("Value does not have a provider.");
@@ -46,106 +81,16 @@ public class ValueManifest<T> {
         return provider().source();
     }
 
-    public @NotNull String path() {
-        String path = getMeta(ValueMetaList.PATH);
-        if (path != null) return path;
-        else throw new IllegalStateException("No section path provided.");
-    }
-
-    protected Object getValue() {
+    protected Object getData() {
         return config().get(path());
     }
 
-    protected void setValue(@Nullable Object value) {
+    protected void setData(@Nullable Object value) {
         config().set(path(), value);
     }
 
-    public Map<ValueMetaType<?>, Object> metadata() {
-        return metadata;
+    public Map<PathMetadata<?>, Object> metadata() {
+        return provider().metadata(path());
     }
-
-    /**
-     * Get the value of option.
-     *
-     * @param type         {@link ValueMetaType}
-     * @param defaultValue Default value if the value of option is not set.
-     * @param <V>          Value type
-     * @return Value of option
-     */
-    @SuppressWarnings("unchecked")
-    @Contract("_, !null -> !null")
-    public <V> @Nullable V getMeta(@NotNull ValueMetaType<V> type, @Nullable V defaultValue) {
-        return (V) metadata().getOrDefault(type, type.getDefault(this, defaultValue));
-    }
-
-    /**
-     * Get the value of option.
-     *
-     * @param type {@link ValueMetaType}
-     * @param <V>  Value type
-     * @return Value of option
-     */
-    public <V> @Nullable V getMeta(@NotNull ValueMetaType<V> type) {
-        return getMeta(type, null);
-    }
-
-    public boolean hasMeta(@NotNull ValueMetaType<?> type) {
-        return metadata().containsKey(type) || type.hasDefaults(this);
-    }
-
-    /**
-     * Set the value of meta, if the value is null, the meta will be removed.
-     * <br> Will only be changed in current holder.
-     *
-     * @param type  {@link ValueMetaType}
-     * @param value Value of meta
-     * @param <V>   Value type
-     * @return Previous value of meta
-     */
-    @SuppressWarnings("unchecked")
-    public <V> @Nullable V setMeta(@NotNull ValueMetaType<V> type, @Nullable V value) {
-        if (value == null || type.isDefault(this, value)) {
-            return (V) metadata().remove(type);
-        } else {
-            return (V) metadata().put(type, value);
-        }
-    }
-
-    /**
-     * Set the value of meta, if the value is null, the meta will not be changed.
-     * <br> Will only be changed in current holder.
-     *
-     * @param type  {@link ValueMetaType}
-     * @param value Value of meta
-     * @param <V>   Value type
-     */
-    public <V> void setMetaIfAbsent(@NotNull ValueMetaType<V> type, @Nullable V value) {
-        if (value == null || type.isDefault(this, value)) {
-            metadata().remove(type);
-        } else {
-            metadata().putIfAbsent(type, value);
-        }
-    }
-
-    /**
-     * Set the value of meta, if the value is null, the meta will not be changed.
-     * <br> Will only be changed in current holder.
-     *
-     * @param type  {@link ValueMetaType}
-     * @param value Value of meta
-     * @param <V>   Value type
-     */
-    @SuppressWarnings("unchecked")
-    public <V> @Nullable V setMetaIfPresent(@NotNull ValueMetaType<V> type, @Nullable V value) {
-        Object exists = metadata().get(type);
-        if (exists == null) return null;
-
-        if (value == null || type.isDefault(this, value)) {
-            return (V) metadata().remove(type);
-        } else {
-            return (V) metadata().put(type, value);
-        }
-    }
-
 
 }

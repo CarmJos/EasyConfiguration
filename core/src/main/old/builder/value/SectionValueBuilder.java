@@ -3,7 +3,6 @@ package cc.carm.lib.configuration.builder.value;
 import cc.carm.lib.configuration.builder.CommonConfigBuilder;
 import cc.carm.lib.configuration.function.ConfigDataFunction;
 import cc.carm.lib.configuration.function.ConfigValueParser;
-import cc.carm.lib.configuration.value.standard.ConfiguredSection;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;

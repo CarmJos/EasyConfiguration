@@ -1,6 +1,6 @@
 package cc.carm.lib.configuration.option;
 
-import cc.carm.lib.easyoptions.OptionType;
+import cc.carm.lib.configuration.source.option.ConfigurationOption;
 
 public interface CommentableOptions {
 
@@ -8,7 +8,7 @@ public interface CommentableOptions {
      * Whether to keep modified comments in configuration,
      * that means we only set comments for values that are not exists in configuration.
      */
-    OptionType<Boolean> KEEP_COMMENTS = OptionType.of(true);
+    ConfigurationOption<Boolean> KEEP_COMMENTS = ConfigurationOption.of(true);
 
     /**
      * Whether to comment values name that are not exists in configuration and no default value offered.
@@ -19,6 +19,6 @@ public interface CommentableOptions {
      * # foo:
      * </pre></blockquote>
      */
-    OptionType<Boolean> COMMENT_NO_DEFAULT = OptionType.of(true);
+    ConfigurationOption<Boolean> COMMENT_NO_DEFAULT = ConfigurationOption.of(true);
 
 }

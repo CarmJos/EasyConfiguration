@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class CachedConfigValue<T> extends ConfigValue<T> {
-    
+
     protected @Nullable T cachedValue;
     protected long parsedTime = -1;
 
@@ -30,13 +30,24 @@ public abstract class CachedConfigValue<T> extends ConfigValue<T> {
     }
 
     protected final T getDefaultFirst(@Nullable T value) {
-        return updateCache(this.defaultSupplier == null ? value : this.defaultSupplier);
+        return updateCache(this.defaults() == null ? value : this.defaults());
     }
 
+    /**
+     * Get the cached value or the default value if the cached value is null
+     *
+     * @return the cached value or the default value
+     */
     protected @Nullable T getCachedOrDefault() {
         return getCachedOrDefault(null);
     }
 
+    /**
+     * Get the cached value or the default value if the cached value is null
+     *
+     * @param emptyValue the value to return if the cached value and the default value are null
+     * @return the cached value or the default value
+     */
     @Contract("!null->!null")
     protected T getCachedOrDefault(@Nullable T emptyValue) {
         if (getCachedValue() != null) return getCachedValue();

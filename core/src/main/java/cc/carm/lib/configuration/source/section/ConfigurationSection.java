@@ -1,7 +1,6 @@
-package cc.carm.lib.configuration.source;
+package cc.carm.lib.configuration.source.section;
 
 import cc.carm.lib.configuration.function.ConfigDataFunction;
-import cc.carm.lib.configuration.function.ConfigValueParser;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12,7 +11,9 @@ import java.util.*;
 public interface ConfigurationSection {
 
     @NotNull
-    Set<String> getKeys(boolean deep);
+    default Set<String> getKeys(boolean deep) {
+        return getValues(deep).keySet();
+    }
 
     @NotNull
     Map<String, Object> getValues(boolean deep);
@@ -40,22 +41,22 @@ public interface ConfigurationSection {
         return get(path, null, clazz);
     }
 
-    default @Nullable <T> T get(@NotNull String path, @NotNull ConfigValueParser<Object, T> parser) {
+    default @Nullable <T> T get(@NotNull String path, @NotNull ConfigDataFunction<Object, T> parser) {
         return get(path, null, parser);
     }
 
     @Contract("_,!null,_->!null")
     default @Nullable <T> T get(@NotNull String path, @Nullable T defaultValue, @NotNull Class<T> clazz) {
-        return get(path, defaultValue, ConfigValueParser.castObject(clazz));
+        return get(path, defaultValue, ConfigDataFunction.castObject(clazz));
     }
 
     @Contract("_,!null,_->!null")
     default @Nullable <T> T get(@NotNull String path, @Nullable T defaultValue,
-                                @NotNull ConfigValueParser<Object, T> parser) {
+                                @NotNull ConfigDataFunction<Object, T> parser) {
         Object value = get(path);
         if (value != null) {
             try {
-                return parser.parse(value, defaultValue);
+                return parser.handle(value);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -74,7 +75,7 @@ public interface ConfigurationSection {
 
     @Contract("_, !null -> !null")
     default @Nullable Boolean getBoolean(@NotNull String path, @Nullable Boolean def) {
-        return get(path, def, ConfigValueParser.booleanValue());
+        return get(path, def, ConfigDataFunction.booleanValue());
     }
 
     default @Nullable Boolean isByte(@NotNull String path) {
@@ -87,7 +88,7 @@ public interface ConfigurationSection {
 
     @Contract("_, !null -> !null")
     default @Nullable Byte getByte(@NotNull String path, @Nullable Byte def) {
-        return get(path, def, ConfigValueParser.byteValue());
+        return get(path, def, ConfigDataFunction.byteValue());
     }
 
     default boolean isShort(@NotNull String path) {
@@ -100,7 +101,7 @@ public interface ConfigurationSection {
 
     @Contract("_, !null -> !null")
     default @Nullable Short getShort(@NotNull String path, @Nullable Short def) {
-        return get(path, def, ConfigValueParser.shortValue());
+        return get(path, def, ConfigDataFunction.shortValue());
     }
 
 
@@ -114,7 +115,7 @@ public interface ConfigurationSection {
 
     @Contract("_, !null -> !null")
     default @Nullable Integer getInt(@NotNull String path, @Nullable Integer def) {
-        return get(path, def, ConfigValueParser.intValue());
+        return get(path, def, ConfigDataFunction.intValue());
     }
 
 
@@ -128,7 +129,7 @@ public interface ConfigurationSection {
 
     @Contract("_, !null -> !null")
     default @Nullable Long getLong(@NotNull String path, @Nullable Long def) {
-        return get(path, def, ConfigValueParser.longValue());
+        return get(path, def, ConfigDataFunction.longValue());
     }
 
 
@@ -142,7 +143,7 @@ public interface ConfigurationSection {
 
     @Contract("_, !null -> !null")
     default @Nullable Float getFloat(@NotNull String path, @Nullable Float def) {
-        return get(path, def, ConfigValueParser.floatValue());
+        return get(path, def, ConfigDataFunction.floatValue());
     }
 
 
@@ -156,7 +157,7 @@ public interface ConfigurationSection {
 
     @Contract("_, !null -> !null")
     default @Nullable Double getDouble(@NotNull String path, @Nullable Double def) {
-        return get(path, def, ConfigValueParser.doubleValue());
+        return get(path, def, ConfigDataFunction.doubleValue());
     }
 
 
@@ -232,7 +233,7 @@ public interface ConfigurationSection {
         List<T> values = new ArrayList<>();
         for (Object o : list) {
             try {
-                values.add(parser.parse(o));
+                values.add(parser.handle(o));
             } catch (Exception ignored) {
             }
         }

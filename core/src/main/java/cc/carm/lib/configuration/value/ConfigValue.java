@@ -9,12 +9,8 @@ import java.util.Optional;
 
 public abstract class ConfigValue<T> extends ValueManifest<T> {
 
-//    public static @NotNull ConfigBuilder builder() {
-//        return new ConfigBuilder();
-//    }
-
     protected ConfigValue(@NotNull ValueManifest<T> manifest) {
-        super(manifest.metadata, manifest.provider, manifest.defaultSupplier);
+        super(manifest.type, manifest.provider, manifest.path, manifest.defaultSupplier);
     }
 
     /**
@@ -41,7 +37,7 @@ public abstract class ConfigValue<T> extends ValueManifest<T> {
      * @throws NullPointerException 对应数据为空时抛出
      */
     public @NotNull T getNotNull() {
-        return Objects.requireNonNull(getOrDefault(), "Value(" + path() + ") is null.");
+        return Objects.requireNonNull(getOrDefault(), "Value(" + path() + ") [" + type() + "] is null.");
     }
 
     public @NotNull Optional<@Nullable T> optional() {

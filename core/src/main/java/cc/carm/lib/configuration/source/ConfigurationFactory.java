@@ -1,85 +1,84 @@
 package cc.carm.lib.configuration.source;
 
-import cc.carm.lib.configuration.adapter.ValueAdapter;
 import cc.carm.lib.configuration.adapter.ValueAdapterRegistry;
-import cc.carm.lib.configuration.function.ConfigDataFunction;
-import cc.carm.lib.configuration.loader.ConfigurationLoader;
-import cc.carm.lib.configuration.loader.PathGenerator;
-import cc.carm.lib.easyoptions.OptionHolder;
-import cc.carm.lib.easyoptions.OptionType;
+import cc.carm.lib.configuration.source.loader.ConfigurationLoader;
+import cc.carm.lib.configuration.source.loader.PathGenerator;
+import cc.carm.lib.configuration.source.option.ConfigurationOption;
+import cc.carm.lib.configuration.source.option.ConfigurationOptionHolder;
+import cc.carm.lib.configuration.source.section.ConfigurationSource;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public abstract class ConfigurationFactory<P extends ConfigurationSource<P, ?>, C> {
+public abstract class ConfigurationFactory<SOURCE extends ConfigurationSource<SOURCE, ?>, PROVIDER extends ConfigurationProvider<SOURCE>, SELF> {
 
-    protected Function<P, ConfigurationLoader> loaderFunction = p -> new ConfigurationLoader();
+    protected Function<PROVIDER, ConfigurationLoader> loaderFunction = PROVIDER -> new ConfigurationLoader();
     protected Consumer<ConfigurationLoader> loaderConsumer = loader -> {
     };
 
     protected ValueAdapterRegistry adapters = new ValueAdapterRegistry();
-    protected OptionHolder options = new OptionHolder();
+    protected ConfigurationOptionHolder options = new ConfigurationOptionHolder();
 
-    public abstract C getThis();
+    public abstract SELF self();
 
-    public C loader(Function<P, ConfigurationLoader> loaderFunction) {
+    public SELF loader(Function<PROVIDER, ConfigurationLoader> loaderFunction) {
         this.loaderFunction = loaderFunction;
-        return getThis();
+        return self();
     }
 
-    public C loader(ConfigurationLoader loader) {
-        return loader(p -> loader);
+    public SELF loader(ConfigurationLoader loader) {
+        return loader(PROVIDER -> loader);
     }
 
-    public C loader(Consumer<ConfigurationLoader> loaderConsumer) {
+    public SELF loader(Consumer<ConfigurationLoader> loaderConsumer) {
         this.loaderConsumer = this.loaderConsumer.andThen(loaderConsumer);
-        return getThis();
+        return self();
     }
 
-    public C pathGenerator(PathGenerator pathGenerator) {
+    public SELF pathGenerator(PathGenerator pathGenerator) {
         return loader(loader -> {
             loader.setPathGenerator(pathGenerator);
         });
     }
 
-    public C adapters(ValueAdapterRegistry adapters) {
+    public SELF adapters(ValueAdapterRegistry adapters) {
         this.adapters = adapters;
-        return getThis();
+        return self();
     }
 
-    public C adapter(Consumer<ValueAdapterRegistry> adapterRegistryConsumer) {
+    public SELF adapter(Consumer<ValueAdapterRegistry> adapterRegistryConsumer) {
         adapterRegistryConsumer.accept(adapters);
-        return getThis();
+        return self();
     }
 
-    public C adapter(@NotNull ValueAdapter<?, ?> adapter) {
-        return adapter(a -> a.register(adapter));
-    }
+//    public SELF adapter(@NotNull ValueAdapter<?, ?> adapter) {
+//        return adapter(a -> a.register(adapter));
+//    }
+//
+//    public <T> SELF adapter(Class<T> clazz, @NotNull ValueAdapter<?, T> adapter) {
+//        return adapter(a -> a.register(clazz, adapter));
+//    }
+//
+//    public <B, V> SELF adapter(Class<B> baseClass, Class<V> valueClass,
+//                               ConfigDataFunction<B, V> parser, ConfigDataFunction<V, B> serializer) {
+//        return adapter(a -> a.register(baseClass, valueClass, parser, serializer));
+//    }
 
-    public <T> C adapter(Class<T> clazz, @NotNull ValueAdapter<?, T> adapter) {
-        return adapter(a -> a.register(clazz, adapter));
-    }
-
-    public <B, V> C adapter(Class<B> baseClass, Class<V> valueClass,
-                            ConfigDataFunction<B, V> parser, ConfigDataFunction<V, B> serializer) {
-        return adapter(a -> a.register(baseClass, valueClass, parser, serializer));
-    }
-
-    public C options(OptionHolder options) {
+    public SELF options(ConfigurationOptionHolder options) {
         this.options = options;
-        return getThis();
+        return self();
     }
 
-    public C option(Consumer<OptionHolder> optionsConsumer) {
+    public SELF option(Consumer<ConfigurationOptionHolder> optionsConsumer) {
         optionsConsumer.accept(options);
-        return getThis();
+        return self();
     }
 
-    public <O> C option(OptionType<O> option, O value) {
+    public <O> SELF option(ConfigurationOption<O> option, O value) {
         return option(o -> o.set(option, value));
     }
 
-    public abstract @NotNull P build();
+    public abstract @NotNull PROVIDER build();
 
 }

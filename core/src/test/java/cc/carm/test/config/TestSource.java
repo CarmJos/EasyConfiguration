@@ -1,7 +1,7 @@
 package cc.carm.test.config;
 
-import cc.carm.lib.configuration.source.ConfigurationSection;
-import cc.carm.lib.configuration.source.ConfigurationSource;
+import cc.carm.lib.configuration.source.section.ConfigurationSection;
+import cc.carm.lib.configuration.source.section.ConfigurationSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,7 +16,7 @@ public class TestSource extends ConfigurationSource<TestSource, Map<String, Stri
     }
 
     @Override
-    protected TestSource getThis() {
+    protected TestSource self() {
         return this;
     }
 

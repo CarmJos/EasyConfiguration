@@ -1,14 +1,18 @@
 import cc.carm.lib.configuration.adapter.ValueAdapterRegistry;
-import cc.carm.lib.configuration.adapter.strandard.EnumAdapter;
+import cc.carm.lib.configuration.adapter.ValueType;
 import cc.carm.lib.configuration.adapter.strandard.PrimitiveAdapters;
 import cc.carm.lib.configuration.source.ConfigurationProvider;
-import cc.carm.lib.configuration.loader.ConfigurationLoader;
-import cc.carm.lib.easyoptions.OptionHolder;
+import cc.carm.lib.configuration.source.loader.ConfigurationLoader;
+import cc.carm.lib.configuration.source.option.ConfigurationOptionHolder;
+import cc.carm.lib.configuration.value.standard.ConfiguredValue;
 import cc.carm.test.config.TestSource;
 import org.junit.Test;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AdaptTest {
 
@@ -16,42 +20,29 @@ public class AdaptTest {
     public void test() throws Exception {
 
         ValueAdapterRegistry registry = new ValueAdapterRegistry();
-        registry.register(Long.class, PrimitiveAdapters.ofLong());
-        registry.register(long.class, PrimitiveAdapters.ofLong());
-        registry.register(Integer.class, PrimitiveAdapters.ofInteger());
-        registry.register(int.class, PrimitiveAdapters.ofInteger());
-        registry.register(Double.class, PrimitiveAdapters.ofDouble());
-        registry.register(double.class, PrimitiveAdapters.ofDouble());
-        registry.register(Float.class, PrimitiveAdapters.ofFloat());
-        registry.register(float.class, PrimitiveAdapters.ofFloat());
-        registry.register(Short.class, PrimitiveAdapters.ofShort());
-        registry.register(short.class, PrimitiveAdapters.ofShort());
-        registry.register(Byte.class, PrimitiveAdapters.ofByte());
-        registry.register(byte.class, PrimitiveAdapters.ofByte());
-        registry.register(Character.class, PrimitiveAdapters.ofCharacter());
-        registry.register(char.class, PrimitiveAdapters.ofCharacter());
-        registry.register(Boolean.class, PrimitiveAdapters.ofBoolean());
-        registry.register(boolean.class, PrimitiveAdapters.ofBoolean());
-        registry.register(String.class, PrimitiveAdapters.ofString());
-        registry.register(new EnumAdapter());
+        registry.register(PrimitiveAdapters.ADAPTERS);
+        registry.register(PrimitiveAdapters.ofEnum());
 
-        registry.register(Long.class, Duration.class, Duration::ofSeconds, Duration::getSeconds);
+
+        registry.register(ValueType.of(Long.class), ValueType.of(Duration.class), Duration::ofMillis, Duration::toMillis);
         registry.register(
-                Duration.class, LocalTime.class,
+                ValueType.of(Duration.class), ValueType.of(LocalTime.class),
                 duration -> LocalTime.now().plus(duration),
                 data -> Duration.between(LocalTime.now(), data)
         );
 
-        ConfigurationProvider<TestSource> provider = new ConfigurationProvider<>(new TestSource(), new ConfigurationLoader(), registry, new OptionHolder());
+        ConfigurationProvider<TestSource> provider = new ConfigurationProvider<>(
+                new TestSource(), new ConfigurationLoader(),
+                registry, new ConfigurationOptionHolder(), new ConcurrentHashMap<>()
+        );
 
-        LocalTime v = registry.deserialize(provider, LocalTime.class, "600");
+        LocalTime v = registry.deserialize(provider, LocalTime.class, 600000L);
         Object d = registry.serialize(provider, v);
 
         System.out.println(v);
         System.out.println(d);
-        System.out.println(registry.deserialize(provider, TestEnum.class, "b"));
+        System.out.println(registry.deserialize(provider, TestEnum.class, "C"));
         System.out.println(registry.serialize(provider, TestEnum.C).getClass());
-
     }
 
     enum TestEnum {
