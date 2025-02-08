@@ -1,7 +1,7 @@
 package cc.carm.lib.configuration.source;
 
 import cc.carm.lib.configuration.adapter.ValueAdapterRegistry;
-import cc.carm.lib.configuration.source.loader.ConfigurationLoader;
+import cc.carm.lib.configuration.source.loader.ConfigurationInitializer;
 import cc.carm.lib.configuration.source.loader.PathGenerator;
 import cc.carm.lib.configuration.source.option.ConfigurationOption;
 import cc.carm.lib.configuration.source.option.ConfigurationOptionHolder;
@@ -13,8 +13,8 @@ import java.util.function.Function;
 
 public abstract class ConfigurationFactory<SOURCE extends ConfigurationSource<SOURCE, ?>, PROVIDER extends ConfigurationProvider<SOURCE>, SELF> {
 
-    protected Function<PROVIDER, ConfigurationLoader> loaderFunction = PROVIDER -> new ConfigurationLoader();
-    protected Consumer<ConfigurationLoader> loaderConsumer = loader -> {
+    protected Function<PROVIDER, ConfigurationInitializer> loaderFunction = PROVIDER -> new ConfigurationInitializer();
+    protected Consumer<ConfigurationInitializer> loaderConsumer = loader -> {
     };
 
     protected ValueAdapterRegistry adapters = new ValueAdapterRegistry();
@@ -22,23 +22,23 @@ public abstract class ConfigurationFactory<SOURCE extends ConfigurationSource<SO
 
     public abstract SELF self();
 
-    public SELF loader(Function<PROVIDER, ConfigurationLoader> loaderFunction) {
+    public SELF loader(Function<PROVIDER, ConfigurationInitializer> loaderFunction) {
         this.loaderFunction = loaderFunction;
         return self();
     }
 
-    public SELF loader(ConfigurationLoader loader) {
+    public SELF loader(ConfigurationInitializer loader) {
         return loader(PROVIDER -> loader);
     }
 
-    public SELF loader(Consumer<ConfigurationLoader> loaderConsumer) {
+    public SELF loader(Consumer<ConfigurationInitializer> loaderConsumer) {
         this.loaderConsumer = this.loaderConsumer.andThen(loaderConsumer);
         return self();
     }
 
-    public SELF pathGenerator(PathGenerator pathGenerator) {
+    public SELF pathGenerator(PathGenerator generator) {
         return loader(loader -> {
-            loader.setPathGenerator(pathGenerator);
+            loader.pathGenerator(generator);
         });
     }
 

@@ -2,7 +2,7 @@ package cc.carm.lib.configuration.builder.value;
 
 import cc.carm.lib.configuration.adapter.ValueType;
 import cc.carm.lib.configuration.builder.impl.AbstractSourceBuilder;
-import cc.carm.lib.configuration.function.ConfigValueHandler;
+import cc.carm.lib.configuration.function.ValueHandler;
 import cc.carm.lib.configuration.value.standard.ConfiguredValue;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,7 +10,7 @@ public class SourceValueBuilder<S, V> extends AbstractSourceBuilder<V, S, V, Con
 
 
     public SourceValueBuilder(@NotNull ValueType<S> sourceType, @NotNull ValueType<V> valueType,
-                              @NotNull ConfigValueHandler<S, V> parser, @NotNull ConfigValueHandler<V, S> serializer) {
+                              @NotNull ValueHandler<S, V> parser, @NotNull ValueHandler<V, S> serializer) {
         super(valueType, sourceType, valueType, parser, serializer);
     }
 

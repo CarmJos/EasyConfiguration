@@ -3,8 +3,8 @@ package cc.carm.lib.configuration.builder.impl;
 import cc.carm.lib.configuration.adapter.ValueAdapter;
 import cc.carm.lib.configuration.adapter.ValueType;
 import cc.carm.lib.configuration.builder.CommonConfigBuilder;
-import cc.carm.lib.configuration.function.ConfigDataFunction;
-import cc.carm.lib.configuration.function.ConfigValueHandler;
+import cc.carm.lib.configuration.function.DataFunction;
+import cc.carm.lib.configuration.function.ValueHandler;
 import cc.carm.lib.configuration.value.ConfigValue;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,13 +15,13 @@ public abstract class AbstractSourceBuilder<
 
     protected final @NotNull ValueType<SOURCE> sourceType;
     protected final @NotNull ValueType<PARAM> paramType;
-    protected @NotNull ConfigValueHandler<SOURCE, PARAM> valueParser;
-    protected @NotNull ConfigValueHandler<PARAM, SOURCE> valueSerializer;
+    protected @NotNull ValueHandler<SOURCE, PARAM> valueParser;
+    protected @NotNull ValueHandler<PARAM, SOURCE> valueSerializer;
 
     public AbstractSourceBuilder(@NotNull ValueType<V> type,
                                  @NotNull ValueType<SOURCE> sourceType, @NotNull ValueType<PARAM> paramType,
-                                 @NotNull ConfigValueHandler<SOURCE, PARAM> parser,
-                                 @NotNull ConfigValueHandler<PARAM, SOURCE> serializer) {
+                                 @NotNull ValueHandler<SOURCE, PARAM> parser,
+                                 @NotNull ValueHandler<PARAM, SOURCE> serializer) {
         super(type);
         this.sourceType = sourceType;
         this.paramType = paramType;
@@ -29,21 +29,21 @@ public abstract class AbstractSourceBuilder<
         this.valueSerializer = serializer;
     }
 
-    public @NotNull SELF parse(ConfigDataFunction<SOURCE, PARAM> parser) {
+    public @NotNull SELF parse(DataFunction<SOURCE, PARAM> parser) {
         return parse((p, source) -> parser.handle(source));
     }
 
-    public @NotNull SELF parse(@NotNull ConfigValueHandler<SOURCE, PARAM> parser) {
+    public @NotNull SELF parse(@NotNull ValueHandler<SOURCE, PARAM> parser) {
         this.valueParser = parser;
         return self();
     }
 
-    public @NotNull SELF serialize(@NotNull ConfigValueHandler<PARAM, SOURCE> serializer) {
+    public @NotNull SELF serialize(@NotNull ValueHandler<PARAM, SOURCE> serializer) {
         this.valueSerializer = serializer;
         return self();
     }
 
-    public @NotNull SELF serialize(@NotNull ConfigDataFunction<PARAM, SOURCE> serializer) {
+    public @NotNull SELF serialize(@NotNull DataFunction<PARAM, SOURCE> serializer) {
         return serialize((p, value) -> serializer.handle(value));
     }
 

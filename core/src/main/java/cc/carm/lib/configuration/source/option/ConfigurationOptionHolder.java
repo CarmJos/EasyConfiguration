@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ConfigurationOptionHolder {
 
-    public static <V> @NotNull ConfigurationOptionHolder of(@NotNull Map<ConfigurationOption<V>, V> options) {
+    public static @NotNull ConfigurationOptionHolder of(@NotNull Map<ConfigurationOption<?>, Object> options) {
         return new ConfigurationOptionHolder(new ConcurrentHashMap<>(options));
     }
 
@@ -23,7 +23,7 @@ public class ConfigurationOptionHolder {
         this.options = options;
     }
 
-    public @NotNull Map<ConfigurationOption<?>, Object> options() {
+    public @NotNull Map<ConfigurationOption<?>, Object> values() {
         return options;
     }
 
@@ -36,7 +36,7 @@ public class ConfigurationOptionHolder {
      */
     @SuppressWarnings("unchecked")
     public <V> @NotNull V get(@NotNull ConfigurationOption<V> type) {
-        return Optional.ofNullable(options().get(type)).map(v -> (V) v).orElseGet(type::defaults);
+        return Optional.ofNullable(values().get(type)).map(v -> (V) v).orElseGet(type::defaults);
     }
 
     /**
@@ -50,9 +50,9 @@ public class ConfigurationOptionHolder {
     @SuppressWarnings("unchecked")
     public <V> @Nullable V set(@NotNull ConfigurationOption<V> type, @Nullable V value) {
         if (value == null) {
-            return (V) options().remove(type);
+            return (V) values().remove(type);
         } else {
-            return (V) options().put(type, value);
+            return (V) values().put(type, value);
         }
     }
 

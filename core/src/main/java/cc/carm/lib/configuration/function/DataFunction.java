@@ -7,39 +7,39 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 @FunctionalInterface
-public interface ConfigDataFunction<T, R> {
+public interface DataFunction<T, R> {
 
     @NotNull R handle(@NotNull T data) throws Exception;
 
-    default <V> @NotNull ConfigDataFunction<T, V> andThen(@NotNull ConfigDataFunction<? super R, V> after) {
+    default <V> @NotNull DataFunction<T, V> andThen(@NotNull DataFunction<? super R, V> after) {
         Objects.requireNonNull(after);
         return data -> after.handle(handle(data));
     }
 
     @Contract(pure = true)
-    static <T> @NotNull ConfigDataFunction<T, T> identity() {
+    static <T> @NotNull DataFunction<T, T> identity() {
         return input -> input;
     }
 
     @Contract(pure = true)
-    static <T> @NotNull ConfigDataFunction<T, T> identity(Class<T> type) {
+    static <T> @NotNull DataFunction<T, T> identity(Class<T> type) {
         return input -> input;
     }
 
     @Contract(pure = true)
-    static <T, V> @NotNull ConfigDataFunction<T, V> required() {
+    static <T, V> @NotNull DataFunction<T, V> required() {
         return input -> {
             throw new IllegalArgumentException("Please specify the value parser.");
         };
     }
 
     @Contract(pure = true)
-    static <T> @NotNull ConfigDataFunction<T, Object> toObject() {
+    static <T> @NotNull DataFunction<T, Object> toObject() {
         return input -> input;
     }
 
     @Contract(pure = true)
-    static <V> @NotNull ConfigDataFunction<Object, V> castObject(Class<V> valueClass) {
+    static <V> @NotNull DataFunction<Object, V> castObject(Class<V> valueClass) {
         return input -> {
             if (valueClass.isInstance(input)) return valueClass.cast(input);
             else throw new IllegalArgumentException("Cannot cast value to " + valueClass.getName());
@@ -47,7 +47,7 @@ public interface ConfigDataFunction<T, R> {
     }
 
     @Contract(pure = true)
-    static <V> @NotNull ConfigDataFunction<String, V> castFromString(Class<V> valueClass) {
+    static <V> @NotNull DataFunction<String, V> castFromString(Class<V> valueClass) {
         return input -> {
             if (valueClass.isInstance(input)) return valueClass.cast(input);
             else throw new IllegalArgumentException("Cannot cast string to " + valueClass.getName());
@@ -55,7 +55,7 @@ public interface ConfigDataFunction<T, R> {
     }
 
     @Contract(pure = true)
-    static <T> @NotNull ConfigDataFunction<T, String> castToString() {
+    static <T> @NotNull DataFunction<T, String> castToString() {
         return input -> {
             if (input instanceof String) return (String) input;
             else if (input instanceof Enum<?>) return ((Enum<?>) input).name();
@@ -64,7 +64,7 @@ public interface ConfigDataFunction<T, R> {
     }
 
     @Contract(pure = true)
-    static <V> @NotNull ConfigDataFunction<String, V> parseString(Class<V> valueClass) {
+    static <V> @NotNull DataFunction<String, V> parseString(Class<V> valueClass) {
         return input -> {
             if (valueClass.isInstance(input)) return valueClass.cast(input);
             else throw new IllegalArgumentException("Cannot cast string to " + valueClass.getName());
@@ -72,7 +72,7 @@ public interface ConfigDataFunction<T, R> {
     }
 
     @Contract(pure = true)
-    static @NotNull ConfigDataFunction<Object, Integer> intValue() {
+    static @NotNull DataFunction<Object, Integer> intValue() {
         return input -> {
             if (input instanceof Integer) {
                 return (Integer) input;
@@ -83,7 +83,7 @@ public interface ConfigDataFunction<T, R> {
     }
 
     @Contract(pure = true)
-    static @NotNull ConfigDataFunction<Object, Short> shortValue() {
+    static @NotNull DataFunction<Object, Short> shortValue() {
         return input -> {
             if (input instanceof Short) {
                 return (Short) input;
@@ -94,7 +94,7 @@ public interface ConfigDataFunction<T, R> {
     }
 
     @Contract(pure = true)
-    static @NotNull ConfigDataFunction<Object, Double> doubleValue() {
+    static @NotNull DataFunction<Object, Double> doubleValue() {
         return input -> {
             if (input instanceof Double) {
                 return (Double) input;
@@ -105,7 +105,7 @@ public interface ConfigDataFunction<T, R> {
     }
 
     @Contract(pure = true)
-    static @NotNull ConfigDataFunction<Object, Byte> byteValue() {
+    static @NotNull DataFunction<Object, Byte> byteValue() {
         return input -> {
             if (input instanceof Byte) {
                 return (Byte) input;
@@ -116,7 +116,7 @@ public interface ConfigDataFunction<T, R> {
     }
 
     @Contract(pure = true)
-    static @NotNull ConfigDataFunction<Object, Float> floatValue() {
+    static @NotNull DataFunction<Object, Float> floatValue() {
         return input -> {
             if (input instanceof Float) {
                 return (Float) input;
@@ -127,7 +127,7 @@ public interface ConfigDataFunction<T, R> {
     }
 
     @Contract(pure = true)
-    static @NotNull ConfigDataFunction<Object, Long> longValue() {
+    static @NotNull DataFunction<Object, Long> longValue() {
         return input -> {
             if (input instanceof Long) {
                 return (Long) input;
@@ -138,7 +138,7 @@ public interface ConfigDataFunction<T, R> {
     }
 
     @Contract(pure = true)
-    static @NotNull ConfigDataFunction<Object, Boolean> booleanValue() {
+    static @NotNull DataFunction<Object, Boolean> booleanValue() {
         return input -> {
             if (input instanceof Boolean) {
                 return (Boolean) input;

@@ -2,7 +2,7 @@ package cc.carm.lib.configuration.builder.list;
 
 import cc.carm.lib.configuration.adapter.ValueType;
 import cc.carm.lib.configuration.builder.impl.AbstractSourceBuilder;
-import cc.carm.lib.configuration.function.ConfigValueHandler;
+import cc.carm.lib.configuration.function.ValueHandler;
 import cc.carm.lib.configuration.value.standard.ConfiguredList;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +18,7 @@ public class SourceListBuilder<SOURCE, V>
     protected @NotNull Supplier<? extends List<V>> constructor;
 
     public SourceListBuilder(@NotNull ValueType<SOURCE> sourceType, @NotNull ValueType<V> paramType,
-                             @NotNull ConfigValueHandler<SOURCE, V> parser, @NotNull ConfigValueHandler<V, SOURCE> serializer,
+                             @NotNull ValueHandler<SOURCE, V> parser, @NotNull ValueHandler<V, SOURCE> serializer,
                              @NotNull Supplier<? extends List<V>> constructor) {
         super(new ValueType<List<V>>() {
         }, sourceType, paramType, parser, serializer);

@@ -1,6 +1,6 @@
 package cc.carm.lib.configuration.source.section;
 
-import cc.carm.lib.configuration.function.ConfigDataFunction;
+import cc.carm.lib.configuration.function.DataFunction;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,18 +41,18 @@ public interface ConfigurationSection {
         return get(path, null, clazz);
     }
 
-    default @Nullable <T> T get(@NotNull String path, @NotNull ConfigDataFunction<Object, T> parser) {
+    default @Nullable <T> T get(@NotNull String path, @NotNull DataFunction<Object, T> parser) {
         return get(path, null, parser);
     }
 
     @Contract("_,!null,_->!null")
     default @Nullable <T> T get(@NotNull String path, @Nullable T defaultValue, @NotNull Class<T> clazz) {
-        return get(path, defaultValue, ConfigDataFunction.castObject(clazz));
+        return get(path, defaultValue, DataFunction.castObject(clazz));
     }
 
     @Contract("_,!null,_->!null")
     default @Nullable <T> T get(@NotNull String path, @Nullable T defaultValue,
-                                @NotNull ConfigDataFunction<Object, T> parser) {
+                                @NotNull DataFunction<Object, T> parser) {
         Object value = get(path);
         if (value != null) {
             try {
@@ -75,7 +75,7 @@ public interface ConfigurationSection {
 
     @Contract("_, !null -> !null")
     default @Nullable Boolean getBoolean(@NotNull String path, @Nullable Boolean def) {
-        return get(path, def, ConfigDataFunction.booleanValue());
+        return get(path, def, DataFunction.booleanValue());
     }
 
     default @Nullable Boolean isByte(@NotNull String path) {
@@ -88,7 +88,7 @@ public interface ConfigurationSection {
 
     @Contract("_, !null -> !null")
     default @Nullable Byte getByte(@NotNull String path, @Nullable Byte def) {
-        return get(path, def, ConfigDataFunction.byteValue());
+        return get(path, def, DataFunction.byteValue());
     }
 
     default boolean isShort(@NotNull String path) {
@@ -101,7 +101,7 @@ public interface ConfigurationSection {
 
     @Contract("_, !null -> !null")
     default @Nullable Short getShort(@NotNull String path, @Nullable Short def) {
-        return get(path, def, ConfigDataFunction.shortValue());
+        return get(path, def, DataFunction.shortValue());
     }
 
 
@@ -115,7 +115,7 @@ public interface ConfigurationSection {
 
     @Contract("_, !null -> !null")
     default @Nullable Integer getInt(@NotNull String path, @Nullable Integer def) {
-        return get(path, def, ConfigDataFunction.intValue());
+        return get(path, def, DataFunction.intValue());
     }
 
 
@@ -129,7 +129,7 @@ public interface ConfigurationSection {
 
     @Contract("_, !null -> !null")
     default @Nullable Long getLong(@NotNull String path, @Nullable Long def) {
-        return get(path, def, ConfigDataFunction.longValue());
+        return get(path, def, DataFunction.longValue());
     }
 
 
@@ -143,7 +143,7 @@ public interface ConfigurationSection {
 
     @Contract("_, !null -> !null")
     default @Nullable Float getFloat(@NotNull String path, @Nullable Float def) {
-        return get(path, def, ConfigDataFunction.floatValue());
+        return get(path, def, DataFunction.floatValue());
     }
 
 
@@ -157,7 +157,7 @@ public interface ConfigurationSection {
 
     @Contract("_, !null -> !null")
     default @Nullable Double getDouble(@NotNull String path, @Nullable Double def) {
-        return get(path, def, ConfigDataFunction.doubleValue());
+        return get(path, def, DataFunction.doubleValue());
     }
 
 
@@ -188,47 +188,47 @@ public interface ConfigurationSection {
         return get(path, def, String.class);
     }
 
-    default <V> @NotNull List<V> getList(@NotNull String path, @NotNull ConfigDataFunction<Object, V> parser) {
+    default <V> @NotNull List<V> getList(@NotNull String path, @NotNull DataFunction<Object, V> parser) {
         return parseList(getList(path), parser);
     }
 
     @Unmodifiable
     default @NotNull List<String> getStringList(@NotNull String path) {
-        return getList(path, ConfigDataFunction.castToString());
+        return getList(path, DataFunction.castToString());
     }
 
     @Unmodifiable
     default @NotNull List<Integer> getIntegerList(@NotNull String path) {
-        return getList(path, ConfigDataFunction.intValue());
+        return getList(path, DataFunction.intValue());
     }
 
     @Unmodifiable
     default @NotNull List<Long> getLongList(@NotNull String path) {
-        return getList(path, ConfigDataFunction.longValue());
+        return getList(path, DataFunction.longValue());
     }
 
     @Unmodifiable
     default @NotNull List<Double> getDoubleList(@NotNull String path) {
-        return getList(path, ConfigDataFunction.doubleValue());
+        return getList(path, DataFunction.doubleValue());
     }
 
     @Unmodifiable
     default @NotNull List<Float> getFloatList(@NotNull String path) {
-        return getList(path, ConfigDataFunction.floatValue());
+        return getList(path, DataFunction.floatValue());
     }
 
     @Unmodifiable
     default @NotNull List<Byte> getByteList(@NotNull String path) {
-        return getList(path, ConfigDataFunction.byteValue());
+        return getList(path, DataFunction.byteValue());
     }
 
     @Unmodifiable
     default @NotNull List<Character> getCharList(@NotNull String path) {
-        return getList(path, ConfigDataFunction.castObject(Character.class));
+        return getList(path, DataFunction.castObject(Character.class));
     }
 
     @Unmodifiable
-    static <T> @NotNull List<T> parseList(@Nullable List<?> list, ConfigDataFunction<Object, T> parser) {
+    static <T> @NotNull List<T> parseList(@Nullable List<?> list, DataFunction<Object, T> parser) {
         if (list == null) return Collections.emptyList();
         List<T> values = new ArrayList<>();
         for (Object o : list) {

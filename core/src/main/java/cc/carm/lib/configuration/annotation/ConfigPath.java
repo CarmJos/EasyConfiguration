@@ -1,7 +1,5 @@
 package cc.carm.lib.configuration.annotation;
 
-import cc.carm.lib.configuration.source.loader.PathGenerator;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

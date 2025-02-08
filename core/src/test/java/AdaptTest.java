@@ -1,17 +1,14 @@
 import cc.carm.lib.configuration.adapter.ValueAdapterRegistry;
 import cc.carm.lib.configuration.adapter.ValueType;
-import cc.carm.lib.configuration.adapter.strandard.PrimitiveAdapters;
+import cc.carm.lib.configuration.adapter.strandard.PrimitiveAdapter;
 import cc.carm.lib.configuration.source.ConfigurationProvider;
-import cc.carm.lib.configuration.source.loader.ConfigurationLoader;
+import cc.carm.lib.configuration.source.loader.ConfigurationInitializer;
 import cc.carm.lib.configuration.source.option.ConfigurationOptionHolder;
-import cc.carm.lib.configuration.value.standard.ConfiguredValue;
 import cc.carm.test.config.TestSource;
 import org.junit.Test;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AdaptTest {
@@ -20,8 +17,8 @@ public class AdaptTest {
     public void test() throws Exception {
 
         ValueAdapterRegistry registry = new ValueAdapterRegistry();
-        registry.register(PrimitiveAdapters.ADAPTERS);
-        registry.register(PrimitiveAdapters.ofEnum());
+        registry.register(PrimitiveAdapter.ADAPTERS);
+        registry.register(PrimitiveAdapter.ofEnum());
 
 
         registry.register(ValueType.of(Long.class), ValueType.of(Duration.class), Duration::ofMillis, Duration::toMillis);
@@ -32,8 +29,8 @@ public class AdaptTest {
         );
 
         ConfigurationProvider<TestSource> provider = new ConfigurationProvider<>(
-                new TestSource(), new ConfigurationLoader(),
-                registry, new ConfigurationOptionHolder(), new ConcurrentHashMap<>()
+                new TestSource(), registry, new ConfigurationOptionHolder(),
+                new ConcurrentHashMap<>(), new ConfigurationInitializer()
         );
 
         LocalTime v = registry.deserialize(provider, LocalTime.class, 600000L);

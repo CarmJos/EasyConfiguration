@@ -1,7 +1,7 @@
 package cc.carm.lib.configuration.builder.value;
 
 import cc.carm.lib.configuration.adapter.ValueType;
-import cc.carm.lib.configuration.function.ConfigValueHandler;
+import cc.carm.lib.configuration.function.ValueHandler;
 import cc.carm.lib.configuration.source.section.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,12 +20,12 @@ public class ConfigValueBuilder<V> {
     }
 
     public @NotNull <S> SourceValueBuilder<S, V> from(@NotNull ValueType<S> sourceType) {
-        return from(sourceType, ConfigValueHandler.required(), ConfigValueHandler.required());
+        return from(sourceType, ValueHandler.required(), ValueHandler.required());
     }
 
     public @NotNull <S> SourceValueBuilder<S, V> from(@NotNull ValueType<S> sourceType,
-                                                      @NotNull ConfigValueHandler<S, V> valueParser,
-                                                      @NotNull ConfigValueHandler<V, S> valueSerializer) {
+                                                      @NotNull ValueHandler<S, V> valueParser,
+                                                      @NotNull ValueHandler<V, S> valueSerializer) {
         return new SourceValueBuilder<>(sourceType, this.type, valueParser, valueSerializer);
     }
 
@@ -34,12 +34,12 @@ public class ConfigValueBuilder<V> {
     }
 
     public @NotNull SectionValueBuilder<V> fromSection() {
-        return fromSection(ConfigValueHandler.required(), ConfigValueHandler.required());
+        return fromSection(ValueHandler.required(), ValueHandler.required());
     }
 
     public @NotNull SectionValueBuilder<V> fromSection(
-            @NotNull ConfigValueHandler<ConfigurationSection, V> valueParser,
-            @NotNull ConfigValueHandler<V, ? extends Map<Object, Object>> valueSerializer
+            @NotNull ValueHandler<ConfigurationSection, V> valueParser,
+            @NotNull ValueHandler<V, ? extends Map<Object, Object>> valueSerializer
     ) {
         return new SectionValueBuilder<>(this.type, valueParser, valueSerializer);
     }

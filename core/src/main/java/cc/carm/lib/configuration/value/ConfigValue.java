@@ -10,7 +10,7 @@ import java.util.Optional;
 public abstract class ConfigValue<T> extends ValueManifest<T> {
 
     protected ConfigValue(@NotNull ValueManifest<T> manifest) {
-        super(manifest.type, manifest.provider, manifest.path, manifest.defaultSupplier);
+        super(manifest);
     }
 
     /**
@@ -37,7 +37,7 @@ public abstract class ConfigValue<T> extends ValueManifest<T> {
      * @throws NullPointerException 对应数据为空时抛出
      */
     public @NotNull T getNotNull() {
-        return Objects.requireNonNull(getOrDefault(), "Value(" + path() + ") [" + type() + "] is null.");
+        return Objects.requireNonNull(getOrDefault(), "Value(" + type() + ") @[" + path() + "] is null.");
     }
 
     public @NotNull Optional<@Nullable T> optional() {
@@ -78,6 +78,18 @@ public abstract class ConfigValue<T> extends ValueManifest<T> {
      */
     public boolean isDefault() {
         return Objects.equals(defaults(), get());
+    }
+
+    /**
+     * Try to save the configuration.
+     * <br>To save multiple modifications,
+     * it is recommended to call {@link ConfigurationProvider#save()}
+     * after all modifications are completed instead of this.
+     *
+     * @throws Exception
+     */
+    public void save() throws Exception {
+        provider().save();
     }
 
 }

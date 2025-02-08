@@ -4,7 +4,7 @@ import cc.carm.lib.configuration.Configuration;
 
 import static cc.carm.lib.configuration.source.option.ConfigurationOption.of;
 
-public interface ConfigurationOptions {
+public interface StandardOptions {
 
     /**
      * The configuration path separator.

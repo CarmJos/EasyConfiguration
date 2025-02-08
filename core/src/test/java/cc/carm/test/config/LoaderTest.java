@@ -4,7 +4,7 @@ import cc.carm.lib.configuration.adapter.ValueAdapterRegistry;
 import cc.carm.lib.configuration.annotation.ConfigPath;
 import cc.carm.lib.configuration.Configuration;
 import cc.carm.lib.configuration.source.ConfigurationProvider;
-import cc.carm.lib.configuration.source.loader.ConfigurationLoader;
+import cc.carm.lib.configuration.source.loader.ConfigurationInitializer;
 import cc.carm.lib.configuration.source.option.ConfigurationOptionHolder;
 import org.junit.Test;
 
@@ -14,10 +14,13 @@ public class LoaderTest {
 
     @Test
     public void test() throws Exception {
-        ConfigurationProvider<TestSource> provider = new ConfigurationProvider<>(new TestSource(), new ConfigurationLoader(), new ValueAdapterRegistry(), new ConfigurationOptionHolder(), new ConcurrentHashMap<>());
+        ConfigurationProvider<TestSource> provider = new ConfigurationProvider<>(
+                new TestSource(), new ValueAdapterRegistry(), new ConfigurationOptionHolder(),
+                new ConcurrentHashMap<>(), new ConfigurationInitializer()
+        );
 
-        ConfigurationLoader loader = new ConfigurationLoader();
-        loader.load(provider, ROOT.class);
+        ConfigurationInitializer loader = new ConfigurationInitializer();
+        loader.initialize(provider, ROOT.class);
     }
 
     interface ROOT extends Configuration {

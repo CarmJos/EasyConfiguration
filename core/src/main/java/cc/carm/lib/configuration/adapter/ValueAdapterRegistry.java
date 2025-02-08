@@ -1,6 +1,6 @@
 package cc.carm.lib.configuration.adapter;
 
-import cc.carm.lib.configuration.function.ConfigDataFunction;
+import cc.carm.lib.configuration.function.DataFunction;
 import cc.carm.lib.configuration.source.ConfigurationProvider;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -15,14 +15,14 @@ public class ValueAdapterRegistry {
     protected final Set<ValueAdapter<?>> adapters = new HashSet<>();
 
     public <FROM, TO> void register(@NotNull Class<FROM> from, @NotNull Class<TO> to,
-                                    @Nullable ConfigDataFunction<FROM, TO> parser,
-                                    @Nullable ConfigDataFunction<TO, FROM> serializer) {
+                                    @Nullable DataFunction<FROM, TO> parser,
+                                    @Nullable DataFunction<TO, FROM> serializer) {
         register(ValueType.of(from), ValueType.of(to), parser, serializer);
     }
 
     public <FROM, TO> void register(@NotNull ValueType<FROM> from, @NotNull ValueType<TO> to,
-                                    @Nullable ConfigDataFunction<FROM, TO> parser,
-                                    @Nullable ConfigDataFunction<TO, FROM> serializer) {
+                                    @Nullable DataFunction<FROM, TO> parser,
+                                    @Nullable DataFunction<TO, FROM> serializer) {
         ValueAdapter<FROM> fromAdapter = adapterOf(from);
         if (fromAdapter == null) throw new IllegalArgumentException("No adapter for type " + from);
         register(to,
