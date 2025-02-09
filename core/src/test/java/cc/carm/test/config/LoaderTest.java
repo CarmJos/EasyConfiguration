@@ -3,7 +3,7 @@ package cc.carm.test.config;
 import cc.carm.lib.configuration.adapter.ValueAdapterRegistry;
 import cc.carm.lib.configuration.annotation.ConfigPath;
 import cc.carm.lib.configuration.Configuration;
-import cc.carm.lib.configuration.source.ConfigurationProvider;
+import cc.carm.lib.configuration.source.ConfigurationHolder;
 import cc.carm.lib.configuration.source.loader.ConfigurationInitializer;
 import cc.carm.lib.configuration.source.option.ConfigurationOptionHolder;
 import org.junit.Test;
@@ -14,7 +14,7 @@ public class LoaderTest {
 
     @Test
     public void test() throws Exception {
-        ConfigurationProvider<TestSource> provider = new ConfigurationProvider<>(
+        ConfigurationHolder<TestSource> provider = new ConfigurationHolder<>(
                 new TestSource(), new ValueAdapterRegistry(), new ConfigurationOptionHolder(),
                 new ConcurrentHashMap<>(), new ConfigurationInitializer()
         );

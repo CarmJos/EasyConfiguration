@@ -2,7 +2,7 @@ package cc.carm.lib.configuration.function;
 
 
 import cc.carm.lib.configuration.adapter.ValueType;
-import cc.carm.lib.configuration.source.ConfigurationProvider;
+import cc.carm.lib.configuration.source.ConfigurationHolder;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12,7 +12,7 @@ import java.util.Objects;
 @FunctionalInterface
 public interface ValueHandler<T, R> {
 
-    @Nullable R handle(@NotNull ConfigurationProvider<?> provider, @NotNull T data) throws Exception;
+    @Nullable R handle(@NotNull ConfigurationHolder<?> holder, @NotNull T data) throws Exception;
 
     default <V> ValueHandler<T, V> andThen(@NotNull ValueHandler<R, V> after) {
         Objects.requireNonNull(after);
@@ -47,7 +47,7 @@ public interface ValueHandler<T, R> {
 
     @Contract(pure = true)
     static <T> @NotNull ValueHandler<T, Object> toObject() {
-        return ConfigurationProvider::serialize;
+        return ConfigurationHolder::serialize;
     }
 
     @Contract(pure = true)

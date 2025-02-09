@@ -1,6 +1,6 @@
 package cc.carm.lib.configuration.value;
 
-import cc.carm.lib.configuration.source.ConfigurationProvider;
+import cc.carm.lib.configuration.source.ConfigurationHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,7 +46,7 @@ public abstract class ConfigValue<T> extends ValueManifest<T> {
 
     /**
      * 设定该配置的值。
-     * <br> 设定后，不会自动保存配置文件；若需要保存，请调用 {@link ConfigurationProvider#save()} 方法。
+     * <br> 设定后，不会自动保存配置文件；若需要保存，请调用 {@link ConfigurationHolder#save()} 方法。
      *
      * @param value 配置的值
      */
@@ -54,7 +54,7 @@ public abstract class ConfigValue<T> extends ValueManifest<T> {
 
     /**
      * 初始化该配置的默认值。
-     * <br> 设定后，不会自动保存配置文件；若需要保存，请调用 {@link ConfigurationProvider#save()} 方法。
+     * <br> 设定后，不会自动保存配置文件；若需要保存，请调用 {@link ConfigurationHolder#save()} 方法。
      */
     public void setDefault() {
         setDefault(false);
@@ -62,7 +62,7 @@ public abstract class ConfigValue<T> extends ValueManifest<T> {
 
     /**
      * 将该配置的值设置为默认值。
-     * <br> 设定后，不会自动保存配置文件；若需要保存，请调用 {@link ConfigurationProvider#save()} 方法。
+     * <br> 设定后，不会自动保存配置文件；若需要保存，请调用 {@link ConfigurationHolder#save()} 方法。
      *
      * @param override 是否覆盖已设定的值
      */
@@ -83,13 +83,13 @@ public abstract class ConfigValue<T> extends ValueManifest<T> {
     /**
      * Try to save the configuration.
      * <br>To save multiple modifications,
-     * it is recommended to call {@link ConfigurationProvider#save()}
+     * it is recommended to call {@link ConfigurationHolder#save()}
      * after all modifications are completed instead of this.
      *
      * @throws Exception
      */
     public void save() throws Exception {
-        provider().save();
+        holder().save();
     }
 
 }

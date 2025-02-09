@@ -1,19 +1,27 @@
 package cc.carm.lib.configuration.source.section;
 
+import cc.carm.lib.configuration.source.ConfigurationHolder;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class ConfigurationSource<SELF extends ConfigurationSource<SELF, ORIGINAL>, ORIGINAL>
         implements ConfigurationSection {
 
-    protected long updateMillis;
+    protected final @NotNull ConfigurationHolder<? extends SELF> holder;
+    protected long lastUpdateMillis;
 
-    protected ConfigurationSource(long updateMillis) {
-        this.updateMillis = updateMillis;
+    protected ConfigurationSource(@NotNull ConfigurationHolder<? extends SELF> holder,
+                                  long lastUpdateMillis) {
+        this.holder = holder;
+        this.lastUpdateMillis = lastUpdateMillis;
+    }
+
+    public @NotNull ConfigurationHolder<? extends SELF> holder() {
+        return holder;
     }
 
     public void reload() throws Exception {
         onReload(); // 调用重写的Reload方法
-        this.updateMillis = System.currentTimeMillis();
+        this.lastUpdateMillis = System.currentTimeMillis();
     }
 
     protected abstract SELF self();
@@ -27,12 +35,12 @@ public abstract class ConfigurationSource<SELF extends ConfigurationSource<SELF,
 
     protected abstract void onReload() throws Exception;
 
-    public long getUpdateMillis() {
-        return this.updateMillis;
+    public long getLastUpdateMillis() {
+        return this.lastUpdateMillis;
     }
 
     public boolean isExpired(long parsedTime) {
-        return getUpdateMillis() > parsedTime;
+        return getLastUpdateMillis() > parsedTime;
     }
 
 }

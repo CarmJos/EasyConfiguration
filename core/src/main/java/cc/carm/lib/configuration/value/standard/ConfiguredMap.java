@@ -54,7 +54,7 @@ public class ConfiguredMap<K, V> extends CachedConfigValue<Map<K, V>> implements
 
     @Override
     public @NotNull Map<K, V> get() {
-        if (!isExpired()) return getCachedOrDefault(createMap());
+        if (!cacheExpired()) return getCachedOrDefault(createMap());
         // If the value is expired, we need to update it
         Map<K, V> map = createMap();
 
@@ -72,8 +72,8 @@ public class ConfiguredMap<K, V> extends CachedConfigValue<Map<K, V>> implements
             Object dataVal = section.get(dataKey);
             if (dataVal == null) continue;
             try {
-                K key = keyParser.parse(provider(), keyType(), dataKey);
-                V value = valueParser.parse(provider(), valueType(), dataVal);
+                K key = keyParser.parse(holder(), keyType(), dataKey);
+                V value = valueParser.parse(holder(), valueType(), dataVal);
                 map.put(key, value);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -109,8 +109,8 @@ public class ConfiguredMap<K, V> extends CachedConfigValue<Map<K, V>> implements
         for (Map.Entry<K, V> entry : value.entrySet()) {
             try {
                 data.put(
-                        keySerializer.serialize(provider(), keyType(), entry.getKey()),
-                        valueSerializer.serialize(provider(), valueType(), entry.getValue())
+                        keySerializer.serialize(holder(), keyType(), entry.getKey()),
+                        valueSerializer.serialize(holder(), valueType(), entry.getValue())
                 );
             } catch (Exception e) {
                 e.printStackTrace();

@@ -1,7 +1,7 @@
 package cc.carm.lib.configuration.value;
 
 import cc.carm.lib.configuration.adapter.ValueType;
-import cc.carm.lib.configuration.source.ConfigurationProvider;
+import cc.carm.lib.configuration.source.ConfigurationHolder;
 import cc.carm.lib.configuration.source.meta.ConfigurationMetaHolder;
 import cc.carm.lib.configuration.source.section.ConfigurationSource;
 import org.jetbrains.annotations.NotNull;
@@ -13,9 +13,9 @@ import java.util.function.Supplier;
 public class ValueManifest<T> {
 
     protected final @NotNull ValueType<T> type;
-    protected final @NotNull BiConsumer<@NotNull ConfigurationProvider<?>, @NotNull String> initializer;
+    protected final @NotNull BiConsumer<@NotNull ConfigurationHolder<?>, @NotNull String> initializer;
 
-    protected @Nullable ConfigurationProvider<?> provider;
+    protected @Nullable ConfigurationHolder<?> holder;
     protected @Nullable String path; // Section path
 
     protected @NotNull Supplier<@Nullable T> defaultSupplier;
@@ -34,41 +34,41 @@ public class ValueManifest<T> {
     }
 
     public ValueManifest(@NotNull ValueType<T> type, @NotNull Supplier<@Nullable T> defaultSupplier,
-                         @NotNull BiConsumer<@NotNull ConfigurationProvider<?>, @NotNull String> initializer) {
+                         @NotNull BiConsumer<@NotNull ConfigurationHolder<?>, @NotNull String> initializer) {
         this(type, defaultSupplier, initializer, null, null);
     }
 
     public ValueManifest(@NotNull ValueType<T> type, @NotNull Supplier<@Nullable T> defaultSupplier,
-                         @NotNull BiConsumer<@NotNull ConfigurationProvider<?>, @NotNull String> initializer,
-                         @Nullable ConfigurationProvider<?> provider, @Nullable String path) {
+                         @NotNull BiConsumer<@NotNull ConfigurationHolder<?>, @NotNull String> initializer,
+                         @Nullable ConfigurationHolder<?> holder, @Nullable String path) {
         this.type = type;
         this.initializer = initializer;
         this.defaultSupplier = defaultSupplier;
-        this.provider = provider;
+        this.holder = holder;
         this.path = path;
         initialize();
     }
 
     protected ValueManifest(@NotNull ValueManifest<T> manifest) {
-        this(manifest.type, manifest.defaultSupplier, manifest.initializer, manifest.provider, manifest.path);
+        this(manifest.type, manifest.defaultSupplier, manifest.initializer, manifest.holder, manifest.path);
     }
 
-    public void initialize(@NotNull ConfigurationProvider<?> provider, @NotNull String path) {
-        this.provider = provider;
+    public void initialize(@NotNull ConfigurationHolder<?> holder, @NotNull String path) {
+        this.holder = holder;
         this.path = path;
         initialize();
     }
 
     protected void initialize() {
-        if (provider != null && path != null) this.initializer.accept(provider, path);
+        if (holder != null && path != null) this.initializer.accept(holder, path);
     }
 
     public @NotNull ValueType<T> type() {
         return this.type;
     }
 
-    public void provider(@NotNull ConfigurationProvider<?> provider) {
-        this.provider = provider;
+    public void holder(@NotNull ConfigurationHolder<?> holder) {
+        this.holder = holder;
     }
 
     public void path(@NotNull String path) {
@@ -96,17 +96,17 @@ public class ValueManifest<T> {
         else throw new IllegalStateException("No section path provided.");
     }
 
-    public @NotNull ConfigurationProvider<?> provider() {
-        if (this.provider != null) return this.provider;
+    public @NotNull ConfigurationHolder<?> holder() {
+        if (this.holder != null) return this.holder;
         throw new IllegalStateException("Value does not have a provider.");
     }
 
     public @NotNull ConfigurationSource<?, ?> config() {
-        return provider().source();
+        return holder().source();
     }
 
     public ConfigurationMetaHolder metadata() {
-        return provider().metadata(path());
+        return holder().metadata(path());
     }
 
     protected Object getData() {
@@ -118,7 +118,7 @@ public class ValueManifest<T> {
     }
 
 
-    private static final @NotNull BiConsumer<@NotNull ConfigurationProvider<?>, @NotNull String> EMPTY_INITIALIZER = (provider, path) -> {
+    private static final @NotNull BiConsumer<@NotNull ConfigurationHolder<?>, @NotNull String> EMPTY_INITIALIZER = (provider, path) -> {
     };
 
 }

@@ -1,6 +1,6 @@
 package cc.carm.lib.configuration.adapter;
 
-import cc.carm.lib.configuration.source.ConfigurationProvider;
+import cc.carm.lib.configuration.source.ConfigurationHolder;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 public interface ValueSerializer<TYPE> {
 
     Object serialize(
-            @NotNull ConfigurationProvider<?> provider,
+            @NotNull ConfigurationHolder<?> holder,
             @NotNull ValueType<? super TYPE> type, @NotNull TYPE value
     ) throws Exception;
 

@@ -1,7 +1,7 @@
 package cc.carm.lib.configuration.source.loader;
 
 import cc.carm.lib.configuration.Configuration;
-import cc.carm.lib.configuration.source.ConfigurationProvider;
+import cc.carm.lib.configuration.source.ConfigurationHolder;
 import cc.carm.lib.configuration.source.meta.ConfigurationMetadata;
 import cc.carm.lib.configuration.source.option.StandardOptions;
 import cc.carm.lib.configuration.value.ConfigValue;
@@ -83,28 +83,28 @@ public class ConfigurationInitializer {
     }
 
 
-    public @Nullable String getFieldPath(ConfigurationProvider<?> provider, @Nullable String parentPath, @NotNull Field field) {
+    public @Nullable String getFieldPath(ConfigurationHolder<?> holder, @Nullable String parentPath, @NotNull Field field) {
         return pathGenerator.getFieldPath(provider, parentPath, field);
     }
 
-    public @Nullable String getClassPath(ConfigurationProvider<?> provider, @Nullable String parentPath,
+    public @Nullable String getClassPath(ConfigurationHolder<?> holder, @Nullable String parentPath,
                                          @NotNull Class<?> clazz, @Nullable Field clazzField) {
         return pathGenerator.getClassPath(provider, parentPath, clazz, clazzField);
     }
 
-    public void initialize(ConfigurationProvider<?> provider, @NotNull Configuration config) throws Exception {
+    public void initialize(ConfigurationHolder<?> holder, @NotNull Configuration config) throws Exception {
         initializeInstance(provider, config, null, null);
         if (provider.options().get(StandardOptions.SET_DEFAULTS)) provider.save();
     }
 
-    public void initialize(ConfigurationProvider<?> provider, @NotNull Class<? extends Configuration> clazz) throws Exception {
+    public void initialize(ConfigurationHolder<?> holder, @NotNull Class<? extends Configuration> clazz) throws Exception {
         initializeStaticClass(provider, clazz, null, null);
         if (provider.options().get(StandardOptions.SET_DEFAULTS)) provider.save();
     }
 
 
     // 针对实例类的初始化方法
-    protected void initializeInstance(@NotNull ConfigurationProvider<?> provider,
+    protected void initializeInstance(@NotNull ConfigurationHolder<?> holder,
                                       @NotNull Configuration root, @Nullable String parentPath, @Nullable Field configField) {
         String path = getClassPath(provider, parentPath, root.getClass(), configField);
         try {
@@ -117,7 +117,7 @@ public class ConfigurationInitializer {
 
     // 针对静态类的初始化方法
     @SuppressWarnings("unchecked")
-    protected void initializeStaticClass(@NotNull ConfigurationProvider<?> provider,
+    protected void initializeStaticClass(@NotNull ConfigurationHolder<?> holder,
                                          @NotNull Class<?> clazz, @Nullable String parentPath, @Nullable Field configField) {
         if (!Configuration.class.isAssignableFrom(clazz)) return; // 只解析继承了 ConfigurationRoot 的类
 
@@ -141,7 +141,7 @@ public class ConfigurationInitializer {
         }
     }
 
-    protected void initializeField(@NotNull ConfigurationProvider<?> provider,
+    protected void initializeField(@NotNull ConfigurationHolder<?> holder,
                                    @NotNull Object source, @NotNull Field field, @Nullable String parent) {
         try {
             field.setAccessible(true);

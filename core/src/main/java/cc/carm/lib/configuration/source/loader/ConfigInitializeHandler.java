@@ -1,6 +1,6 @@
 package cc.carm.lib.configuration.source.loader;
 
-import cc.carm.lib.configuration.source.ConfigurationProvider;
+import cc.carm.lib.configuration.source.ConfigurationHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,7 +12,7 @@ public interface ConfigInitializeHandler<T> {
         };
     }
 
-    void whenInitialize(@NotNull ConfigurationProvider<?> provider, @Nullable String path, @NotNull T value) throws Exception;
+    void whenInitialize(@NotNull ConfigurationHolder<?> holder, @Nullable String path, @NotNull T value) throws Exception;
 
     default ConfigInitializeHandler<T> andThen(ConfigInitializeHandler<T> after) {
         return (provider, path, value) -> {

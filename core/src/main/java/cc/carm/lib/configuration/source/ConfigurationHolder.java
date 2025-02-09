@@ -13,22 +13,22 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.Objects;
 
-public class ConfigurationProvider<S extends ConfigurationSource<S, ?>> {
+public class ConfigurationHolder<S extends ConfigurationSource<S, ?>> {
 
-    protected final @NotNull S source;
     protected final @NotNull ValueAdapterRegistry adapters;
     protected final @NotNull ConfigurationOptionHolder options;
     protected final @NotNull Map<String, ConfigurationMetaHolder> metadata;
 
     protected final @NotNull ConfigurationInitializer initializer;
 
-    public ConfigurationProvider(@NotNull S source,
-                                 @NotNull ValueAdapterRegistry adapters,
-                                 @NotNull ConfigurationOptionHolder options,
-                                 @NotNull Map<String, ConfigurationMetaHolder> metadata,
-                                 @NotNull ConfigurationInitializer initializer) {
-        this.source = source;
+    protected @Nullable S source;
+
+    public ConfigurationHolder(@NotNull ValueAdapterRegistry adapters,
+                               @NotNull ConfigurationOptionHolder options,
+                               @NotNull Map<String, ConfigurationMetaHolder> metadata,
+                               @NotNull ConfigurationInitializer initializer) {
         this.initializer = initializer;
         this.adapters = adapters;
         this.options = options;
@@ -36,7 +36,7 @@ public class ConfigurationProvider<S extends ConfigurationSource<S, ?>> {
     }
 
     public @NotNull S source() {
-        return source;
+        return Objects.requireNonNull(source, "Source is not initialized");
     }
 
     public void reload() throws Exception {
@@ -100,7 +100,7 @@ public class ConfigurationProvider<S extends ConfigurationSource<S, ?>> {
     }
 
     public void load(@NotNull ValueManifest<?> value) {
-        value.provider(this);
+        value.holder(this);
     }
 
 }

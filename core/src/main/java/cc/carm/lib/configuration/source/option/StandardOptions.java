@@ -1,6 +1,7 @@
 package cc.carm.lib.configuration.source.option;
 
 import cc.carm.lib.configuration.Configuration;
+import cc.carm.lib.configuration.source.ConfigurationHolder;
 
 import static cc.carm.lib.configuration.source.option.ConfigurationOption.of;
 
@@ -26,7 +27,7 @@ public interface StandardOptions {
      * <br> if false, the values will be parsed when calling
      * {@link cc.carm.lib.configuration.value.ConfigValue#get()}
      * <br> if true, the values will be parsed when
-     * {@link cc.carm.lib.configuration.source.ConfigurationProvider#load(Configuration)}.
+     * {@link ConfigurationHolder#load(Configuration)}.
      */
     ConfigurationOption<Boolean> PRELOAD = of(false);
 

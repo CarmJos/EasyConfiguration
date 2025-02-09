@@ -67,7 +67,7 @@ public class ConfiguredList<V> extends CachedConfigValue<List<V>> implements Lis
 
     @Override
     public @NotNull List<V> get() {
-        if (!isExpired()) return getCachedOrDefault(createList());
+        if (!cacheExpired()) return getCachedOrDefault(createList());
         // Data that is outdated and needs to be parsed again.
         List<V> list = createList();
         List<?> data = config().contains(path()) ? config().getList(path()) : null;
@@ -79,7 +79,7 @@ public class ConfiguredList<V> extends CachedConfigValue<List<V>> implements Lis
         for (Object dataVal : data) {
             if (dataVal == null) continue;
             try {
-                list.add(parser.parse(provider(), paramType(), dataVal));
+                list.add(parser.parse(holder(), paramType(), dataVal));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -101,7 +101,7 @@ public class ConfiguredList<V> extends CachedConfigValue<List<V>> implements Lis
         for (V val : value) {
             if (val == null) continue;
             try {
-                data.add(serializer.serialize(provider(), paramType(), val));
+                data.add(serializer.serialize(holder(), paramType(), val));
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

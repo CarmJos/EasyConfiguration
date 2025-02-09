@@ -1,7 +1,7 @@
 package cc.carm.lib.configuration.builder;
 
 import cc.carm.lib.configuration.adapter.ValueType;
-import cc.carm.lib.configuration.source.ConfigurationProvider;
+import cc.carm.lib.configuration.source.ConfigurationHolder;
 import cc.carm.lib.configuration.source.meta.ConfigurationMetaHolder;
 import cc.carm.lib.configuration.source.meta.ConfigurationMetadata;
 import cc.carm.lib.configuration.value.ConfigValue;
@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public abstract class AbstractConfigBuilder<
-        TYPE, RESULT extends ConfigValue<TYPE>, PROVIDER extends ConfigurationProvider<?>,
+        TYPE, RESULT extends ConfigValue<TYPE>, PROVIDER extends ConfigurationHolder<?>,
         SELF extends AbstractConfigBuilder<TYPE, RESULT, PROVIDER, SELF>
         > {
 
@@ -25,7 +25,7 @@ public abstract class AbstractConfigBuilder<
     protected @Nullable String path;
 
     protected @NotNull Supplier<TYPE> defaultValueSupplier = () -> null;
-    protected @NotNull BiConsumer<ConfigurationProvider<?>, String> initializer = (provider, path) -> {
+    protected @NotNull BiConsumer<ConfigurationHolder<?>, String> initializer = (provider, path) -> {
     };
 
     protected AbstractConfigBuilder(Class<? super PROVIDER> providerClass, ValueType<TYPE> type) {
@@ -51,16 +51,16 @@ public abstract class AbstractConfigBuilder<
         return self();
     }
 
-    public @NotNull SELF initializer(@NotNull BiConsumer<ConfigurationProvider<?>, String> initializer) {
+    public @NotNull SELF initializer(@NotNull BiConsumer<ConfigurationHolder<?>, String> initializer) {
         this.initializer = initializer;
         return self();
     }
 
-    public @NotNull SELF append(@NotNull BiConsumer<ConfigurationProvider<?>, String> initializer) {
+    public @NotNull SELF append(@NotNull BiConsumer<ConfigurationHolder<?>, String> initializer) {
         return initializer(initializer.andThen(initializer));
     }
 
-    public @NotNull SELF append(@NotNull Consumer<ConfigurationProvider<?>> initializer) {
+    public @NotNull SELF append(@NotNull Consumer<ConfigurationHolder<?>> initializer) {
         return append((provider, path) -> initializer.accept(provider));
     }
 

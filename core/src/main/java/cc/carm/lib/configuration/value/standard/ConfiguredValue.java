@@ -89,7 +89,7 @@ public class ConfiguredValue<V> extends CachedConfigValue<V> {
 
     @Override
     public V get() {
-        if (!isExpired()) return getCachedOrDefault();
+        if (!cacheExpired()) return getCachedOrDefault();
         // Data that is outdated and needs to be parsed again.
 
         Object data = getData();
@@ -100,7 +100,7 @@ public class ConfiguredValue<V> extends CachedConfigValue<V> {
 
         try {
             // If there are no errors, update the cache and return.
-            return updateCache(parser.parse(provider(), type(), data));
+            return updateCache(parser.parse(holder(), type(), data));
         } catch (Exception e) {
             // There was a parsing error, prompted and returned the default value.
             e.printStackTrace();
@@ -127,7 +127,7 @@ public class ConfiguredValue<V> extends CachedConfigValue<V> {
         if (serializer == null) return; // No serializer, do nothing.
 
         try {
-            setData(serializer.serialize(provider(), type(), value));
+            setData(serializer.serialize(holder(), type(), value));
         } catch (Exception e) {
             e.printStackTrace();
         }

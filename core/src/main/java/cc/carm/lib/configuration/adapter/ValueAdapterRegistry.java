@@ -1,7 +1,7 @@
 package cc.carm.lib.configuration.adapter;
 
 import cc.carm.lib.configuration.function.DataFunction;
-import cc.carm.lib.configuration.source.ConfigurationProvider;
+import cc.carm.lib.configuration.source.ConfigurationHolder;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -100,12 +100,12 @@ public class ValueAdapterRegistry {
     }
 
     @Contract("_,_,null -> null")
-    public <T> T deserialize(@NotNull ConfigurationProvider<?> provider, @NotNull Class<T> type, @Nullable Object source) throws Exception {
+    public <T> T deserialize(@NotNull ConfigurationHolder<?> holder, @NotNull Class<T> type, @Nullable Object source) throws Exception {
         return deserialize(provider, ValueType.of(type), source);
     }
 
     @Contract("_,_,null -> null")
-    public <T> T deserialize(@NotNull ConfigurationProvider<?> provider, @NotNull ValueType<T> type, @Nullable Object source) throws Exception {
+    public <T> T deserialize(@NotNull ConfigurationHolder<?> holder, @NotNull ValueType<T> type, @Nullable Object source) throws Exception {
         if (source == null) return null; // Null check
         if (type.isInstance(source)) return type.cast(source); // Not required to deserialize
         ValueAdapter<T> adapter = adapterOf(type);
@@ -114,7 +114,7 @@ public class ValueAdapterRegistry {
     }
 
     @Contract("_,null -> null")
-    public <T> Object serialize(@NotNull ConfigurationProvider<?> provider, @Nullable T value) throws Exception {
+    public <T> Object serialize(@NotNull ConfigurationHolder<?> holder, @Nullable T value) throws Exception {
         if (value == null) return null; // Null check
         ValueType<T> type = ValueType.of(value);
         ValueAdapter<T> adapter = adapterOf(type);

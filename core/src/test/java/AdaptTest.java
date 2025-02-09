@@ -1,7 +1,7 @@
 import cc.carm.lib.configuration.adapter.ValueAdapterRegistry;
 import cc.carm.lib.configuration.adapter.ValueType;
 import cc.carm.lib.configuration.adapter.strandard.PrimitiveAdapter;
-import cc.carm.lib.configuration.source.ConfigurationProvider;
+import cc.carm.lib.configuration.source.ConfigurationHolder;
 import cc.carm.lib.configuration.source.loader.ConfigurationInitializer;
 import cc.carm.lib.configuration.source.option.ConfigurationOptionHolder;
 import cc.carm.test.config.TestSource;
@@ -28,7 +28,7 @@ public class AdaptTest {
                 data -> Duration.between(LocalTime.now(), data)
         );
 
-        ConfigurationProvider<TestSource> provider = new ConfigurationProvider<>(
+        ConfigurationHolder<TestSource> provider = new ConfigurationHolder<>(
                 new TestSource(), registry, new ConfigurationOptionHolder(),
                 new ConcurrentHashMap<>(), new ConfigurationInitializer()
         );

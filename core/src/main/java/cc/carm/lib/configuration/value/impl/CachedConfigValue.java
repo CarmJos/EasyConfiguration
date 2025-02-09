@@ -28,7 +28,7 @@ public abstract class CachedConfigValue<T> extends ConfigValue<T> {
         return cachedValue;
     }
 
-    public boolean isExpired() {
+    public boolean cacheExpired() {
         return this.parsedTime <= 0 || config().isExpired(this.parsedTime);
     }
 
@@ -63,7 +63,7 @@ public abstract class CachedConfigValue<T> extends ConfigValue<T> {
      */
     protected <O> @Nullable ValueParser<O> parserFor(@NotNull ValueAdapter<O> adapter) {
         if (adapter.parser() != null) return adapter.parser();
-        ValueAdapter<O> registered = provider().adapters().adapterOf(adapter.type());
+        ValueAdapter<O> registered = holder().adapters().adapterOf(adapter.type());
         if (registered == null) return null;
         return registered.parser();
     }
@@ -73,7 +73,7 @@ public abstract class CachedConfigValue<T> extends ConfigValue<T> {
      */
     protected <O> @Nullable ValueSerializer<O> serializerFor(@NotNull ValueAdapter<O> adapter) {
         if (adapter.serializer() != null) return adapter.serializer();
-        ValueAdapter<O> registered = provider().adapters().adapterOf(adapter.type());
+        ValueAdapter<O> registered = holder().adapters().adapterOf(adapter.type());
         if (registered == null) return null;
         return registered.serializer();
     }

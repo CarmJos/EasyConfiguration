@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public abstract class ConfigurationFactory<SOURCE extends ConfigurationSource<SOURCE, ?>, PROVIDER extends ConfigurationProvider<SOURCE>, SELF> {
+public abstract class ConfigurationFactory<SOURCE extends ConfigurationSource<SOURCE, ?>, PROVIDER extends ConfigurationHolder<SOURCE>, SELF> {
 
     protected Function<PROVIDER, ConfigurationInitializer> loaderFunction = PROVIDER -> new ConfigurationInitializer();
     protected Consumer<ConfigurationInitializer> loaderConsumer = loader -> {

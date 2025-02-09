@@ -2,7 +2,7 @@ package cc.carm.lib.configuration.commentable;
 
 import cc.carm.lib.configuration.annotation.HeaderComment;
 import cc.carm.lib.configuration.annotation.InlineComment;
-import cc.carm.lib.configuration.source.ConfigurationProvider;
+import cc.carm.lib.configuration.source.ConfigurationHolder;
 import cc.carm.lib.configuration.source.loader.ConfigurationInitializer;
 import cc.carm.lib.configuration.source.meta.ConfigurationMetadata;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +24,7 @@ public interface CommentableMetaTypes {
     ConfigurationMetadata<String> INLINE_COMMENT = ConfigurationMetadata.of();
 
 
-    static void register(@NotNull ConfigurationProvider<?> provider) {
+    static void register(@NotNull ConfigurationHolder<?> provider) {
         register(provider.initializer());
     }
 

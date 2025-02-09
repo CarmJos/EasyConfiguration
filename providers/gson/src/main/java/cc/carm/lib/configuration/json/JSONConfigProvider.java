@@ -1,7 +1,6 @@
 package cc.carm.lib.configuration.json;
 
 import cc.carm.lib.configuration.source.comment.ConfigurationComments;
-import cc.carm.lib.configuration.core.source.impl.FileConfigProvider;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSerializer;
@@ -20,12 +19,7 @@ import java.util.LinkedHashMap;
  */
 public class JSONConfigProvider extends FileConfigProvider<JSONConfigWrapper> {
 
-    protected final Gson gson = new GsonBuilder()
-            .serializeNulls().disableHtmlEscaping().setPrettyPrinting()
-            .registerTypeAdapter(
-                    JSONConfigWrapper.class,
-                    (JsonSerializer<JSONConfigWrapper>) (src, typeOfSrc, context) -> context.serialize(src.data)
-            ).create();
+
 
     protected JSONConfigWrapper configuration;
     protected ConfigInitializer<JSONConfigProvider> initializer;
