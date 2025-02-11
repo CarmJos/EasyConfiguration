@@ -31,4 +31,23 @@ public @interface InlineComment {
     @NotNull
     String value() default "";
 
+    /**
+     * If the regex is not empty, the comment will be added to
+     * all sub paths if the regex matches the value.
+     * If the regex is empty, the comment will be added to the current path.
+     * <p> e.g. <b>"^foo\\.*\\.bar"</b> will be set like
+     * <blockquote><pre>
+     *     foo:
+     *       some:
+     *         lover: "bar" <- not matched so no comments
+     *         bar: "foobar" # Comment Contents
+     *       other:
+     *         bar: "foobar" # Comment Contents
+     * </pre></blockquote>
+     *
+     * @return The path regexes of this comment
+     */
+    @NotNull
+    String[] regex() default {};
+
 }
