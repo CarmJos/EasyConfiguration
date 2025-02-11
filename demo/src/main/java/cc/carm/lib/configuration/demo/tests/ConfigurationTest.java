@@ -3,9 +3,9 @@ package cc.carm.lib.configuration.demo.tests;
 import cc.carm.lib.configuration.demo.tests.conf.DemoConfiguration;
 import cc.carm.lib.configuration.demo.tests.conf.TestConfiguration;
 import cc.carm.lib.configuration.demo.tests.model.TestModel;
+import cc.carm.lib.configuration.source.ConfigurationHolder;
 import org.jetbrains.annotations.TestOnly;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -14,8 +14,12 @@ import java.util.stream.IntStream;
 public class ConfigurationTest {
 
     @TestOnly
-    public static void testDemo(ConfigurationProvider<?> provider) {
-        provider.initialize(DemoConfiguration.class);
+    public static void testDemo(ConfigurationHolder<?> holder) {
+        try {
+            holder.initializer().initialize(holder, DemoConfiguration.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         System.out.println("----------------------------------------------------");
 
@@ -48,21 +52,21 @@ public class ConfigurationTest {
         System.out.println(DemoConfiguration.MODEL_TEST.get());
         DemoConfiguration.MODEL_TEST.set(TestModel.random());
 
-        System.out.println("> Test Maps:");
-        DemoConfiguration.USERS.forEach((k, v) -> System.out.println(k + ": " + v));
-        LinkedHashMap<Integer, UUID> data = new LinkedHashMap<>();
-        for (int i = 1; i <= 5; i++) {
-            data.put(i, UUID.randomUUID());
-        }
-        DemoConfiguration.USERS.set(data);
+//        System.out.println("> Test Maps:");
+//        DemoConfiguration.USERS.forEach((k, v) -> System.out.println(k + ": " + v));
+//        LinkedHashMap<Integer, UUID> data = new LinkedHashMap<>();
+//        for (int i = 1; i <= 5; i++) {
+//            data.put(i, UUID.randomUUID());
+//        }
+//        DemoConfiguration.USERS.set(data);
         System.out.println("----------------------------------------------------");
     }
 
-    public static void testInner(ConfigurationProvider<?> provider) {
+    public static void testInner(ConfigurationHolder<?> provider) {
 
         TestConfiguration TEST = new TestConfiguration();
 
-        provider.initialize(TEST, true);
+        provider.initialize(TEST);
 
         System.out.println("> Test Inner value before:");
         System.out.println(TEST.INNER.INNER_VALUE.getNotNull());
@@ -76,7 +80,7 @@ public class ConfigurationTest {
 
     }
 
-    public static void save(ConfigurationProvider<?> provider) {
+    public static void save(ConfigurationHolder<?> provider) {
         try {
             provider.save();
         } catch (Exception e) {

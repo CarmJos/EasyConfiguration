@@ -27,7 +27,7 @@ public interface StandardOptions {
      * <br> if false, the values will be parsed when calling
      * {@link cc.carm.lib.configuration.value.ConfigValue#get()}
      * <br> if true, the values will be parsed when
-     * {@link ConfigurationHolder#load(Configuration)}.
+     * {@link ConfigurationHolder#initialize(Configuration)}.
      */
     ConfigurationOption<Boolean> PRELOAD = of(false);
 

@@ -2,7 +2,8 @@ package cc.carm.lib.configuration.source;
 
 import cc.carm.lib.configuration.function.DataFunction;
 import cc.carm.lib.configuration.option.FileConfigOptions;
-import cc.carm.lib.configuration.source.section.ConfigurationSource;
+import cc.carm.lib.configuration.source.section.ConfigureSection;
+import cc.carm.lib.configuration.source.section.ConfigureSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,8 +15,8 @@ import java.nio.file.Files;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public abstract class FileConfigSource<SELF extends FileConfigSource<SELF, ORIGINAL>, ORIGINAL>
-        extends ConfigurationSource<SELF, ORIGINAL> {
+public abstract class FileConfigSource<SECTION extends ConfigureSection, ORIGINAL, SELF extends FileConfigSource<SECTION, ORIGINAL, SELF>>
+        extends ConfigureSource<SECTION, ORIGINAL, SELF> {
 
     protected final @NotNull File file;
     protected final @Nullable String resourcePath;
@@ -26,6 +27,7 @@ public abstract class FileConfigSource<SELF extends FileConfigSource<SELF, ORIGI
         this.file = file;
         this.resourcePath = resourcePath;
     }
+
 
     public Charset charset() {
         return holder().options().get(FileConfigOptions.CHARSET);
@@ -56,28 +58,23 @@ public abstract class FileConfigSource<SELF extends FileConfigSource<SELF, ORIGI
         }
     }
 
-    protected <R> R fileInputStream(@NotNull DataFunction<InputStream, R> loader) {
-        try (FileInputStream is = new FileInputStream(file)) {
+    protected <R> R fileInputStream(@NotNull DataFunction<InputStream, R> loader) throws Exception {
+        try (InputStream is = Files.newInputStream(file.toPath())) {
             return loader.handle(is);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
         }
     }
 
-    protected <R> R fileReader(@NotNull DataFunction<Reader, R> loader) {
+    protected <R> R fileReader(@NotNull DataFunction<Reader, R> loader) throws Exception {
         return fileInputStream(is -> loader.handle(new InputStreamReader(is, charset())));
     }
 
-    protected void fileOutputStream(@NotNull Consumer<FileOutputStream> stream) {
-        try (FileOutputStream os = new FileOutputStream(file)) {
+    protected void fileOutputStream(@NotNull Consumer<OutputStream> stream) throws Exception {
+        try (OutputStream os = Files.newOutputStream(file.toPath())) {
             stream.accept(os);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
-    protected void fileWriter(@NotNull Consumer<Writer> writer) {
+    protected void fileWriter(@NotNull Consumer<Writer> writer) throws Exception {
         fileOutputStream(os -> writer.accept(new OutputStreamWriter(os, charset())));
     }
 

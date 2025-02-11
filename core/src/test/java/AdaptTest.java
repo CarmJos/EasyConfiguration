@@ -5,6 +5,7 @@ import cc.carm.lib.configuration.source.ConfigurationHolder;
 import cc.carm.lib.configuration.source.loader.ConfigurationInitializer;
 import cc.carm.lib.configuration.source.option.ConfigurationOptionHolder;
 import cc.carm.test.config.TestSource;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 import java.time.Duration;
@@ -28,10 +29,17 @@ public class AdaptTest {
                 data -> Duration.between(LocalTime.now(), data)
         );
 
-        ConfigurationHolder<TestSource> provider = new ConfigurationHolder<>(
-                new TestSource(), registry, new ConfigurationOptionHolder(),
+        ConfigurationHolder<TestSource> provider = new ConfigurationHolder<TestSource>(
+                registry, new ConfigurationOptionHolder(),
                 new ConcurrentHashMap<>(), new ConfigurationInitializer()
-        );
+        ) {
+            final TestSource source = new TestSource(this, System.currentTimeMillis());
+
+            @Override
+            public @NotNull TestSource config() {
+                return source;
+            }
+        };
 
         LocalTime v = registry.deserialize(provider, LocalTime.class, 600000L);
         Object d = registry.serialize(provider, v);

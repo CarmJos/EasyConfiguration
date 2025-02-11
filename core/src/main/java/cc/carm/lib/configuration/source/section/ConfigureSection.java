@@ -1,6 +1,7 @@
 package cc.carm.lib.configuration.source.section;
 
 import cc.carm.lib.configuration.function.DataFunction;
+import cc.carm.lib.configuration.source.option.StandardOptions;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -8,7 +9,13 @@ import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.*;
 
-public interface ConfigurationSection {
+public interface ConfigureSection {
+
+    @NotNull ConfigureSource<?, ?, ?> source();
+
+    default char separator() {
+        return source().holder().options().get(StandardOptions.PATH_SEPARATOR);
+    }
 
     @NotNull
     default Set<String> getKeys(boolean deep) {
@@ -33,7 +40,7 @@ public interface ConfigurationSection {
     boolean isSection(@NotNull String path);
 
     @Nullable
-    ConfigurationSection getSection(@NotNull String path);
+    ConfigureSection getSection(@NotNull String path);
 
     @Nullable Object get(@NotNull String path);
 

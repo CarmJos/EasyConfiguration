@@ -2,7 +2,7 @@ package cc.carm.lib.configuration.builder.value;
 
 import cc.carm.lib.configuration.adapter.ValueType;
 import cc.carm.lib.configuration.function.ValueHandler;
-import cc.carm.lib.configuration.source.section.ConfigurationSection;
+import cc.carm.lib.configuration.source.section.ConfigureSection;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -30,7 +30,7 @@ public class ConfigValueBuilder<V> {
     }
 
     public @NotNull SourceValueBuilder<String, V> fromString() {
-        return from(String.class);
+        return from(ValueType.STRING, ValueHandler.required(), ValueHandler.stringValue());
     }
 
     public @NotNull SectionValueBuilder<V> fromSection() {
@@ -38,8 +38,8 @@ public class ConfigValueBuilder<V> {
     }
 
     public @NotNull SectionValueBuilder<V> fromSection(
-            @NotNull ValueHandler<ConfigurationSection, V> valueParser,
-            @NotNull ValueHandler<V, ? extends Map<Object, Object>> valueSerializer
+            @NotNull ValueHandler<ConfigureSection, V> valueParser,
+            @NotNull ValueHandler<V, ? extends Map<String, Object>> valueSerializer
     ) {
         return new SectionValueBuilder<>(this.type, valueParser, valueSerializer);
     }

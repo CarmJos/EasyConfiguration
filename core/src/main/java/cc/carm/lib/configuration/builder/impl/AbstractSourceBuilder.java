@@ -49,13 +49,13 @@ public abstract class AbstractSourceBuilder<
 
     protected ValueAdapter<PARAM> buildAdapter() {
         return new ValueAdapter<>(this.paramType)
-                .parser((p, type, data) -> {
-                    SOURCE source = p.deserialize(this.sourceType, data);
-                    return this.valueParser.handle(p, source);
+                .parser((holder, type, data) -> {
+                    SOURCE source = holder.deserialize(this.sourceType, data);
+                    return this.valueParser.handle(holder, source);
                 })
-                .serializer((p, type, data) -> {
-                    SOURCE source = this.valueSerializer.handle(p, data);
-                    return p.serialize(source);
+                .serializer((holder, type, data) -> {
+                    SOURCE source = this.valueSerializer.handle(holder, data);
+                    return holder.serialize(source);
                 });
     }
 

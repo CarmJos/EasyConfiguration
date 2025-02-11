@@ -4,7 +4,7 @@ import cc.carm.lib.configuration.adapter.ValueAdapter;
 import cc.carm.lib.configuration.adapter.ValueParser;
 import cc.carm.lib.configuration.adapter.ValueSerializer;
 import cc.carm.lib.configuration.adapter.ValueType;
-import cc.carm.lib.configuration.source.section.ConfigurationSection;
+import cc.carm.lib.configuration.source.section.ConfigureSection;
 import cc.carm.lib.configuration.value.ValueManifest;
 import cc.carm.lib.configuration.value.impl.CachedConfigValue;
 import org.jetbrains.annotations.NotNull;
@@ -58,7 +58,7 @@ public class ConfiguredMap<K, V> extends CachedConfigValue<Map<K, V>> implements
         // If the value is expired, we need to update it
         Map<K, V> map = createMap();
 
-        ConfigurationSection section = config().getSection(path());
+        ConfigureSection section = config().getSection(path());
         if (section == null) return getDefaultFirst(map);
 
         Set<String> keys = section.getKeys(false);

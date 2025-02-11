@@ -51,6 +51,11 @@ public interface ValueHandler<T, R> {
     }
 
     @Contract(pure = true)
+    static <T> @NotNull ValueHandler<T, String> stringValue() {
+        return (provider, input) -> String.valueOf(input);
+    }
+
+    @Contract(pure = true)
     static <T> @NotNull ValueHandler<Object, T> fromObject(ValueType<T> type) {
         return (provider, input) -> provider.deserialize(type, input);
     }

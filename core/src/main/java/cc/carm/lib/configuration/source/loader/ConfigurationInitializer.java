@@ -70,49 +70,49 @@ public class ConfigurationInitializer {
     public <T, A extends Annotation> void registerAnnotation(@NotNull Class<A> annotation,
                                                              @NotNull ConfigurationMetadata<T> metadata,
                                                              @NotNull Function<A, T> extractor) {
-        appendFieldInitializer((provider, path, field) -> {
+        appendFieldInitializer((holder, path, field) -> {
             A data = field.getAnnotation(annotation);
             if (data == null) return;
-            provider.metadata(path).setIfAbsent(metadata, extractor.apply(data));
+            holder.metadata(path).setIfAbsent(metadata, extractor.apply(data));
         });
-        appendClassInitializer((provider, path, clazz) -> {
+        appendClassInitializer((holder, path, clazz) -> {
             A data = clazz.getAnnotation(annotation);
             if (data == null) return;
-            provider.metadata(path).setIfAbsent(metadata, extractor.apply(data));
+            holder.metadata(path).setIfAbsent(metadata, extractor.apply(data));
         });
     }
 
 
     public @Nullable String getFieldPath(ConfigurationHolder<?> holder, @Nullable String parentPath, @NotNull Field field) {
-        return pathGenerator.getFieldPath(provider, parentPath, field);
+        return pathGenerator.getFieldPath(holder, parentPath, field);
     }
 
     public @Nullable String getClassPath(ConfigurationHolder<?> holder, @Nullable String parentPath,
                                          @NotNull Class<?> clazz, @Nullable Field clazzField) {
-        return pathGenerator.getClassPath(provider, parentPath, clazz, clazzField);
+        return pathGenerator.getClassPath(holder, parentPath, clazz, clazzField);
     }
 
     public void initialize(ConfigurationHolder<?> holder, @NotNull Configuration config) throws Exception {
-        initializeInstance(provider, config, null, null);
-        if (provider.options().get(StandardOptions.SET_DEFAULTS)) provider.save();
+        initializeInstance(holder, config, null, null);
+        if (holder.options().get(StandardOptions.SET_DEFAULTS)) holder.save();
     }
 
     public void initialize(ConfigurationHolder<?> holder, @NotNull Class<? extends Configuration> clazz) throws Exception {
-        initializeStaticClass(provider, clazz, null, null);
-        if (provider.options().get(StandardOptions.SET_DEFAULTS)) provider.save();
+        initializeStaticClass(holder, clazz, null, null);
+        if (holder.options().get(StandardOptions.SET_DEFAULTS)) holder.save();
     }
 
 
     // 针对实例类的初始化方法
     protected void initializeInstance(@NotNull ConfigurationHolder<?> holder,
                                       @NotNull Configuration root, @Nullable String parentPath, @Nullable Field configField) {
-        String path = getClassPath(provider, parentPath, root.getClass(), configField);
+        String path = getClassPath(holder, parentPath, root.getClass(), configField);
         try {
-            this.classInitializer.whenInitialize(provider, path, root.getClass());
+            this.classInitializer.whenInitialize(holder, path, root.getClass());
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Arrays.stream(root.getClass().getDeclaredFields()).forEach(field -> initializeField(provider, root, field, path));
+        Arrays.stream(root.getClass().getDeclaredFields()).forEach(field -> initializeField(holder, root, field, path));
     }
 
     // 针对静态类的初始化方法
@@ -121,22 +121,22 @@ public class ConfigurationInitializer {
                                          @NotNull Class<?> clazz, @Nullable String parentPath, @Nullable Field configField) {
         if (!Configuration.class.isAssignableFrom(clazz)) return; // 只解析继承了 ConfigurationRoot 的类
 
-        String path = getClassPath(provider, parentPath, clazz, configField);
+        String path = getClassPath(holder, parentPath, clazz, configField);
 
         try {
-            this.classInitializer.whenInitialize(provider, path, (Class<? extends Configuration>) clazz);
+            this.classInitializer.whenInitialize(holder, path, (Class<? extends Configuration>) clazz);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         for (Field field : clazz.getDeclaredFields()) {
-            initializeField(provider, clazz, field, path);
+            initializeField(holder, clazz, field, path);
         }
 
-        if (provider.options().get(StandardOptions.LOAD_SUB_CLASSES)) {
+        if (holder.options().get(StandardOptions.LOAD_SUB_CLASSES)) {
             Class<?>[] classes = clazz.getDeclaredClasses();
             for (int i = classes.length - 1; i >= 0; i--) {   // 逆向加载，保持顺序。
-                initializeStaticClass(provider, classes[i], path, null);
+                initializeStaticClass(holder, classes[i], path, null);
             }
         }
     }
@@ -150,20 +150,20 @@ public class ConfigurationInitializer {
             if (object instanceof ConfigValue<?>) {
                 // 目标是 ConfigValue 实例，进行具体的初始化注入
                 ConfigValue<?> value = (ConfigValue<?>) object;
-                String path = getFieldPath(provider, parent, field);
+                String path = getFieldPath(holder, parent, field);
                 if (path == null) return;
-                value.initialize(provider, path);
+                value.initialize(holder, path);
                 try {
-                    this.fieldInitializer.whenInitialize(provider, path, field);
+                    this.fieldInitializer.whenInitialize(holder, path, field);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             } else if (source instanceof Configuration && object instanceof Configuration) {
                 // 当且仅当 源字段与字段 均为Configuration实例时，才对目标字段进行下一步初始化加载。
-                initializeInstance(provider, (Configuration) object, parent, field);
+                initializeInstance(holder, (Configuration) object, parent, field);
             } else if (source instanceof Class<?> && object instanceof Class<?>) {
                 // 当且仅当 源字段与字段 均为静态类时，才对目标字段进行下一步初始化加载。
-                initializeStaticClass(provider, (Class<?>) object, parent, field);
+                initializeStaticClass(holder, (Class<?>) object, parent, field);
             }
 
             // 以上判断实现以下规范：

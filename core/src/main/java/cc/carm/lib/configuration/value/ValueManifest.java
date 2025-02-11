@@ -3,7 +3,7 @@ package cc.carm.lib.configuration.value;
 import cc.carm.lib.configuration.adapter.ValueType;
 import cc.carm.lib.configuration.source.ConfigurationHolder;
 import cc.carm.lib.configuration.source.meta.ConfigurationMetaHolder;
-import cc.carm.lib.configuration.source.section.ConfigurationSource;
+import cc.carm.lib.configuration.source.section.ConfigureSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -101,8 +101,8 @@ public class ValueManifest<T> {
         throw new IllegalStateException("Value does not have a provider.");
     }
 
-    public @NotNull ConfigurationSource<?, ?> config() {
-        return holder().source();
+    public @NotNull ConfigureSource<?, ?, ?> config() {
+        return holder().config();
     }
 
     public ConfigurationMetaHolder metadata() {

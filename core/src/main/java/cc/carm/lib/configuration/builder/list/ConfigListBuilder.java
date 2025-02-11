@@ -23,7 +23,7 @@ public class ConfigListBuilder<V> {
     }
 
     public @NotNull SourceListBuilder<String, V> fromString() {
-        return from(String.class);
+        return new SourceListBuilder<>(ValueType.STRING, type, ValueHandler.required(), ValueHandler.stringValue(), ArrayList::new);
     }
 
     public @NotNull SectionListBuilder<V> fromSection() {

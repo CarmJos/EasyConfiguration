@@ -1,6 +1,7 @@
-package cc.carm.lib.configuration.json;
+package cc.carm.test.config;
 
-import cc.carm.lib.configuration.source.section.ConfigurationSection;
+import cc.carm.lib.configuration.source.section.ConfigureSection;
+import cc.carm.lib.configuration.source.section.ConfigureSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -8,8 +9,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class JSONConfigurationSection implements ConfigurationSection {
-
+public class TestSection implements ConfigureSection {
+    @Override
+    public @NotNull ConfigureSource<?, ?, ?> source() {
+        return null;
+    }
 
     @Override
     public @NotNull Map<String, Object> getValues(boolean deep) {
@@ -42,7 +46,7 @@ public class JSONConfigurationSection implements ConfigurationSection {
     }
 
     @Override
-    public @Nullable ConfigurationSection getSection(@NotNull String path) {
+    public @Nullable ConfigureSection getSection(@NotNull String path) {
         return null;
     }
 

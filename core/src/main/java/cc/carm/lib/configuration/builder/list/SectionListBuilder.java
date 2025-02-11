@@ -3,7 +3,7 @@ package cc.carm.lib.configuration.builder.list;
 import cc.carm.lib.configuration.adapter.ValueType;
 import cc.carm.lib.configuration.builder.impl.AbstractSectionBuilder;
 import cc.carm.lib.configuration.function.ValueHandler;
-import cc.carm.lib.configuration.source.section.ConfigurationSection;
+import cc.carm.lib.configuration.source.section.ConfigureSection;
 import cc.carm.lib.configuration.value.standard.ConfiguredList;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,8 +15,8 @@ public class SectionListBuilder<V> extends AbstractSectionBuilder<List<V>, V, Co
     protected @NotNull Supplier<? extends List<V>> constructor;
 
     public SectionListBuilder(@NotNull ValueType<V> paramType,
-                              @NotNull ValueHandler<ConfigurationSection, V> parser,
-                              @NotNull ValueHandler<V, ? extends Map<Object, Object>> serializer,
+                              @NotNull ValueHandler<ConfigureSection, V> parser,
+                              @NotNull ValueHandler<V, ? extends Map<String, Object>> serializer,
                               @NotNull Supplier<? extends List<V>> constructor) {
         super(new ValueType<List<V>>() {
         }, paramType, parser, serializer);

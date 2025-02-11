@@ -40,8 +40,8 @@ public class PathGenerator {
     public @Nullable String getFieldPath(@NotNull ConfigurationHolder<?> holder,
                                          @Nullable String parentPath, @NotNull Field field) {
         ConfigPath path = field.getAnnotation(ConfigPath.class);
-        if (path == null) return link(provider, parentPath, false, field.getName()); // No annotation, use field name.
-        else return link(provider, parentPath, path.root(), select(path.value(), field.getName()));
+        if (path == null) return link(holder, parentPath, false, field.getName()); // No annotation, use field name.
+        else return link(holder, parentPath, path.root(), select(path.value(), field.getName()));
     }
 
     public @Nullable String getClassPath(@NotNull ConfigurationHolder<?> holder,
@@ -52,14 +52,14 @@ public class PathGenerator {
         //    and use filed information.
         ConfigPath clazzPath = clazz.getAnnotation(ConfigPath.class);
 
-        if (clazzPath != null) return link(provider, parentPath, clazzPath.root(), clazzPath.value());
+        if (clazzPath != null) return link(holder, parentPath, clazzPath.root(), clazzPath.value());
         if (clazzField == null) {
-            return link(provider, parentPath, false, clazz.getSimpleName()); // No field, use class name.
+            return link(holder, parentPath, false, clazz.getSimpleName()); // No field, use class name.
         }
 
         ConfigPath fieldPath = clazzField.getAnnotation(ConfigPath.class);
-        if (fieldPath == null) return link(provider, parentPath, false, clazzField.getName());
-        else return getFieldPath(provider, parentPath, clazzField);
+        if (fieldPath == null) return link(holder, parentPath, false, clazzField.getName());
+        else return getFieldPath(holder, parentPath, clazzField);
     }
 
     protected String select(String path, String defaultValue) {
@@ -70,7 +70,7 @@ public class PathGenerator {
     protected @Nullable String link(@NotNull ConfigurationHolder<?> holder,
                                     @Nullable String parent, boolean root, @Nullable String path) {
         if (path == null || path.isEmpty()) return root ? null : parent;
-        return root || parent == null ? covertPath(path) : parent + pathSeparator(provider) + covertPath(path);
+        return root || parent == null ? covertPath(path) : parent + pathSeparator(holder) + covertPath(path);
     }
 
     public static boolean isBlank(String path) {
@@ -78,7 +78,7 @@ public class PathGenerator {
     }
 
     public static char pathSeparator(ConfigurationHolder<?> holder) {
-        return provider.options().get(StandardOptions.PATH_SEPARATOR);
+        return holder.options().get(StandardOptions.PATH_SEPARATOR);
     }
 
     /**

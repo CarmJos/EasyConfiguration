@@ -2,16 +2,16 @@ package cc.carm.lib.configuration.adapter.strandard;
 
 import cc.carm.lib.configuration.adapter.ValueAdapter;
 import cc.carm.lib.configuration.adapter.ValueType;
-import cc.carm.lib.configuration.source.section.ConfigurationSection;
+import cc.carm.lib.configuration.source.section.ConfigureSection;
 
 public interface StandardAdapters {
 
-    ValueAdapter<ConfigurationSection> SECTION_ADAPTER = new ValueAdapter<>(
-            ValueType.of(ConfigurationSection.class),
+    ValueAdapter<ConfigureSection> SECTION_ADAPTER = new ValueAdapter<>(
+            ValueType.of(ConfigureSection.class),
             (provider, type, value) -> value,
             (provider, type, value) -> {
-                if (value instanceof ConfigurationSection) {
-                    return (ConfigurationSection) value;
+                if (value instanceof ConfigureSection) {
+                    return (ConfigureSection) value;
                 } else throw new IllegalArgumentException("Value is not a ConfigurationSection");
             }
     );

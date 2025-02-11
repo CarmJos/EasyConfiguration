@@ -1,18 +1,16 @@
 package cc.carm.test.config;
 
-import cc.carm.lib.configuration.source.section.ConfigurationSection;
-import cc.carm.lib.configuration.source.section.ConfigurationSource;
+import cc.carm.lib.configuration.source.ConfigurationHolder;
+import cc.carm.lib.configuration.source.section.ConfigureSource;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-public class TestSource extends ConfigurationSource<TestSource, Map<String, String>> {
+public class TestSource extends ConfigureSource<TestSection, Map<String, String>, TestSource> {
 
-    public TestSource() {
-        super(System.currentTimeMillis());
+
+    public TestSource(@NotNull ConfigurationHolder<? extends TestSource> holder, long lastUpdateMillis) {
+        super(holder, lastUpdateMillis);
     }
 
     @Override
@@ -36,47 +34,12 @@ public class TestSource extends ConfigurationSource<TestSource, Map<String, Stri
     }
 
     @Override
-    public @NotNull Set<String> getKeys(boolean deep) {
+    public @NotNull TestSection section() {
         return null;
     }
 
     @Override
-    public @NotNull Map<String, Object> getValues(boolean deep) {
-        return null;
-    }
-
-    @Override
-    public @Nullable Object get(@NotNull String path) {
-        return null;
-    }
-
-    @Override
-    public void set(@NotNull String path, @Nullable Object value) {
-
-    }
-
-    @Override
-    public boolean contains(@NotNull String path) {
-        return false;
-    }
-
-    @Override
-    public boolean isList(@NotNull String path) {
-        return false;
-    }
-
-    @Override
-    public @Nullable List<?> getList(@NotNull String path) {
-        return null;
-    }
-
-    @Override
-    public boolean isSection(@NotNull String path) {
-        return false;
-    }
-
-    @Override
-    public @Nullable ConfigurationSection getSection(@NotNull String path) {
+    public @NotNull ConfigureSource<?, ?, ?> source() {
         return null;
     }
 }

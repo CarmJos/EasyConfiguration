@@ -1,5 +1,6 @@
 package cc.carm.lib.configuration.demo.tests.model;
 
+import cc.carm.lib.configuration.source.section.ConfigureSection;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -32,7 +33,7 @@ public class TestModel extends AbstractModel {
         return map;
     }
 
-    public static TestModel deserialize(ConfigurationWrapper<?> section) {
+    public static TestModel deserialize(ConfigureSection section) {
         String name = section.getString("name");
         if (name == null) throw new NullPointerException("name is null");
         String uuidString = section.getString("info.uuid");

@@ -3,7 +3,6 @@ package cc.carm.lib.configuration.adapter;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.ParameterizedType;
-
 import java.lang.reflect.Type;
 import java.util.Objects;
 
@@ -12,12 +11,45 @@ import java.util.Objects;
  */
 public abstract class ValueType<T> {
 
+    public static final ValueType<String> STRING = ofPrimitiveType(String.class);
+    public static final ValueType<Integer> INTEGER = ofPrimitiveType(Integer.class);
+    public static final ValueType<Integer> INTEGER_TYPE = ofPrimitiveType(int.class);
+    public static final ValueType<Long> LONG = ofPrimitiveType(Long.class);
+    public static final ValueType<Long> LONG_TYPE = ofPrimitiveType(long.class);
+    public static final ValueType<Double> DOUBLE = ofPrimitiveType(Double.class);
+    public static final ValueType<Double> DOUBLE_TYPE = ofPrimitiveType(double.class);
+    public static final ValueType<Float> FLOAT = ofPrimitiveType(Float.class);
+    public static final ValueType<Float> FLOAT_TYPE = ofPrimitiveType(float.class);
+    public static final ValueType<Boolean> BOOLEAN = ofPrimitiveType(Boolean.class);
+    public static final ValueType<Boolean> BOOLEAN_TYPE = ofPrimitiveType(boolean.class);
+    public static final ValueType<Byte> BYTE = ofPrimitiveType(Byte.class);
+    public static final ValueType<Byte> BYTE_TYPE = ofPrimitiveType(byte.class);
+    public static final ValueType<Short> SHORT = ofPrimitiveType(Short.class);
+    public static final ValueType<Short> SHORT_TYPE = ofPrimitiveType(short.class);
+    public static final ValueType<Character> CHAR = ofPrimitiveType(Character.class);
+    public static final ValueType<Character> CHAR_TYPE = ofPrimitiveType(char.class);
+
+    public static final ValueType<?>[] PRIMITIVE_TYPES = {
+            STRING, INTEGER, LONG, DOUBLE, FLOAT, BOOLEAN, BYTE, SHORT, CHAR,
+            INTEGER_TYPE, LONG_TYPE, DOUBLE_TYPE, FLOAT_TYPE, BOOLEAN_TYPE, BYTE_TYPE, SHORT_TYPE, CHAR_TYPE
+    };
+
     @SuppressWarnings("unchecked")
     public static <T> ValueType<T> of(@NotNull T value) {
         return of((Class<T>) value.getClass());
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> ValueType<T> of(final Type type) {
+        if (type == null) throw new NullPointerException("Type cannot be null");
+        if (type instanceof Class<?>) { // Try handle primitive types
+            Class<?> clazz = (Class<?>) type;
+            for (ValueType<?> valueType : PRIMITIVE_TYPES) {
+                if (valueType.getRawType() == clazz) {
+                    return (ValueType<T>) valueType;
+                }
+            }
+        }
         return new ValueType<T>(type) {
         };
     }
@@ -52,6 +84,11 @@ public abstract class ValueType<T> {
             }
         };
         return of(parameterizedType);
+    }
+
+    private static <T> ValueType<T> ofPrimitiveType(Class<T> clazz) {
+        return new ValueType<T>(clazz) {
+        };
     }
 
     private final Type type;
@@ -138,6 +175,9 @@ public abstract class ValueType<T> {
         if (this == obj) return true;
         if (obj instanceof ValueType) {
             return Objects.equals(type, ((ValueType<?>) obj).type);
+        }
+        if (obj instanceof Type) {
+            return Objects.equals(type, obj);
         }
         return false;
     }

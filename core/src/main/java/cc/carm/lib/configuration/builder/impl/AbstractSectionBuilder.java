@@ -5,7 +5,7 @@ import cc.carm.lib.configuration.adapter.ValueType;
 import cc.carm.lib.configuration.builder.CommonConfigBuilder;
 import cc.carm.lib.configuration.function.DataFunction;
 import cc.carm.lib.configuration.function.ValueHandler;
-import cc.carm.lib.configuration.source.section.ConfigurationSection;
+import cc.carm.lib.configuration.source.section.ConfigureSection;
 import cc.carm.lib.configuration.value.ConfigValue;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,39 +21,39 @@ public abstract class AbstractSectionBuilder<
 
     protected final @NotNull ValueType<PARAM> paramType;
 
-    protected @NotNull ValueHandler<ConfigurationSection, PARAM> parser;
-    protected @NotNull ValueHandler<PARAM, ? extends Map<Object, Object>> serializer;
+    protected @NotNull ValueHandler<ConfigureSection, PARAM> parser;
+    protected @NotNull ValueHandler<PARAM, ? extends Map<String, Object>> serializer;
 
     public AbstractSectionBuilder(@NotNull ValueType<TYPE> type, @NotNull ValueType<PARAM> paramType,
-                                  @NotNull ValueHandler<ConfigurationSection, PARAM> parser,
-                                  @NotNull ValueHandler<PARAM, ? extends Map<Object, Object>> serializer) {
+                                  @NotNull ValueHandler<ConfigureSection, PARAM> parser,
+                                  @NotNull ValueHandler<PARAM, ? extends Map<String, Object>> serializer) {
         super(type);
         this.paramType = paramType;
         this.parser = parser;
         this.serializer = serializer;
     }
 
-    public @NotNull SELF parse(DataFunction<ConfigurationSection, PARAM> valueParser) {
+    public @NotNull SELF parse(DataFunction<ConfigureSection, PARAM> valueParser) {
         return parse((p, section) -> valueParser.handle(section));
     }
 
-    public @NotNull SELF parse(ValueHandler<ConfigurationSection, PARAM> valueParser) {
+    public @NotNull SELF parse(ValueHandler<ConfigureSection, PARAM> valueParser) {
         this.parser = valueParser;
         return self();
     }
 
-    public @NotNull SELF serialize(DataFunction<PARAM, ? extends Map<Object, Object>> serializer) {
+    public @NotNull SELF serialize(DataFunction<PARAM, ? extends Map<String, Object>> serializer) {
         return serialize((p, value) -> serializer.handle(value));
     }
 
-    public @NotNull SELF serialize(ValueHandler<PARAM, ? extends Map<Object, Object>> serializer) {
+    public @NotNull SELF serialize(ValueHandler<PARAM, ? extends Map<String, Object>> serializer) {
         this.serializer = serializer;
         return self();
     }
 
-    public @NotNull SELF serialize(Consumer<Map<Object, Object>> serializer) {
+    public @NotNull SELF serialize(Consumer<Map<String, Object>> serializer) {
         return serialize((p, value) -> {
-            Map<Object, Object> map = new LinkedHashMap<>();
+            Map<String, Object> map = new LinkedHashMap<>();
             serializer.accept(map);
             return map;
         });
@@ -62,12 +62,12 @@ public abstract class AbstractSectionBuilder<
     protected ValueAdapter<PARAM> buildAdapter() {
         return new ValueAdapter<>(this.paramType)
                 .parser((p, type, data) -> {
-                    ConfigurationSection section = p.deserialize(ConfigurationSection.class, data);
+                    ConfigureSection section = p.deserialize(ConfigureSection.class, data);
                     if (section == null) return null;
                     return this.parser.handle(p, section);
                 })
                 .serializer((p, type, data) -> {
-                    Map<Object, Object> map = this.serializer.handle(p, data);
+                    Map<String, Object> map = this.serializer.handle(p, data);
                     return map == null || map.isEmpty() ? null : map;
                 });
     }

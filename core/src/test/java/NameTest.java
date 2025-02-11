@@ -1,3 +1,4 @@
+import cc.carm.lib.configuration.source.loader.PathGenerator;
 import org.junit.Test;
 
 public class NameTest {

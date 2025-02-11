@@ -101,7 +101,7 @@ public class ValueAdapterRegistry {
 
     @Contract("_,_,null -> null")
     public <T> T deserialize(@NotNull ConfigurationHolder<?> holder, @NotNull Class<T> type, @Nullable Object source) throws Exception {
-        return deserialize(provider, ValueType.of(type), source);
+        return deserialize(holder, ValueType.of(type), source);
     }
 
     @Contract("_,_,null -> null")
@@ -110,7 +110,7 @@ public class ValueAdapterRegistry {
         if (type.isInstance(source)) return type.cast(source); // Not required to deserialize
         ValueAdapter<T> adapter = adapterOf(type);
         if (adapter == null) throw new RuntimeException("No adapter for type " + type);
-        return adapter.parse(provider, type, source);
+        return adapter.parse(holder, type, source);
     }
 
     @Contract("_,null -> null")
@@ -119,7 +119,7 @@ public class ValueAdapterRegistry {
         ValueType<T> type = ValueType.of(value);
         ValueAdapter<T> adapter = adapterOf(type);
         if (adapter == null) return value; // No adapters, try to return the original value
-        return adapter.serialize(provider, type, value);
+        return adapter.serialize(holder, type, value);
     }
 
 

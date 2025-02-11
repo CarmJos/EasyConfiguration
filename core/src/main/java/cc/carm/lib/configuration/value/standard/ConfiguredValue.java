@@ -30,6 +30,11 @@ public class ConfiguredValue<V> extends CachedConfigValue<V> {
         return of(ValueType.of(type), () -> null);
     }
 
+    public static <V> ConfiguredValue<V> of(@NotNull Class<V> type, @NotNull V defaults) {
+        return of(ValueType.of(type), () -> defaults);
+    }
+
+
     public static <V> ConfiguredValue<V> of(@NotNull Class<V> type, @NotNull Supplier<@Nullable V> defaultSupplier) {
         return of(ValueType.of(type), defaultSupplier);
     }

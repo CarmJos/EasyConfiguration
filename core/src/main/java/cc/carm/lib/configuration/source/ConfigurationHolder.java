@@ -6,24 +6,21 @@ import cc.carm.lib.configuration.adapter.ValueType;
 import cc.carm.lib.configuration.source.loader.ConfigurationInitializer;
 import cc.carm.lib.configuration.source.meta.ConfigurationMetaHolder;
 import cc.carm.lib.configuration.source.option.ConfigurationOptionHolder;
-import cc.carm.lib.configuration.source.section.ConfigurationSource;
+import cc.carm.lib.configuration.source.section.ConfigureSource;
 import cc.carm.lib.configuration.value.ValueManifest;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
-import java.util.Objects;
 
-public class ConfigurationHolder<S extends ConfigurationSource<S, ?>> {
+public abstract class ConfigurationHolder<SOURCE extends ConfigureSource<?, ?, SOURCE>> {
 
     protected final @NotNull ValueAdapterRegistry adapters;
     protected final @NotNull ConfigurationOptionHolder options;
     protected final @NotNull Map<String, ConfigurationMetaHolder> metadata;
 
     protected final @NotNull ConfigurationInitializer initializer;
-
-    protected @Nullable S source;
 
     public ConfigurationHolder(@NotNull ValueAdapterRegistry adapters,
                                @NotNull ConfigurationOptionHolder options,
@@ -35,16 +32,14 @@ public class ConfigurationHolder<S extends ConfigurationSource<S, ?>> {
         this.metadata = metadata;
     }
 
-    public @NotNull S source() {
-        return Objects.requireNonNull(source, "Source is not initialized");
-    }
+    public abstract @NotNull SOURCE config();
 
     public void reload() throws Exception {
-        source().reload();
+        config().reload();
     }
 
     public void save() throws Exception {
-        source().save();
+        config().save();
     }
 
     public ConfigurationOptionHolder options() {
@@ -83,7 +78,7 @@ public class ConfigurationHolder<S extends ConfigurationSource<S, ?>> {
         return adapters().serialize(this, value);
     }
 
-    public void load(Class<? extends Configuration> configClass) {
+    public void initialize(Class<? extends Configuration> configClass) {
         try {
             initializer.initialize(this, configClass);
         } catch (Exception e) {
@@ -91,7 +86,7 @@ public class ConfigurationHolder<S extends ConfigurationSource<S, ?>> {
         }
     }
 
-    public void load(@NotNull Configuration config) {
+    public void initialize(@NotNull Configuration config) {
         try {
             initializer.initialize(this, config);
         } catch (Exception e) {
@@ -99,7 +94,7 @@ public class ConfigurationHolder<S extends ConfigurationSource<S, ?>> {
         }
     }
 
-    public void load(@NotNull ValueManifest<?> value) {
+    public void initialize(@NotNull ValueManifest<?> value) {
         value.holder(this);
     }
 
