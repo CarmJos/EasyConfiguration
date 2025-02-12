@@ -38,7 +38,7 @@ public abstract class ConfigureSource<
     public abstract @NotNull ORIGINAL original();
 
     /**
-     * @return Configuration section
+     * @return The root {@link ConfigureSection}
      */
     public abstract @NotNull SECTION section();
 
@@ -52,6 +52,11 @@ public abstract class ConfigureSource<
 
     public boolean isExpired(long parsedTime) {
         return getLastUpdateMillis() > parsedTime;
+    }
+
+    @Override
+    public @Nullable ConfigureSection parent() {
+        return null; // Source also represents the root section, so it has no parent
     }
 
     @Override

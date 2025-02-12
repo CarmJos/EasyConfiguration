@@ -1,7 +1,5 @@
 package sample;
 
-import cc.carm.lib.configuration.EasyConfiguration;
-
 public class Sample {
 
     public static void main(String[] args) {

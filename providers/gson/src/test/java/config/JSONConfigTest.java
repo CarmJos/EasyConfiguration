@@ -1,10 +1,8 @@
 package config;
 
 import cc.carm.lib.configuration.demo.tests.ConfigurationTest;
-import cc.carm.lib.configuration.json.JSONConfigFactory;
+import cc.carm.lib.configuration.source.json.JSONConfigFactory;
 import cc.carm.lib.configuration.source.ConfigurationHolder;
-import cc.carm.lib.configuration.source.loader.PathGenerator;
-import cc.carm.lib.configuration.source.option.StandardOptions;
 import cc.carm.lib.configuration.value.ConfigValue;
 import cc.carm.lib.configuration.value.standard.ConfiguredValue;
 import org.junit.Test;

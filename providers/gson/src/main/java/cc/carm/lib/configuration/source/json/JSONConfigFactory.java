@@ -1,7 +1,7 @@
-package cc.carm.lib.configuration.json;
+package cc.carm.lib.configuration.source.json;
 
 import cc.carm.lib.configuration.source.ConfigurationHolder;
-import cc.carm.lib.configuration.source.FileConfigFactory;
+import cc.carm.lib.configuration.source.file.FileConfigFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.jetbrains.annotations.NotNull;

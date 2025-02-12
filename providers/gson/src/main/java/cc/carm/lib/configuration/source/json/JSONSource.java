@@ -1,7 +1,7 @@
-package cc.carm.lib.configuration.json;
+package cc.carm.lib.configuration.source.json;
 
 import cc.carm.lib.configuration.source.ConfigurationHolder;
-import cc.carm.lib.configuration.source.FileConfigSource;
+import cc.carm.lib.configuration.source.file.FileConfigSource;
 import cc.carm.lib.configuration.source.section.ConfigureSource;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -22,7 +22,7 @@ public class JSONSource extends FileConfigSource<JSONSection, Map<?, ?>, JSONSou
             ).create();
 
     protected final @NotNull Gson gson;
-    protected @Nullable JSONSection section;
+    protected @Nullable JSONSection rootSection;
 
     protected JSONSource(@NotNull ConfigurationHolder<? extends JSONSource> holder, long lastUpdateMillis,
                          @NotNull File file, @Nullable String resourcePath) {
@@ -62,7 +62,7 @@ public class JSONSource extends FileConfigSource<JSONSection, Map<?, ?>, JSONSou
 
     @Override
     public @NotNull JSONSection section() {
-        return Objects.requireNonNull(this.section, "Section is not initialized");
+        return Objects.requireNonNull(this.rootSection, "Section is not initialized");
     }
 
     @Override
@@ -74,7 +74,7 @@ public class JSONSource extends FileConfigSource<JSONSection, Map<?, ?>, JSONSou
     protected void onReload() throws Exception {
         Map<?, ?> data = fileReader(reader -> gson.fromJson(reader, LinkedHashMap.class));
         if (data == null) data = new LinkedHashMap<>();
-        this.section = new JSONSection(this, data);
+        this.rootSection = new JSONSection(this, data, null);
         this.lastUpdateMillis = System.currentTimeMillis(); // 更新时间
     }
 }

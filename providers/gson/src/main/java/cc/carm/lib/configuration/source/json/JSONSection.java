@@ -1,4 +1,4 @@
-package cc.carm.lib.configuration.json;
+package cc.carm.lib.configuration.source.json;
 
 import cc.carm.lib.configuration.source.section.ConfigureSection;
 import cc.carm.lib.configuration.source.section.ConfigureSource;
@@ -9,24 +9,26 @@ import java.util.*;
 
 public class JSONSection implements ConfigureSection {
 
-    protected final ConfigureSource<? extends JSONSection, ?, ?> source;
-    protected final Map<String, Object> data;
+    protected final @NotNull ConfigureSource<? extends JSONSection, ?, ?> source;
+    protected final @NotNull Map<String, Object> data;
+    protected final @Nullable JSONSection parent;
 
     public JSONSection(@NotNull ConfigureSource<? extends JSONSection, ?, ?> source,
-                       @NotNull Map<?, ?> data) {
+                       @NotNull Map<?, ?> data, @Nullable JSONSection parent) {
         this.source = source;
+        this.parent = parent;
         this.data = new LinkedHashMap<>();
 
         for (Map.Entry<?, ?> entry : data.entrySet()) {
             String key = (entry.getKey() == null) ? "null" : entry.getKey().toString();
 
             if (entry.getValue() instanceof Map) {
-                this.data.put(key, new JSONSection(source, (Map<?, ?>) entry.getValue()));
+                this.data.put(key, new JSONSection(source, (Map<?, ?>) entry.getValue(), this));
             } else if (entry.getValue() instanceof List) {
                 List<Object> list = new ArrayList<>();
                 for (Object obj : (List<?>) entry.getValue()) {
                     if (obj instanceof Map) {
-                        list.add(new JSONSection(source, (Map<?, ?>) obj));
+                        list.add(new JSONSection(source, (Map<?, ?>) obj, this));
                     } else {
                         list.add(obj);
                     }
@@ -43,13 +45,12 @@ public class JSONSection implements ConfigureSection {
         return this.source;
     }
 
-    public Map<String, Object> data() {
+    public @NotNull Map<String, Object> data() {
         return this.data;
     }
 
-    @Override
-    public @NotNull Set<String> getKeys(boolean deep) {
-        return getValues(deep).keySet();
+    public @Nullable JSONSection parent() {
+        return this.parent;
     }
 
     @Override
@@ -57,14 +58,14 @@ public class JSONSection implements ConfigureSection {
         if (deep) {
             Map<String, Object> values = new LinkedHashMap<>();
             mapChildrenValues(values, this, null, true);
-            return values;
-        } else return new LinkedHashMap<>(this.data);
+            return Collections.unmodifiableMap(values);
+        } else return Collections.unmodifiableMap(data());
     }
 
     @Override
     public void set(@NotNull String path, @Nullable Object value) {
         if (value instanceof Map) {
-            value = new JSONSection(source(), (Map<?, ?>) value);
+            value = new JSONSection(source(), (Map<?, ?>) value, this);
         }
 
         JSONSection section = getSectionFor(path);
@@ -119,7 +120,7 @@ public class JSONSection implements ConfigureSection {
         String root = path.substring(0, index);
         Object section = this.data.get(root);
         if (section == null) {
-            section = new JSONSection(source(), new LinkedHashMap<>());
+            section = new JSONSection(source(), new LinkedHashMap<>(), this);
             this.data.put(root, section);
         }
 
@@ -132,6 +133,15 @@ public class JSONSection implements ConfigureSection {
     }
 
 
+    /**
+     * Map the values of the children of the section to the output map.
+     *
+     * @param output  The map to map the values to
+     * @param section The section to map the values from
+     * @param parent  The parent path
+     * @param deep    If the mapping should be deep
+     * @author md_5, sk89q
+     */
     protected void mapChildrenValues(@NotNull Map<String, Object> output, @NotNull JSONSection section,
                                      @Nullable String parent, boolean deep) {
         for (Map.Entry<String, Object> entry : section.data().entrySet()) {

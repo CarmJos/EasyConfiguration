@@ -1,7 +1,8 @@
-package cc.carm.lib.configuration.source;
+package cc.carm.lib.configuration.source.file;
 
 import cc.carm.lib.configuration.function.DataFunction;
-import cc.carm.lib.configuration.option.FileConfigOptions;
+import cc.carm.lib.configuration.source.ConfigurationHolder;
+import cc.carm.lib.configuration.source.option.FileConfigOptions;
 import cc.carm.lib.configuration.source.section.ConfigureSection;
 import cc.carm.lib.configuration.source.section.ConfigureSource;
 import org.jetbrains.annotations.NotNull;

@@ -1,5 +1,7 @@
-package cc.carm.lib.configuration.source;
+package cc.carm.lib.configuration.source.file;
 
+import cc.carm.lib.configuration.source.ConfigurationFactory;
+import cc.carm.lib.configuration.source.ConfigurationHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

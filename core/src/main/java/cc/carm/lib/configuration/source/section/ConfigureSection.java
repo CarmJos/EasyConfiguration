@@ -2,27 +2,31 @@ package cc.carm.lib.configuration.source.section;
 
 import cc.carm.lib.configuration.function.DataFunction;
 import cc.carm.lib.configuration.source.option.StandardOptions;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
+import org.jetbrains.annotations.*;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public interface ConfigureSection {
 
     @NotNull ConfigureSource<?, ?, ?> source();
+
+    @Nullable ConfigureSection parent();
 
     default char separator() {
         return source().holder().options().get(StandardOptions.PATH_SEPARATOR);
     }
 
     @NotNull
+    @UnmodifiableView
     default Set<String> getKeys(boolean deep) {
         return getValues(deep).keySet();
     }
 
     @NotNull
+    @UnmodifiableView
     Map<String, Object> getValues(boolean deep);
 
     void set(@NotNull String path, @Nullable Object value);
@@ -195,56 +199,125 @@ public interface ConfigureSection {
         return get(path, def, String.class);
     }
 
+    /**
+     * Get a list of values from the section
+     * <p>
+     * If the path does not exist, an empty list will be returned
+     * <br>Any changes please use {@link #set(String, Object)} after changes
+     *
+     * @param path   The path to get the list from
+     * @param parser The function to parse the values
+     * @param <V>    The type of the values
+     * @return The list of values
+     */
     default <V> @NotNull List<V> getList(@NotNull String path, @NotNull DataFunction<Object, V> parser) {
-        return parseList(getList(path), parser);
+        return getCollection(path, ArrayList::new, parser);
     }
 
-    @Unmodifiable
+    /**
+     * Get a list of strings from the section
+     * <p> Limitations see {@link #getList(String, DataFunction)}
+     *
+     * @param path The path to get the list from
+     * @return The list of strings
+     */
     default @NotNull List<String> getStringList(@NotNull String path) {
         return getList(path, DataFunction.castToString());
     }
 
-    @Unmodifiable
+    /**
+     * Get a list of integer from the section
+     * <p> Limitations see {@link #getList(String, DataFunction)}
+     *
+     * @param path The path to get the list from
+     * @return The list of int values
+     */
     default @NotNull List<Integer> getIntegerList(@NotNull String path) {
         return getList(path, DataFunction.intValue());
     }
 
-    @Unmodifiable
+    /**
+     * Get a list of long from the section
+     * <p> Limitations see {@link #getList(String, DataFunction)}
+     *
+     * @param path The path to get the list from
+     * @return The list of long values
+     */
     default @NotNull List<Long> getLongList(@NotNull String path) {
         return getList(path, DataFunction.longValue());
     }
 
-    @Unmodifiable
+    /**
+     * Get a list of double from the section
+     * <p> Limitations see {@link #getList(String, DataFunction)}
+     *
+     * @param path The path to get the list from
+     * @return The list of doubles
+     */
     default @NotNull List<Double> getDoubleList(@NotNull String path) {
         return getList(path, DataFunction.doubleValue());
     }
 
-    @Unmodifiable
+    /**
+     * Get a list of floats from the section
+     * <p> Limitations see {@link #getList(String, DataFunction)}
+     *
+     * @param path The path to get the list from
+     * @return The list of floats
+     */
     default @NotNull List<Float> getFloatList(@NotNull String path) {
         return getList(path, DataFunction.floatValue());
     }
 
-    @Unmodifiable
+    /**
+     * Get a list of bytes from the section
+     * <p> Limitations see {@link #getList(String, DataFunction)}
+     *
+     * @param path The path to get the list from
+     * @return The list of bytes
+     */
     default @NotNull List<Byte> getByteList(@NotNull String path) {
         return getList(path, DataFunction.byteValue());
     }
 
-    @Unmodifiable
+    /**
+     * Get a list of char from the section
+     * <p> Limitations see {@link #getList(String, DataFunction)}
+     *
+     * @param path The path to get the list from
+     * @return The list of char
+     */
     default @NotNull List<Character> getCharList(@NotNull String path) {
         return getList(path, DataFunction.castObject(Character.class));
     }
 
-    @Unmodifiable
-    static <T> @NotNull List<T> parseList(@Nullable List<?> list, DataFunction<Object, T> parser) {
-        if (list == null) return Collections.emptyList();
-        List<T> values = new ArrayList<>();
-        for (Object o : list) {
+    default <T, C extends Collection<T>> @NotNull C getCollection(@NotNull String path,
+                                                                  @NotNull Supplier<C> constructor,
+                                                                  @NotNull DataFunction<Object, T> parser) {
+        return parseCollection(getList(path), constructor, parser);
+    }
+
+    default @NotNull Stream<?> stream(@NotNull String path) {
+        List<?> values = getList(path);
+        return values == null ? Stream.empty() : values.stream();
+    }
+
+    default <T> @NotNull Stream<T> stream(@NotNull String path, @NotNull Function<Object, T> parser) {
+        return stream(path).map(parser);
+    }
+
+    static <T, C extends Collection<T>> @NotNull C parseCollection(
+            @Nullable List<?> data, @NotNull Supplier<C> constructor,
+            @NotNull DataFunction<Object, T> parser
+    ) {
+        C values = constructor.get();
+        if (data == null) return values;
+        for (Object obj : data) {
             try {
-                values.add(parser.handle(o));
+                values.add(parser.handle(obj));
             } catch (Exception ignored) {
             }
         }
         return values;
     }
-
 }
