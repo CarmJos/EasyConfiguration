@@ -7,6 +7,7 @@ import com.google.gson.GsonBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -57,7 +58,7 @@ public class JSONConfigFactory extends FileConfigFactory<JSONSource, Configurati
         File configFile = this.file;
         String sourcePath = this.resourcePath;
 
-        return new ConfigurationHolder<JSONSource>(this.adapters, this.options, new ConcurrentHashMap<>(), this.initializer) {
+        return new ConfigurationHolder<JSONSource>(this.adapters, this.options, new HashMap<>(), this.initializer) {
             final JSONSource source = new JSONSource(this, configFile, sourcePath, gson);
 
             @Override
