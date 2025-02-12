@@ -20,6 +20,7 @@
         <module>core</module>
         <module>features/commentable</module>
         <module>features/file</module>
+        <module>features/versioned</module>
 
         <module>providers/yaml</module>
         <module>providers/gson</module>
