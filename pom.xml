@@ -18,11 +18,16 @@
     <version>3.9.1</version>
     <modules>
         <module>core</module>
+        <module>features/commentable</module>
+        <module>features/file</module>
+        <module>features/versioned</module>
+
+        <module>providers/yaml</module>
+        <module>providers/gson</module>
+        <!--        <module>providers/sql</module>-->
+        <!--        <module>providers/hocon</module>-->
+
         <module>demo</module>
-        <module>impl/yaml</module>
-        <module>impl/json</module>
-        <module>impl/sql</module>
-        <module>impl/hocon</module>
     </modules>
 
     <name>EasyConfiguration</name>

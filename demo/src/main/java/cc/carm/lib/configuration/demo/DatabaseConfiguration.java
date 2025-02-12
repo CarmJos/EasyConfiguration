@@ -1,13 +1,13 @@
 package cc.carm.lib.configuration.demo;
 
-import cc.carm.lib.configuration.core.ConfigurationRoot;
-import cc.carm.lib.configuration.core.annotation.ConfigPath;
-import cc.carm.lib.configuration.core.annotation.HeaderComment;
-import cc.carm.lib.configuration.core.value.ConfigValue;
-import cc.carm.lib.configuration.core.value.type.ConfiguredValue;
+import cc.carm.lib.configuration.Configuration;
+import cc.carm.lib.configuration.annotation.ConfigPath;
+import cc.carm.lib.configuration.annotation.HeaderComment;
+import cc.carm.lib.configuration.value.ConfigValue;
+import cc.carm.lib.configuration.value.standard.ConfiguredValue;
 
 @HeaderComment({"", "数据库配置", "  用于提供数据库连接，进行数据库操作。"})
-public class DatabaseConfiguration extends ConfigurationRoot {
+public class DatabaseConfiguration implements Configuration {
 
     @ConfigPath("driver")
     @HeaderComment({

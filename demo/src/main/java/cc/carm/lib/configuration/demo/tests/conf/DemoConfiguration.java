@@ -1,17 +1,14 @@
 package cc.carm.lib.configuration.demo.tests.conf;
 
-import cc.carm.lib.configuration.core.ConfigInitializer;
-import cc.carm.lib.configuration.core.Configuration;
-import cc.carm.lib.configuration.core.ConfigurationRoot;
-import cc.carm.lib.configuration.core.annotation.ConfigPath;
-import cc.carm.lib.configuration.core.annotation.HeaderComment;
-import cc.carm.lib.configuration.core.annotation.InlineComment;
-import cc.carm.lib.configuration.core.value.ConfigValue;
-import cc.carm.lib.configuration.core.value.type.ConfiguredList;
-import cc.carm.lib.configuration.core.value.type.ConfiguredMap;
-import cc.carm.lib.configuration.core.value.type.ConfiguredSection;
-import cc.carm.lib.configuration.core.value.type.ConfiguredValue;
-import cc.carm.lib.configuration.demo.tests.model.TestModel;
+import cc.carm.lib.configuration.Configuration;
+import cc.carm.lib.configuration.annotation.ConfigPath;
+import cc.carm.lib.configuration.annotation.HeaderComment;
+import cc.carm.lib.configuration.annotation.InlineComment;
+import cc.carm.lib.configuration.demo.DatabaseConfiguration;
+import cc.carm.lib.configuration.demo.tests.model.UserRecord;
+import cc.carm.lib.configuration.value.ConfigValue;
+import cc.carm.lib.configuration.value.standard.ConfiguredList;
+import cc.carm.lib.configuration.value.standard.ConfiguredValue;
 
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
@@ -31,45 +28,41 @@ public interface DemoConfiguration extends Configuration {
 
     // 支持通过 Class<?> 变量标注子配置，一并注册。
     // 注意： 若对应类也有注解，则优先使用类的注解。
-    @ConfigPath("other-class-config") //支持通过注解修改子配置的主路径，若不修改则以变量名自动生成。
-    @HeaderComment({"", "Something..."}) // 支持给子路径直接打注释
-    @InlineComment("InlineComments for class path")
-    Class<?> OTHER = OtherConfiguration.class;
+    Class<?> DATABASE = DatabaseConfiguration.class;
 
-    @ConfigPath("user") // 通过注解规定配置文件中的路径，若不进行注解则以变量名自动生成。
+    @ConfigPath("registered_users") // 通过注解规定配置文件中的路径，若不进行注解则以变量名自动生成。
     @HeaderComment({"Section类型数据测试"}) // 通过注解给配置添加注释。
     @InlineComment("Section数据也支持InlineComment注释")
-    ConfigValue<TestModel> MODEL_TEST = ConfiguredSection.builderOf(TestModel.class)
-            .defaults(new TestModel("Carm", UUID.randomUUID()))
-            .parseValue((section, defaultValue) -> TestModel.deserialize(section))
-            .serializeValue(TestModel::serialize).build();
+    ConfiguredList<UserRecord> USERS = ConfiguredList.builderOf(UserRecord.class).fromSection()
+            .parse(UserRecord::deserialize).serialize(UserRecord::serialize)
+            .defaults(UserRecord.CARM).build();
 
-    @HeaderComment({"[ID - UUID]对照表", "", "用于测试Map类型的解析与序列化保存"})
-    ConfiguredMap<Integer, UUID> USERS = ConfiguredMap.builderOf(Integer.class, UUID.class)
-            .asLinkedMap().fromString()
-            .parseKey(Integer::parseInt)
-            .parseValue(v -> Objects.requireNonNull(UUID.fromString(v)))
-            .build();
+//    @HeaderComment({"[ID - UUID]对照表", "", "用于测试Map类型的解析与序列化保存"})
+//    ConfiguredMap<Integer, UUID> USERS = ConfiguredMap.builderOf(Integer.class, UUID.class)
+//            .asLinkedMap().fromString()
+//            .parseKey(Integer::parseInt)
+//            .parseValue(v -> Objects.requireNonNull(UUID.fromString(v)))
+//            .build();
 
 
     /**
      * 支持内部类的直接注册。
-     * 注意，需要使用 {@link ConfigInitializer#initialize(Class, boolean, boolean)} 方法，并设定第三个参数为 true。
+     * 注意，需要启用 {@link  cc.carm.lib.configuration.source.option.StandardOptions#LOAD_SUB_CLASSES}
      */
-    class Sub extends ConfigurationRoot {
+    class SUB implements Configuration {
 
         @ConfigPath(value = "uuid-value", root = true)
         @InlineComment("This is an inline comment")
         public static final ConfigValue<UUID> UUID_CONFIG_VALUE = ConfiguredValue
                 .builderOf(UUID.class).fromString()
-                .parseValue((data, defaultValue) -> UUID.fromString(data))
+                .parse((holder, data) -> UUID.fromString(data))
                 .build();
 
-        public static class That extends ConfigurationRoot {
+        public static class That implements Configuration {
 
             public static final ConfiguredList<UUID> OPERATORS = ConfiguredList
                     .builderOf(UUID.class).fromString()
-                    .parseValue(s -> Objects.requireNonNull(UUID.fromString(s)))
+                    .parse(s -> Objects.requireNonNull(UUID.fromString(s)))
                     .build();
 
         }
