@@ -7,20 +7,22 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class TestModel extends AbstractModel {
+public class UserRecord extends AbstractRecord {
 
-    public UUID uuid;
+    public static final UserRecord CARM = new UserRecord("Carm", UUID.fromString("f7b3b3b3-3b3b-3b3b-3b3b-3b3b3b3b3b3b"));
 
-    public TestModel(String name, UUID uuid) {
+    protected UUID uuid;
+
+    public UserRecord(String name, UUID uuid) {
         super(name);
         this.uuid = uuid;
     }
 
-    public void setUuid(UUID uuid) {
+    public void uuid(UUID uuid) {
         this.uuid = uuid;
     }
 
-    public UUID getUuid() {
+    public UUID uuid() {
         return uuid;
     }
 
@@ -33,16 +35,16 @@ public class TestModel extends AbstractModel {
         return map;
     }
 
-    public static TestModel deserialize(ConfigureSection section) {
+    public static UserRecord deserialize(ConfigureSection section) {
         String name = section.getString("name");
         if (name == null) throw new NullPointerException("name is null");
         String uuidString = section.getString("info.uuid");
         if (uuidString == null) throw new NullPointerException("uuid is null");
-        return new TestModel(name, UUID.fromString(uuidString));
+        return new UserRecord(name, UUID.fromString(uuidString));
     }
 
-    public static TestModel random() {
-        return new TestModel(UUID.randomUUID().toString().substring(0, 5), UUID.randomUUID());
+    public static UserRecord random() {
+        return new UserRecord(UUID.randomUUID().toString().substring(0, 5), UUID.randomUUID());
     }
 
 

@@ -1,8 +1,8 @@
 package cc.carm.lib.configuration.demo.tests;
 
 import cc.carm.lib.configuration.demo.tests.conf.DemoConfiguration;
-import cc.carm.lib.configuration.demo.tests.conf.TestConfiguration;
-import cc.carm.lib.configuration.demo.tests.model.TestModel;
+import cc.carm.lib.configuration.demo.tests.conf.RegistryConfig;
+import cc.carm.lib.configuration.demo.tests.model.UserRecord;
 import cc.carm.lib.configuration.source.ConfigurationHolder;
 import org.jetbrains.annotations.TestOnly;
 
@@ -16,7 +16,7 @@ public class ConfigurationTest {
     @TestOnly
     public static void testDemo(ConfigurationHolder<?> holder) {
         try {
-            holder.initializer().initialize(holder, DemoConfiguration.class);
+            holder.initialize(DemoConfiguration.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -30,27 +30,27 @@ public class ConfigurationTest {
         System.out.println("after: " + DemoConfiguration.TEST_NUMBER.get());
 
         System.out.println("> Test Value:");
-        System.out.println("before: " + DemoConfiguration.Sub.UUID_CONFIG_VALUE.get());
-        DemoConfiguration.Sub.UUID_CONFIG_VALUE.set(UUID.randomUUID());
-        System.out.println("after: " + DemoConfiguration.Sub.UUID_CONFIG_VALUE.get());
+        System.out.println("before: " + DemoConfiguration.SUB.UUID_CONFIG_VALUE.get());
+        DemoConfiguration.SUB.UUID_CONFIG_VALUE.set(UUID.randomUUID());
+        System.out.println("after: " + DemoConfiguration.SUB.UUID_CONFIG_VALUE.get());
 
         System.out.println("> Test List:");
 
         System.out.println(" Before:");
-        DemoConfiguration.Sub.That.OPERATORS.forEach(System.out::println);
+        DemoConfiguration.SUB.That.OPERATORS.forEach(System.out::println);
         List<UUID> operators = IntStream.range(0, 5).mapToObj(i -> UUID.randomUUID()).collect(Collectors.toList());
-        DemoConfiguration.Sub.That.OPERATORS.set(operators);
+        DemoConfiguration.SUB.That.OPERATORS.set(operators);
         System.out.println(" After:");
-        DemoConfiguration.Sub.That.OPERATORS.forEach(System.out::println);
+        DemoConfiguration.SUB.That.OPERATORS.forEach(System.out::println);
 
         System.out.println("> Clear List:");
-        System.out.println(" Before: size :" + DemoConfiguration.Sub.That.OPERATORS.size());
-        DemoConfiguration.Sub.That.OPERATORS.modify(List::clear);
-        System.out.println(" After size :" + DemoConfiguration.Sub.That.OPERATORS.size());
+        System.out.println(" Before: size :" + DemoConfiguration.SUB.That.OPERATORS.size());
+        DemoConfiguration.SUB.That.OPERATORS.modify(List::clear);
+        System.out.println(" After size :" + DemoConfiguration.SUB.That.OPERATORS.size());
 
         System.out.println("> Test Section:");
-        System.out.println(DemoConfiguration.MODEL_TEST.get());
-        DemoConfiguration.MODEL_TEST.set(TestModel.random());
+        System.out.println(DemoConfiguration.USERS.get());
+        DemoConfiguration.USERS.add(UserRecord.random());
 
 //        System.out.println("> Test Maps:");
 //        DemoConfiguration.USERS.forEach((k, v) -> System.out.println(k + ": " + v));
@@ -64,19 +64,19 @@ public class ConfigurationTest {
 
     public static void testInner(ConfigurationHolder<?> provider) {
 
-        TestConfiguration TEST = new TestConfiguration();
+        RegistryConfig TEST = new RegistryConfig();
 
         provider.initialize(TEST);
 
         System.out.println("> Test Inner value before:");
-        System.out.println(TEST.INNER.INNER_VALUE.getNotNull());
+        System.out.println(TEST.INSTANCE.INNER_VALUE.getNotNull());
 
         double after = Math.random() * 200D;
         System.out.println("> Test Inner value -> " + after);
-        TEST.INNER.INNER_VALUE.set(after);
+        TEST.INSTANCE.INNER_VALUE.set(after);
 
         System.out.println("> Test Inner value after:");
-        System.out.println(TEST.INNER.INNER_VALUE.getNotNull());
+        System.out.println(TEST.INSTANCE.INNER_VALUE.getNotNull());
 
     }
 

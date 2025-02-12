@@ -6,7 +6,7 @@ import cc.carm.lib.configuration.value.ConfigValue;
 import cc.carm.lib.configuration.value.standard.ConfiguredValue;
 
 @HeaderComment("Inner Test")
-public class TestInnerConfiguration implements Configuration {
+public class InstanceConfig implements Configuration {
 
     public final ConfigValue<Double> INNER_VALUE = ConfiguredValue.of(1.0D);
 

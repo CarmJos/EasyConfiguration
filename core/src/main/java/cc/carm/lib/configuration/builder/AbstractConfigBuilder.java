@@ -41,7 +41,7 @@ public abstract class AbstractConfigBuilder<
 
     public abstract @NotNull RESULT build();
 
-    public @NotNull SELF provider(@Nullable PROVIDER provider) {
+    public @NotNull SELF holder(@Nullable PROVIDER provider) {
         this.provider = provider;
         return self();
     }

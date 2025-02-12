@@ -14,7 +14,7 @@ public @interface ConfigPath {
 
     /**
      * The path value of the current configuration.
-     * If not set,will generate the path by {@link PathGenerator}.
+     * If not set,will generate the path by {@link cc.carm.lib.configuration.source.loader.PathGenerator}.
      *
      * @return The path value of the current configuration
      */

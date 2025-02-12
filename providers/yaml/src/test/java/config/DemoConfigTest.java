@@ -2,15 +2,13 @@ package config;
 
 import cc.carm.lib.configuration.EasyConfiguration;
 import cc.carm.lib.configuration.demo.tests.ConfigurationTest;
-import cc.carm.lib.configuration.demo.tests.model.AbstractModel;
+import cc.carm.lib.configuration.demo.tests.model.AbstractRecord;
 import cc.carm.lib.configuration.yaml.YAMLConfigProvider;
 import config.model.AnyModel;
 import config.model.SomeModel;
 import config.source.ModelConfiguration;
 import org.bspfsystems.yamlconfiguration.serialization.ConfigurationSerialization;
 import org.junit.Test;
-
-import java.io.IOException;
 
 public class DemoConfigTest {
 
@@ -37,10 +35,10 @@ public class DemoConfigTest {
         provider.initialize(ModelConfiguration.class);
         System.out.println("----------------------------------------------------");
 
-        AbstractModel someModel = ModelConfiguration.SOME_MODEL.get();
+        AbstractRecord someModel = ModelConfiguration.SOME_MODEL.get();
         if (someModel != null) System.out.println(someModel.getName());
 
-        AbstractModel anyModel = ModelConfiguration.ANY_MODEL.get();
+        AbstractRecord anyModel = ModelConfiguration.ANY_MODEL.get();
         if (anyModel != null) System.out.println(anyModel.getName());
 
         ModelConfiguration.MODELS.forEach(System.out::println);

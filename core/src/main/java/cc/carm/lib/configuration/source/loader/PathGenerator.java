@@ -40,8 +40,9 @@ public class PathGenerator {
     public @Nullable String getFieldPath(@NotNull ConfigurationHolder<?> holder,
                                          @Nullable String parentPath, @NotNull Field field) {
         ConfigPath path = field.getAnnotation(ConfigPath.class);
-        if (path == null) return link(holder, parentPath, false, field.getName()); // No annotation, use field name.
-        else return link(holder, parentPath, path.root(), select(path.value(), field.getName()));
+        if (path == null)
+            return link(holder, parentPath, false, covertPath(field.getName())); // No annotation, use field name.
+        else return link(holder, parentPath, path.root(), select(path.value(), covertPath(field.getName())));
     }
 
     public @Nullable String getClassPath(@NotNull ConfigurationHolder<?> holder,
@@ -51,14 +52,14 @@ public class PathGenerator {
         // 2. If the class defined as a field, check if the field has a ConfigPath annotation,
         //    and use filed information.
         ConfigPath clazzPath = clazz.getAnnotation(ConfigPath.class);
-
         if (clazzPath != null) return link(holder, parentPath, clazzPath.root(), clazzPath.value());
+
         if (clazzField == null) {
-            return link(holder, parentPath, false, clazz.getSimpleName()); // No field, use class name.
+            return link(holder, parentPath, false, parentPath == null ? null : covertPath(clazz.getSimpleName())); // No field, use class name.
         }
 
         ConfigPath fieldPath = clazzField.getAnnotation(ConfigPath.class);
-        if (fieldPath == null) return link(holder, parentPath, false, clazzField.getName());
+        if (fieldPath == null) return link(holder, parentPath, false, covertPath(clazzField.getName()));
         else return getFieldPath(holder, parentPath, clazzField);
     }
 
@@ -70,7 +71,7 @@ public class PathGenerator {
     protected @Nullable String link(@NotNull ConfigurationHolder<?> holder,
                                     @Nullable String parent, boolean root, @Nullable String path) {
         if (path == null || path.isEmpty()) return root ? null : parent;
-        return root || parent == null ? covertPath(path) : parent + pathSeparator(holder) + covertPath(path);
+        return root || parent == null ? path : parent + pathSeparator(holder) + path;
     }
 
     public static boolean isBlank(String path) {
@@ -93,16 +94,16 @@ public class PathGenerator {
     public static String covertPathName(String name) {
         return name
                 // Replace all uppercase letters with dashes
-                .replaceAll("[A-Z]", "-$0")
+                .replaceAll("[A-Z]", "=$0")
                 // If the first letter is also capitalized,
                 // it will also be converted and the first dash will need to be removed
-                .replaceAll("-(.*)", "$1")
+                .replaceAll("^=(.*)$", "$1")
                 // Because the name may contain _, it needs to be treated a little differently
-                .replaceAll("_-([A-Z])", "_$1")
+                .replaceAll("_=([A-Z])", "_$1")
                 // The content that is not named in all caps is then converted
-                .replaceAll("([a-z])-([A-Z])", "$1_$2")
+                .replaceAll("([a-z])=([A-Z])", "$1_$2")
                 // Remove any extra horizontal lines
-                .replace("-", "")
+                .replaceAll("=", "")
                 // Replace the underscore with a dash
                 .replace("_", "-")
                 // Finally, convert it to all lowercase

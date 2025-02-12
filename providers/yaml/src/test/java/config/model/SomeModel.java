@@ -1,6 +1,6 @@
 package config.model;
 
-import cc.carm.lib.configuration.demo.tests.model.AbstractModel;
+import cc.carm.lib.configuration.demo.tests.model.AbstractRecord;
 import org.bspfsystems.yamlconfiguration.serialization.ConfigurationSerializable;
 import org.bspfsystems.yamlconfiguration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @SerializableAs("SomeModel")
-public class SomeModel extends AbstractModel implements ConfigurationSerializable {
+public class SomeModel extends AbstractRecord implements ConfigurationSerializable {
 
     public final int num;
 

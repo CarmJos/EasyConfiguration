@@ -46,15 +46,16 @@ public abstract class FileConfigSource<SECTION extends ConfigureSection, ORIGINA
             throw new IOException("Failed to create directory " + file.getParentFile().getAbsolutePath());
         }
 
-        if (!this.file.createNewFile()) {
-            throw new IOException("Failed to create file " + file.getAbsolutePath());
-        }
-
         if (resourcePath != null && copyDefaults()) {
             try {
                 saveResource(resourcePath, false);
-            } catch (IllegalArgumentException ignored) {
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
             }
+        }
+
+        if (!this.file.exists() && !this.file.createNewFile()) {
+            throw new IOException("Failed to create file " + file.getAbsolutePath());
         }
     }
 
@@ -65,7 +66,11 @@ public abstract class FileConfigSource<SECTION extends ConfigureSection, ORIGINA
     }
 
     protected <R> R fileReader(@NotNull DataFunction<Reader, R> loader) throws Exception {
-        return fileInputStream(is -> loader.handle(new InputStreamReader(is, charset())));
+        try (InputStream is = Files.newInputStream(file.toPath())) {
+            try (Reader r = new InputStreamReader(is, charset())) {
+                return loader.handle(r);
+            }
+        }
     }
 
     protected void fileOutputStream(@NotNull Consumer<OutputStream> stream) throws Exception {
@@ -75,7 +80,11 @@ public abstract class FileConfigSource<SECTION extends ConfigureSection, ORIGINA
     }
 
     protected void fileWriter(@NotNull Consumer<Writer> writer) throws Exception {
-        fileOutputStream(os -> writer.accept(new OutputStreamWriter(os, charset())));
+        try (OutputStream os = Files.newOutputStream(file.toPath())) {
+            try (Writer w = new OutputStreamWriter(os, charset())) {
+                writer.accept(w);
+            }
+        }
     }
 
     protected void saveResource(@NotNull String resourcePath, boolean replace)

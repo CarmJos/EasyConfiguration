@@ -22,6 +22,16 @@ public class JSONSection implements ConfigureSection {
 
             if (entry.getValue() instanceof Map) {
                 this.data.put(key, new JSONSection(source, (Map<?, ?>) entry.getValue()));
+            } else if (entry.getValue() instanceof List) {
+                List<Object> list = new ArrayList<>();
+                for (Object obj : (List<?>) entry.getValue()) {
+                    if (obj instanceof Map) {
+                        list.add(new JSONSection(source, (Map<?, ?>) obj));
+                    } else {
+                        list.add(obj);
+                    }
+                }
+                this.data.put(key, list);
             } else {
                 this.data.put(key, entry.getValue());
             }

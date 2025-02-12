@@ -7,7 +7,7 @@ import cc.carm.lib.configuration.value.ConfigValue;
 import cc.carm.lib.configuration.value.standard.ConfiguredList;
 import cc.carm.lib.configuration.value.standard.ConfiguredMap;
 import cc.carm.lib.configuration.value.standard.ConfiguredSectionMap;
-import cc.carm.lib.configuration.demo.tests.model.AbstractModel;
+import cc.carm.lib.configuration.demo.tests.model.AbstractRecord;
 import cc.carm.lib.configuration.yaml.value.ConfiguredSerializable;
 import config.model.AnyModel;
 import config.model.SomeModel;
@@ -16,11 +16,11 @@ import config.model.SomeModel;
 @ConfigPath("model-test")
 public class ModelConfiguration implements Configuration {
 
-    public static final ConfigValue<? extends AbstractModel> SOME_MODEL = ConfiguredSerializable.of(
+    public static final ConfigValue<? extends AbstractRecord> SOME_MODEL = ConfiguredSerializable.of(
             SomeModel.class, SomeModel.random()
     );
 
-    public static final ConfigValue<? extends AbstractModel> ANY_MODEL = ConfiguredSerializable.of(
+    public static final ConfigValue<? extends AbstractRecord> ANY_MODEL = ConfiguredSerializable.of(
             AnyModel.class, AnyModel.random()
     );
 

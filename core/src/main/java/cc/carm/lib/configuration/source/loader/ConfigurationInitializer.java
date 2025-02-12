@@ -83,29 +83,31 @@ public class ConfigurationInitializer {
     }
 
 
-    public @Nullable String getFieldPath(ConfigurationHolder<?> holder, @Nullable String parentPath, @NotNull Field field) {
+    public @Nullable String getFieldPath(@NotNull ConfigurationHolder<?> holder, @Nullable String parentPath, @NotNull Field field) {
         return pathGenerator.getFieldPath(holder, parentPath, field);
     }
 
-    public @Nullable String getClassPath(ConfigurationHolder<?> holder, @Nullable String parentPath,
+    public @Nullable String getClassPath(@NotNull ConfigurationHolder<?> holder, @Nullable String parentPath,
                                          @NotNull Class<?> clazz, @Nullable Field clazzField) {
         return pathGenerator.getClassPath(holder, parentPath, clazz, clazzField);
     }
 
-    public void initialize(ConfigurationHolder<?> holder, @NotNull Configuration config) throws Exception {
+    public void initialize(@NotNull ConfigurationHolder<?> holder,
+                           @NotNull Configuration config) throws Exception {
         initializeInstance(holder, config, null, null);
         if (holder.options().get(StandardOptions.SET_DEFAULTS)) holder.save();
     }
 
-    public void initialize(ConfigurationHolder<?> holder, @NotNull Class<? extends Configuration> clazz) throws Exception {
+    public void initialize(@NotNull ConfigurationHolder<?> holder,
+                           @NotNull Class<? extends Configuration> clazz) throws Exception {
         initializeStaticClass(holder, clazz, null, null);
         if (holder.options().get(StandardOptions.SET_DEFAULTS)) holder.save();
     }
 
 
     // 针对实例类的初始化方法
-    protected void initializeInstance(@NotNull ConfigurationHolder<?> holder,
-                                      @NotNull Configuration root, @Nullable String parentPath, @Nullable Field configField) {
+    protected void initializeInstance(@NotNull ConfigurationHolder<?> holder, @NotNull Configuration root,
+                                      @Nullable String parentPath, @Nullable Field configField) {
         String path = getClassPath(holder, parentPath, root.getClass(), configField);
         try {
             this.classInitializer.whenInitialize(holder, path, root.getClass());
@@ -118,8 +120,9 @@ public class ConfigurationInitializer {
     // 针对静态类的初始化方法
     @SuppressWarnings("unchecked")
     protected void initializeStaticClass(@NotNull ConfigurationHolder<?> holder,
-                                         @NotNull Class<?> clazz, @Nullable String parentPath, @Nullable Field configField) {
-        if (!Configuration.class.isAssignableFrom(clazz)) return; // 只解析继承了 ConfigurationRoot 的类
+                                         @NotNull Class<?> clazz,
+                                         @Nullable String parentPath, @Nullable Field configField) {
+        if (!Configuration.class.isAssignableFrom(clazz)) return; // Only Configuration class can be initialized.
 
         String path = getClassPath(holder, parentPath, clazz, configField);
 
@@ -157,6 +160,9 @@ public class ConfigurationInitializer {
                     this.fieldInitializer.whenInitialize(holder, path, field);
                 } catch (Exception e) {
                     e.printStackTrace();
+                }
+                if (holder.options().get(StandardOptions.SET_DEFAULTS)) {
+                    value.setDefault();
                 }
             } else if (source instanceof Configuration && object instanceof Configuration) {
                 // 当且仅当 源字段与字段 均为Configuration实例时，才对目标字段进行下一步初始化加载。
