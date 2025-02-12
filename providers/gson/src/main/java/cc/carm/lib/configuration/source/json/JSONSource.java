@@ -2,36 +2,38 @@ package cc.carm.lib.configuration.source.json;
 
 import cc.carm.lib.configuration.source.ConfigurationHolder;
 import cc.carm.lib.configuration.source.file.FileConfigSource;
-import cc.carm.lib.configuration.source.section.ConfigureSource;
+import cc.carm.lib.configuration.source.section.MemorySection;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
 
-public class JSONSource extends FileConfigSource<JSONSection, Map<?, ?>, JSONSource> {
+public class JSONSource extends FileConfigSource<MemorySection, Map<?, ?>, JSONSource> {
 
     public static final @NotNull Gson DEFAULT_GSON = new GsonBuilder()
             .serializeNulls().disableHtmlEscaping().setPrettyPrinting()
             .registerTypeAdapter(
-                    JSONSection.class,
-                    (JsonSerializer<JSONSection>) (src, typeOfSrc, context) -> context.serialize(src.data)
+                    MemorySection.class,
+                    (JsonSerializer<MemorySection>) (src, t, c) -> c.serialize(src.data())
             ).create();
 
     protected final @NotNull Gson gson;
-    protected @Nullable JSONSection rootSection;
+    protected @Nullable MemorySection rootSection;
 
-    protected JSONSource(@NotNull ConfigurationHolder<? extends JSONSource> holder, long lastUpdateMillis,
+    protected JSONSource(@NotNull ConfigurationHolder<? extends JSONSource> holder,
                          @NotNull File file, @Nullable String resourcePath) {
-        this(holder, lastUpdateMillis, file, resourcePath, DEFAULT_GSON);
+        this(holder, file, resourcePath, DEFAULT_GSON);
     }
 
-    protected JSONSource(@NotNull ConfigurationHolder<? extends JSONSource> holder, long lastUpdateMillis,
+    protected JSONSource(@NotNull ConfigurationHolder<? extends JSONSource> holder,
                          @NotNull File file, @Nullable String resourcePath, @NotNull Gson gson) {
-        super(holder, lastUpdateMillis, file, resourcePath);
+        super(holder, 0, file, resourcePath);
         this.gson = gson;
         initialize();
     }
@@ -51,18 +53,13 @@ public class JSONSource extends FileConfigSource<JSONSection, Map<?, ?>, JSONSou
     }
 
     @Override
-    public @NotNull ConfigureSource<?, ?, ?> source() {
-        return this;
-    }
-
-    @Override
     public @NotNull Map<?, ?> original() {
         return section().data();
     }
 
     @Override
-    public @NotNull JSONSection section() {
-        return Objects.requireNonNull(this.rootSection, "Section is not initialized");
+    public @NotNull MemorySection section() {
+        return Objects.requireNonNull(this.rootSection, "Root section is not initialized");
     }
 
     @Override
@@ -70,11 +67,15 @@ public class JSONSource extends FileConfigSource<JSONSection, Map<?, ?>, JSONSou
         fileWriter(writer -> gson.toJson(original(), writer));
     }
 
+    public @NotNull String saveToString() {
+        return gson.toJson(original());
+    }
+
     @Override
     protected void onReload() throws Exception {
-        Map<?, ?> data = fileReader(reader -> gson.fromJson(reader, LinkedHashMap.class));
-        if (data == null) data = new LinkedHashMap<>();
-        this.rootSection = new JSONSection(this, data, null);
+        this.rootSection = MemorySection.root(
+                this, fileReader(reader -> gson.fromJson(reader, LinkedHashMap.class))
+        );
         this.lastUpdateMillis = System.currentTimeMillis(); // 更新时间
     }
 }

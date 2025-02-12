@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.annotation.Annotation;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public abstract class ConfigurationFactory<
         SOURCE extends ConfigureSource<?, ?, SOURCE>,
@@ -31,8 +32,7 @@ public abstract class ConfigurationFactory<
         this.adapters.register(StandardAdapters.SECTION_ADAPTER);
     }
 
-    public abstract SELF self();
-
+    protected abstract SELF self();
 
     public SELF adapters(ValueAdapterRegistry adapters) {
         this.adapters = adapters;
@@ -81,13 +81,25 @@ public abstract class ConfigurationFactory<
         return self();
     }
 
-    public SELF option(Consumer<ConfigurationOptionHolder> optionsConsumer) {
-        optionsConsumer.accept(options);
+    public SELF option(Consumer<ConfigurationOptionHolder> modifier) {
+        modifier.accept(options);
         return self();
     }
 
-    public <O> SELF option(ConfigurationOption<O> option, O value) {
-        return option(o -> o.set(option, value));
+    public <O> SELF option(ConfigurationOption<O> type, O value) {
+        return option(o -> o.set(type, value));
+    }
+
+    public <O> SELF option(ConfigurationOption<O> type, Supplier<O> value) {
+        return option(type, value.get());
+    }
+
+    public <O> SELF option(ConfigurationOption<O> type, Consumer<O> modifier) {
+        return option(holder -> {
+            O current = holder.get(type);
+            modifier.accept(current);
+            holder.set(type, current);
+        });
     }
 
 

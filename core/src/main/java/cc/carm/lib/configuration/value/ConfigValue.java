@@ -7,6 +7,32 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * Represents a configurable value with type safety and null-handling capabilities.
+ * <p>
+ * This abstract class provides core functionalities for managing configuration values,
+ * including value retrieval with fallback defaults, null safety enforcement, and value
+ * persistence controls. It serves as the foundation for type-specific configuration
+ * implementations.
+ * </p>
+ *
+ * <h3>Functions:</h3>
+ * <ul>
+ *   <li>Type-safe value access through {@link #get()} and {@link #optional()}</li>
+ *   <li>Default value fallback via {@link #getOrDefault()}</li>
+ *   <li>Null-safety enforcement with {@link #resolve()} and {@link #getNotNull()}</li>
+ *   <li>Default value initialization through {@link #setDefault()}</li>
+ *   <li>Value comparison with {@link #isDefault()}</li>
+ * </ul>
+ *
+ * <h3>Persistence Behavior:</h3>
+ * Value modifications via {@link #set(Object)} or {@link #setDefault()} methods
+ * <b>do NOT automatically persist</b> to configuration sources. Explicit calls to
+ * {@link ConfigurationHolder#save()} are required for permanent storage.
+ *
+ * @see ValueManifest Base class providing metadata and default value handling
+ * @see ConfigurationHolder Responsible for configuration source persistence
+ */
 public abstract class ConfigValue<T> extends ValueManifest<T> {
 
     protected ConfigValue(@NotNull ValueManifest<T> manifest) {
@@ -14,57 +40,77 @@ public abstract class ConfigValue<T> extends ValueManifest<T> {
     }
 
     /**
-     * 得到该配置的设定值(即读取到的值)。
-     * <br> 若初始化时未写入默认值，则可以通过 {@link #getOrDefault()} 方法在该设定值为空时获取默认值。
+     * Gets the configured value (i.e., the value read from the source).
+     * <br> If no default value was written during initialization, you can use
+     * the {@link #getOrDefault()} method to obtain the default value when this value is empty.
      *
-     * @return 设定值
+     * @return Configured value
      */
     public abstract @Nullable T get();
 
     /**
-     * 得到该配置的设定值，若不存在，则返回默认值。
+     * Gets the configured value, or returns the default value if not present.
      *
-     * @return 设定值或默认值
+     * @return Configured value or default value
      */
     public T getOrDefault() {
         return optional().orElse(defaults());
     }
 
     /**
-     * 得到该配置的非空值。
+     * Gets the non-null value of this configuration.
      *
-     * @return 非空值
-     * @throws NullPointerException 对应数据为空时抛出
+     * @return Non-null value
+     * @throws NullPointerException Thrown when the corresponding data is null
      */
-    public @NotNull T getNotNull() {
+    public @NotNull T resolve() {
         return Objects.requireNonNull(getOrDefault(), "Value(" + type() + ") @[" + path() + "] is null.");
     }
 
+    /**
+     * Gets the non-null value of this configuration.
+     *
+     * @return Non-null value
+     * @throws NullPointerException Thrown when the corresponding data is null
+     * @see #resolve()
+     */
+    public @NotNull T getNotNull() {
+        return resolve();
+    }
+
+    /**
+     * Gets the value of this configuration as an {@link Optional}.
+     *
+     * @return {@link Optional} value
+     */
     public @NotNull Optional<@Nullable T> optional() {
         return Optional.ofNullable(get());
     }
 
     /**
-     * 设定该配置的值。
-     * <br> 设定后，不会自动保存配置文件；若需要保存，请调用 {@link ConfigurationHolder#save()} 方法。
+     * Sets the value of this configuration.
+     * <br> After setting, the configuration file will NOT be saved automatically.
+     * To save, call {@link ConfigurationHolder#save()}.
      *
-     * @param value 配置的值
+     * @param value The value to set
      */
     public abstract void set(@Nullable T value);
 
     /**
-     * 初始化该配置的默认值。
-     * <br> 设定后，不会自动保存配置文件；若需要保存，请调用 {@link ConfigurationHolder#save()} 方法。
+     * Initializes the default value for this configuration.
+     * <br> After setting, the configuration file will NOT be saved automatically.
+     * To save, call {@link ConfigurationHolder#save()}.
      */
     public void setDefault() {
         setDefault(false);
     }
 
     /**
-     * 将该配置的值设置为默认值。
-     * <br> 设定后，不会自动保存配置文件；若需要保存，请调用 {@link ConfigurationHolder#save()} 方法。
+     * Sets the configuration value to its default.
+     * <br> After setting, the configuration file will NOT be saved automatically.
+     * To save, call {@link ConfigurationHolder#save()}.
      *
-     * @param override 是否覆盖已设定的值
+     * @param override Whether to overwrite existing configured value
      */
     public void setDefault(boolean override) {
         if (!override && config().contains(path())) return;
@@ -72,9 +118,9 @@ public abstract class ConfigValue<T> extends ValueManifest<T> {
     }
 
     /**
-     * 判断加载的配置是否与默认值相同。
+     * Checks if the loaded configuration value matches the default value.
      *
-     * @return 获取当前值是否为默认值。
+     * @return Whether the current value is the default value
      */
     public boolean isDefault() {
         return Objects.equals(defaults(), get());
@@ -86,7 +132,7 @@ public abstract class ConfigValue<T> extends ValueManifest<T> {
      * it is recommended to call {@link ConfigurationHolder#save()}
      * after all modifications are completed instead of this.
      *
-     * @throws Exception
+     * @throws Exception Thrown when an error occurs during saving
      */
     public void save() throws Exception {
         holder().save();

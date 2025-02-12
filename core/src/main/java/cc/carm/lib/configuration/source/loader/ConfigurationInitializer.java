@@ -67,19 +67,31 @@ public class ConfigurationInitializer {
         this.classInitializer = this.classInitializer.andThen(classInitializer);
     }
 
-    public <T, A extends Annotation> void registerAnnotation(@NotNull Class<A> annotation,
-                                                             @NotNull ConfigurationMetadata<T> metadata,
-                                                             @NotNull Function<A, T> extractor) {
-        appendFieldInitializer((holder, path, field) -> {
-            A data = field.getAnnotation(annotation);
-            if (data == null) return;
-            holder.metadata(path).setIfAbsent(metadata, extractor.apply(data));
-        });
+    public <T, A extends Annotation> void registerClassAnnotation(@NotNull Class<A> annotation,
+                                                                  @NotNull ConfigurationMetadata<T> metadata,
+                                                                  @NotNull Function<A, T> extractor) {
         appendClassInitializer((holder, path, clazz) -> {
             A data = clazz.getAnnotation(annotation);
             if (data == null) return;
             holder.metadata(path).setIfAbsent(metadata, extractor.apply(data));
         });
+    }
+
+    public <T, A extends Annotation> void registerFieldAnnotation(@NotNull Class<A> annotation,
+                                                                  @NotNull ConfigurationMetadata<T> metadata,
+                                                                  @NotNull Function<A, T> extractor) {
+        appendFieldInitializer((holder, path, field) -> {
+            A data = field.getAnnotation(annotation);
+            if (data == null) return;
+            holder.metadata(path).setIfAbsent(metadata, extractor.apply(data));
+        });
+    }
+
+    public <T, A extends Annotation> void registerAnnotation(@NotNull Class<A> annotation,
+                                                             @NotNull ConfigurationMetadata<T> metadata,
+                                                             @NotNull Function<A, T> extractor) {
+        registerClassAnnotation(annotation, metadata, extractor);
+        registerFieldAnnotation(annotation, metadata, extractor);
     }
 
 

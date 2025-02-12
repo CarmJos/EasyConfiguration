@@ -1,5 +1,6 @@
 package cc.carm.lib.configuration.source.file;
 
+import cc.carm.lib.configuration.function.DataConsumer;
 import cc.carm.lib.configuration.function.DataFunction;
 import cc.carm.lib.configuration.source.ConfigurationHolder;
 import cc.carm.lib.configuration.source.option.FileConfigOptions;
@@ -14,7 +15,6 @@ import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.Objects;
-import java.util.function.Consumer;
 
 public abstract class FileConfigSource<SECTION extends ConfigureSection, ORIGINAL, SELF extends FileConfigSource<SECTION, ORIGINAL, SELF>>
         extends ConfigureSource<SECTION, ORIGINAL, SELF> {
@@ -37,7 +37,6 @@ public abstract class FileConfigSource<SECTION extends ConfigureSection, ORIGINA
     public boolean copyDefaults() {
         return holder().options().get(FileConfigOptions.COPY_DEFAULTS);
     }
-
 
     public void initializeFile() throws IOException {
         if (this.file.exists()) return;
@@ -74,13 +73,41 @@ public abstract class FileConfigSource<SECTION extends ConfigureSection, ORIGINA
         }
     }
 
-    protected void fileOutputStream(@NotNull Consumer<OutputStream> stream) throws Exception {
+    protected <R> R fileReadString(@NotNull DataFunction<String, R> loader) throws Exception {
+        try (InputStream is = Files.newInputStream(file.toPath())) {
+            try (Reader r = new InputStreamReader(is, charset())) {
+                StringBuilder sb = new StringBuilder();
+                char[] buf = new char[1024];
+                int len;
+                while ((len = r.read(buf)) > 0) {
+                    sb.append(buf, 0, len);
+                }
+                return loader.handle(sb.toString());
+            }
+        }
+    }
+
+    protected void fileReadString(@NotNull DataConsumer<String> loader) throws Exception {
+        try (InputStream is = Files.newInputStream(file.toPath())) {
+            try (Reader r = new InputStreamReader(is, charset())) {
+                StringBuilder sb = new StringBuilder();
+                char[] buf = new char[1024];
+                int len;
+                while ((len = r.read(buf)) > 0) {
+                    sb.append(buf, 0, len);
+                }
+                loader.accept(sb.toString());
+            }
+        }
+    }
+
+    protected void fileOutputStream(@NotNull DataConsumer<OutputStream> stream) throws Exception {
         try (OutputStream os = Files.newOutputStream(file.toPath())) {
             stream.accept(os);
         }
     }
 
-    protected void fileWriter(@NotNull Consumer<Writer> writer) throws Exception {
+    protected void fileWriter(@NotNull DataConsumer<Writer> writer) throws Exception {
         try (OutputStream os = Files.newOutputStream(file.toPath())) {
             try (Writer w = new OutputStreamWriter(os, charset())) {
                 writer.accept(w);

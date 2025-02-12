@@ -2,6 +2,8 @@ package cc.carm.lib.configuration.source.option;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Supplier;
+
 public class ConfigurationOption<V> {
 
     @SuppressWarnings("unchecked")
@@ -11,6 +13,10 @@ public class ConfigurationOption<V> {
 
     public static <T> ConfigurationOption<T> of(@NotNull Class<T> valueClazz, @NotNull T defaultValue) {
         return new ConfigurationOption<>(valueClazz, defaultValue);
+    }
+
+    public static <T> ConfigurationOption<T> of(@NotNull Supplier<T> defaultValue) {
+        return of(defaultValue.get());
     }
 
     private final @NotNull Class<V> valueClazz;

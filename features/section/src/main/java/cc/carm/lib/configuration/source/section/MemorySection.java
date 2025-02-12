@@ -1,34 +1,39 @@
-package cc.carm.lib.configuration.source.json;
+package cc.carm.lib.configuration.source.section;
 
-import cc.carm.lib.configuration.source.section.ConfigureSection;
-import cc.carm.lib.configuration.source.section.ConfigureSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class JSONSection implements ConfigureSection {
+public class MemorySection implements ConfigureSection {
 
-    protected final @NotNull ConfigureSource<? extends JSONSection, ?, ?> source;
+    public static @NotNull MemorySection root(@NotNull ConfigureSource<? extends MemorySection, ?, ?> source) {
+        return new MemorySection(source, new LinkedHashMap<>(), null);
+    }
+
+    public static @NotNull MemorySection root(@NotNull ConfigureSource<? extends MemorySection, ?, ?> source,
+                                              @Nullable Map<?, ?> data) {
+        return new MemorySection(source, data == null ? new LinkedHashMap<>() : data, null);
+    }
+
+    protected final @NotNull ConfigureSource<? extends MemorySection, ?, ?> source;
     protected final @NotNull Map<String, Object> data;
-    protected final @Nullable JSONSection parent;
+    protected final @Nullable MemorySection parent;
 
-    public JSONSection(@NotNull ConfigureSource<? extends JSONSection, ?, ?> source,
-                       @NotNull Map<?, ?> data, @Nullable JSONSection parent) {
+    public MemorySection(@NotNull ConfigureSource<? extends MemorySection, ?, ?> source,
+                         @NotNull Map<?, ?> data, @Nullable MemorySection parent) {
         this.source = source;
         this.parent = parent;
         this.data = new LinkedHashMap<>();
-
         for (Map.Entry<?, ?> entry : data.entrySet()) {
             String key = (entry.getKey() == null) ? "null" : entry.getKey().toString();
-
             if (entry.getValue() instanceof Map) {
-                this.data.put(key, new JSONSection(source, (Map<?, ?>) entry.getValue(), this));
+                this.data.put(key, createChild((Map<?, ?>) entry.getValue()));
             } else if (entry.getValue() instanceof List) {
                 List<Object> list = new ArrayList<>();
                 for (Object obj : (List<?>) entry.getValue()) {
                     if (obj instanceof Map) {
-                        list.add(new JSONSection(source, (Map<?, ?>) obj, this));
+                        list.add(createChild((Map<?, ?>) obj));
                     } else {
                         list.add(obj);
                     }
@@ -40,8 +45,16 @@ public class JSONSection implements ConfigureSection {
         }
     }
 
+    protected @NotNull MemorySection createChild(@NotNull Map<?, ?> data) {
+        return new MemorySection(source(), data, this);
+    }
+
+    protected @NotNull MemorySection createChild() {
+        return createChild(new LinkedHashMap<>());
+    }
+
     @Override
-    public @NotNull ConfigureSource<? extends JSONSection, ?, ?> source() {
+    public @NotNull ConfigureSource<? extends MemorySection, ?, ?> source() {
         return this.source;
     }
 
@@ -49,7 +62,7 @@ public class JSONSection implements ConfigureSection {
         return this.data;
     }
 
-    public @Nullable JSONSection parent() {
+    public @Nullable MemorySection parent() {
         return this.parent;
     }
 
@@ -64,11 +77,9 @@ public class JSONSection implements ConfigureSection {
 
     @Override
     public void set(@NotNull String path, @Nullable Object value) {
-        if (value instanceof Map) {
-            value = new JSONSection(source(), (Map<?, ?>) value, this);
-        }
+        if (value instanceof Map) value = createChild((Map<?, ?>) value);
 
-        JSONSection section = getSectionFor(path);
+        MemorySection section = getSectionFor(path);
         if (section == this) {
             if (value == null) {
                 this.data.remove(path);
@@ -87,7 +98,7 @@ public class JSONSection implements ConfigureSection {
 
     @Override
     public @Nullable Object get(@NotNull String path) {
-        JSONSection section = getSectionFor(path);
+        MemorySection section = getSectionFor(path);
         return section == this ? data.get(path) : section.get(getChild(path));
     }
 
@@ -104,7 +115,7 @@ public class JSONSection implements ConfigureSection {
 
     @Override
     public boolean isSection(@NotNull String path) {
-        return get(path) instanceof JSONSection;
+        return get(path) instanceof ConfigureSection;
     }
 
     @Override
@@ -113,18 +124,18 @@ public class JSONSection implements ConfigureSection {
         return (val instanceof ConfigureSection) ? (ConfigureSection) val : null;
     }
 
-    private JSONSection getSectionFor(String path) {
+    private MemorySection getSectionFor(String path) {
         int index = path.indexOf(separator());
         if (index == -1) return this;
 
         String root = path.substring(0, index);
         Object section = this.data.get(root);
         if (section == null) {
-            section = new JSONSection(source(), new LinkedHashMap<>(), this);
+            section = createChild();
             this.data.put(root, section);
         }
 
-        return (JSONSection) section;
+        return (MemorySection) section;
     }
 
     private String getChild(String path) {
@@ -140,16 +151,15 @@ public class JSONSection implements ConfigureSection {
      * @param section The section to map the values from
      * @param parent  The parent path
      * @param deep    If the mapping should be deep
-     * @author md_5, sk89q
      */
-    protected void mapChildrenValues(@NotNull Map<String, Object> output, @NotNull JSONSection section,
+    protected void mapChildrenValues(@NotNull Map<String, Object> output, @NotNull MemorySection section,
                                      @Nullable String parent, boolean deep) {
         for (Map.Entry<String, Object> entry : section.data().entrySet()) {
             String path = (parent == null ? "" : parent + separator()) + entry.getKey();
             output.remove(path);
             output.put(path, entry.getValue());
-            if (deep && entry.getValue() instanceof JSONSection) {
-                this.mapChildrenValues(output, (JSONSection) entry.getValue(), path, true);
+            if (deep && entry.getValue() instanceof MemorySection) {
+                this.mapChildrenValues(output, (MemorySection) entry.getValue(), path, true);
             }
         }
     }

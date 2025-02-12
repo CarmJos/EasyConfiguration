@@ -60,6 +60,11 @@ public abstract class ConfigureSource<
     }
 
     @Override
+    public @NotNull ConfigureSource<?, ?, ?> source() {
+        return self();
+    }
+
+    @Override
     public @NotNull Map<String, Object> getValues(boolean deep) {
         return section().getValues(deep);
     }

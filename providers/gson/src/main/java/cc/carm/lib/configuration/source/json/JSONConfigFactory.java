@@ -28,17 +28,13 @@ public class JSONConfigFactory extends FileConfigFactory<JSONSource, Configurati
     }
 
     @Override
-    public JSONConfigFactory self() {
+    protected JSONConfigFactory self() {
         return this;
     }
 
     public JSONConfigFactory gson(@NotNull Supplier<Gson> gsonSupplier) {
         this.gsonSupplier = gsonSupplier;
         return self();
-    }
-
-    public JSONConfigFactory gson(@NotNull Gson gson) {
-        return gson(() -> gson);
     }
 
     public JSONConfigFactory gson(@NotNull Consumer<GsonBuilder> builder) {
@@ -49,6 +45,9 @@ public class JSONConfigFactory extends FileConfigFactory<JSONSource, Configurati
         });
     }
 
+    public JSONConfigFactory gson(@NotNull Gson gson) {
+        return gson(() -> gson);
+    }
 
     @Override
     public @NotNull ConfigurationHolder<JSONSource> build() {
@@ -59,7 +58,7 @@ public class JSONConfigFactory extends FileConfigFactory<JSONSource, Configurati
         String sourcePath = this.resourcePath;
 
         return new ConfigurationHolder<JSONSource>(this.adapters, this.options, new ConcurrentHashMap<>(), this.initializer) {
-            final JSONSource source = new JSONSource(this, 0, configFile, sourcePath, gson);
+            final JSONSource source = new JSONSource(this, configFile, sourcePath, gson);
 
             @Override
             public @NotNull JSONSource config() {

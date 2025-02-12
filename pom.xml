@@ -18,8 +18,9 @@
     <version>3.9.1</version>
     <modules>
         <module>core</module>
-        <module>features/commentable</module>
+        <module>features/section</module>
         <module>features/file</module>
+        <module>features/commentable</module>
         <module>features/versioned</module>
 
         <module>providers/yaml</module>

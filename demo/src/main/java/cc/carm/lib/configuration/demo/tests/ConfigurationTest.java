@@ -69,14 +69,14 @@ public class ConfigurationTest {
         provider.initialize(TEST);
 
         System.out.println("> Test Inner value before:");
-        System.out.println(TEST.INSTANCE.INNER_VALUE.getNotNull());
+        System.out.println(TEST.INSTANCE.INNER_VALUE.resolve());
 
         double after = Math.random() * 200D;
         System.out.println("> Test Inner value -> " + after);
         TEST.INSTANCE.INNER_VALUE.set(after);
 
         System.out.println("> Test Inner value after:");
-        System.out.println(TEST.INSTANCE.INNER_VALUE.getNotNull());
+        System.out.println(TEST.INSTANCE.INNER_VALUE.resolve());
 
     }
 

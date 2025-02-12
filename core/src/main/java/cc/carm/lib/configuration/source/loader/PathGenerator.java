@@ -54,13 +54,14 @@ public class PathGenerator {
         ConfigPath clazzPath = clazz.getAnnotation(ConfigPath.class);
         if (clazzPath != null) return link(holder, parentPath, clazzPath.root(), clazzPath.value());
 
-        if (clazzField == null) {
-            return link(holder, parentPath, false, parentPath == null ? null : covertPath(clazz.getSimpleName())); // No field, use class name.
+        if (clazzField != null) {
+            ConfigPath fieldPath = clazzField.getAnnotation(ConfigPath.class);
+            if (fieldPath == null) return link(holder, parentPath, false, covertPath(clazzField.getName()));
+            else return getFieldPath(holder, parentPath, clazzField);
         }
 
-        ConfigPath fieldPath = clazzField.getAnnotation(ConfigPath.class);
-        if (fieldPath == null) return link(holder, parentPath, false, covertPath(clazzField.getName()));
-        else return getFieldPath(holder, parentPath, clazzField);
+        return link(holder, parentPath, false, covertPath(clazz.getSimpleName())); // No field, use class name.
+
     }
 
     protected String select(String path, String defaultValue) {
@@ -71,7 +72,7 @@ public class PathGenerator {
     protected @Nullable String link(@NotNull ConfigurationHolder<?> holder,
                                     @Nullable String parent, boolean root, @Nullable String path) {
         if (path == null || path.isEmpty()) return root ? null : parent;
-        return root || parent == null ? path : parent + pathSeparator(holder) + path;
+        return (root || parent == null) ? path : (parent + pathSeparator(holder) + path);
     }
 
     public static boolean isBlank(String path) {

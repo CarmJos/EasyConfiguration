@@ -111,22 +111,22 @@ public class ConfiguredList<V> extends CachedConfigValue<List<V>> implements Lis
 
     @Override
     public V get(int index) {
-        return getNotNull().get(index);
+        return resolve().get(index);
     }
 
     public @NotNull List<V> copy() {
-        return new ArrayList<>(getNotNull());
+        return new ArrayList<>(resolve());
     }
 
     public <T> @NotNull T handle(Function<List<V>, T> function) {
-        List<V> list = getNotNull();
+        List<V> list = resolve();
         T result = function.apply(list);
         set(list);
         return result;
     }
 
     public @NotNull ConfiguredList<V> modify(Consumer<List<V>> consumer) {
-        List<V> list = getNotNull();
+        List<V> list = resolve();
         consumer.accept(list);
         set(list);
         return this;
@@ -139,40 +139,40 @@ public class ConfiguredList<V> extends CachedConfigValue<List<V>> implements Lis
 
     @Override
     public int size() {
-        return getNotNull().size();
+        return resolve().size();
     }
 
     @Override
     public boolean isEmpty() {
-        return getNotNull().isEmpty();
+        return resolve().isEmpty();
     }
 
     @Override
     public boolean contains(Object o) {
-        return getNotNull().contains(o);
+        return resolve().contains(o);
     }
 
     @NotNull
     @Override
     public Iterator<V> iterator() {
-        return getNotNull().iterator();
+        return resolve().iterator();
     }
 
     @NotNull
     @Override
     public Object @NotNull [] toArray() {
-        return getNotNull().toArray();
+        return resolve().toArray();
     }
 
     @NotNull
     @Override
     public <T> T @NotNull [] toArray(@NotNull T[] a) {
-        return getNotNull().toArray(a);
+        return resolve().toArray(a);
     }
 
     @Override
     public boolean containsAll(@NotNull Collection<?> c) {
-        return new HashSet<>(getNotNull()).containsAll(c);
+        return new HashSet<>(resolve()).containsAll(c);
     }
 
     @Override
@@ -223,30 +223,30 @@ public class ConfiguredList<V> extends CachedConfigValue<List<V>> implements Lis
 
     @Override
     public int indexOf(Object o) {
-        return getNotNull().indexOf(o);
+        return resolve().indexOf(o);
     }
 
     @Override
     public int lastIndexOf(Object o) {
-        return getNotNull().lastIndexOf(o);
+        return resolve().lastIndexOf(o);
     }
 
     @NotNull
     @Override
     public ListIterator<V> listIterator() {
-        return getNotNull().listIterator();
+        return resolve().listIterator();
     }
 
     @NotNull
     @Override
     public ListIterator<V> listIterator(int index) {
-        return getNotNull().listIterator(index);
+        return resolve().listIterator(index);
     }
 
     @NotNull
     @Override
     public List<V> subList(int fromIndex, int toIndex) {
-        return getNotNull().subList(fromIndex, toIndex);
+        return resolve().subList(fromIndex, toIndex);
     }
 
 }

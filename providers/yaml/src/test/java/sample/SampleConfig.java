@@ -1,6 +1,6 @@
 package sample;
 
-import cc.carm.lib.configuration.source.Configuration;
+import cc.carm.lib.configuration.Configuration;
 import cc.carm.lib.configuration.annotation.ConfigPath;
 import cc.carm.lib.configuration.annotation.HeaderComment;
 import cc.carm.lib.configuration.annotation.InlineComment;
@@ -9,6 +9,7 @@ import cc.carm.lib.configuration.value.standard.ConfiguredValue;
 
 import java.util.UUID;
 
+@ConfigPath(root = true)
 @HeaderComment("Configurations for sample")
 public interface SampleConfig extends Configuration {
 
@@ -16,12 +17,13 @@ public interface SampleConfig extends Configuration {
     ConfiguredValue<Boolean> ENABLED = ConfiguredValue.of(true);
 
     ConfiguredList<UUID> UUIDS = ConfiguredList.builderOf(UUID.class).fromString()
-            .parseValue(UUID::fromString).serializeValue(UUID::toString)
+            .parse(UUID::fromString).serialize(UUID::toString)
             .defaults(
                     UUID.fromString("00000000-0000-0000-0000-000000000000"),
                     UUID.fromString("00000000-0000-0000-0000-000000000001")
             ).build();
 
+    @ConfigPath("info") // Custom path
     interface INFO extends Configuration {
 
         @HeaderComment("Configure your name!") // Header comment

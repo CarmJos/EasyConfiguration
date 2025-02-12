@@ -19,7 +19,7 @@ public interface VersionedMetaTypes {
     }
 
     static void register(@NotNull ConfigurationInitializer initializer) {
-        initializer.registerAnnotation(ConfigVersion.class, VERSION, ConfigVersion::value);
+        initializer.registerFieldAnnotation(ConfigVersion.class, VERSION, ConfigVersion::value);
     }
 
 }
