@@ -9,6 +9,9 @@ public interface YAMLOptions {
 
     ConfigurationOption<LoaderOptions> LOADER = ConfigurationOption.of(() -> {
         LoaderOptions loaderOptions = new LoaderOptions();
+        // As we handle comments ourselves,
+        // we don't want SnakeYAML to read them when loading the configs.
+        loaderOptions.setProcessComments(false);
         loaderOptions.setMaxAliasesForCollections(100); // 100 aliases
         loaderOptions.setCodePointLimit(5 * 1024 * 1024); // 5MB
         return loaderOptions;
