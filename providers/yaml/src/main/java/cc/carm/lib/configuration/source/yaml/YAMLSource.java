@@ -1,29 +1,33 @@
 package cc.carm.lib.configuration.source.yaml;
 
-import cc.carm.lib.configuration.commentable.CommentableMetaTypes;
+import cc.carm.lib.configuration.commentable.CommentableMeta;
+import cc.carm.lib.configuration.option.CommentableOptions;
 import cc.carm.lib.configuration.source.ConfigurationHolder;
 import cc.carm.lib.configuration.source.file.FileConfigSource;
-import cc.carm.lib.configuration.source.meta.ConfigurationMetadata;
+import cc.carm.lib.configuration.source.option.StandardOptions;
 import cc.carm.lib.configuration.source.section.ConfigureSection;
 import cc.carm.lib.configuration.source.section.MemorySection;
+import cc.carm.lib.yamlcommentupdater.CommentedSection;
+import cc.carm.lib.yamlcommentupdater.CommentedYAMLWriter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.comments.CommentLine;
-import org.yaml.snakeyaml.comments.CommentType;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.nodes.*;
 import org.yaml.snakeyaml.reader.UnicodeReader;
 import org.yaml.snakeyaml.representer.Representer;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.Reader;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.regex.Pattern;
 
-public class YAMLSource extends FileConfigSource<MemorySection, Map<?, ?>, YAMLSource> {
+public class YAMLSource extends FileConfigSource<MemorySection, Map<?, ?>, YAMLSource> implements CommentedSection {
 
     protected final @NotNull YamlConstructor yamlConstructor;
     protected final @NotNull YamlRepresenter yamlRepresenter;
@@ -65,6 +69,11 @@ public class YAMLSource extends FileConfigSource<MemorySection, Map<?, ?>, YAMLS
         return Objects.requireNonNull(this.rootSection, "Root section is not initialized.");
     }
 
+    @Override
+    public char separator() {
+        return holder().options().get(StandardOptions.PATH_SEPARATOR);
+    }
+
     public @NotNull LoaderOptions loaderOptions() {
         return holder().options().get(YAMLOptions.LOADER);
     }
@@ -77,54 +86,23 @@ public class YAMLSource extends FileConfigSource<MemorySection, Map<?, ?>, YAMLS
     private MappingNode toNodeTree(@NotNull final ConfigureSection section) {
         List<NodeTuple> nodeTuples = new ArrayList<>();
         for (final Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
-
-            final Node keyNode = this.yaml.represent(entry.getKey());
-            final Node valueNode;
+            Node keyNode = this.yaml.represent(entry.getKey());
+            Node valueNode;
             if (entry.getValue() instanceof ConfigureSection) {
                 valueNode = this.toNodeTree((ConfigureSection) entry.getValue());
             } else {
                 valueNode = this.yaml.represent(entry.getValue());
             }
-
-            keyNode.setBlockComments(buildComments(CommentType.BLOCK, CommentableMetaTypes.HEADER_COMMENTS, entry.getKey()));
-            if (valueNode instanceof MappingNode || valueNode instanceof SequenceNode) {
-                keyNode.setInLineComments(buildComment(CommentType.IN_LINE, CommentableMetaTypes.INLINE_COMMENT, entry.getKey()));
-            } else {
-                valueNode.setInLineComments(buildComment(CommentType.IN_LINE, CommentableMetaTypes.INLINE_COMMENT, entry.getKey()));
-            }
-//            keyNode.setEndComments(buildComments(CommentType.BLOCK, CommentableMetaTypes.FOOTER_COMMENTS, entry.getKey()));
-
             nodeTuples.add(new NodeTuple(keyNode, valueNode));
         }
 
         return new MappingNode(Tag.MAP, nodeTuples, DumperOptions.FlowStyle.BLOCK);
     }
 
-    public List<CommentLine> buildComments(@NotNull CommentType type, @NotNull ConfigurationMetadata<List<String>> meta,
-                                           @Nullable String path) {
-        List<String> comments = holder.metadata(path).get(meta);
-        if (comments == null) return Collections.emptyList();
-        return comments.stream().map(s -> {
-            if (s.isEmpty()) return new CommentLine(null, null, "", CommentType.BLANK_LINE);
-            else return new CommentLine(null, null, s, type);
-        }).collect(Collectors.toList());
-    }
-
-    public List<CommentLine> buildComment(@NotNull CommentType type, @NotNull ConfigurationMetadata<String> meta,
-                                          @Nullable String path) {
-        String comment = holder.metadata(path).get(meta);
-        if (comment == null || comment.isEmpty()) return Collections.emptyList();
-        return Collections.singletonList(new CommentLine(null, null, comment, type));
-    }
-
 
     @NotNull
-    public String saveToString() {
-
-        MappingNode mappingNode = this.toNodeTree(this);
-//        mappingNode.setBlockComments(this.getCommentLines(this.saveHeader(this.getOptions().getHeader()), CommentType.BLOCK));
-//        mappingNode.setEndComments(this.getCommentLines(this.getOptions().getFooter(), CommentType.BLOCK));
-
+    public String saveToString(ConfigureSection section) {
+        MappingNode mappingNode = this.toNodeTree(section);
         StringWriter writer = new StringWriter();
         if ((mappingNode.getBlockComments() == null || mappingNode.getBlockComments().isEmpty())
                 && (mappingNode.getEndComments() == null || mappingNode.getEndComments().isEmpty())
@@ -137,18 +115,31 @@ public class YAMLSource extends FileConfigSource<MemorySection, Map<?, ?>, YAMLS
             }
             this.yaml.serialize(mappingNode, writer);
         }
-
         return writer.toString();
     }
 
     @Override
     public void save() throws Exception {
-        fileWriter(w -> w.write(saveToString()));
+        CommentedYAMLWriter writer = new CommentedYAMLWriter(
+                String.valueOf(this.separator()),
+                dumperOptions().getIndent(),
+                holder.options().get(CommentableOptions.COMMENT_EMPTY_VALUE)
+        );
+        try {
+            fileWriter(w -> w.write(writer.saveToString(this)));
+        } catch (Exception ex) {
+            fileWriter(w -> w.write(saveToString(section())));
+        }
     }
 
     @Override
     protected void onReload() throws Exception {
         this.rootSection = fileReadString(this::loadFromString);
+    }
+
+    @Override
+    public String toString() {
+        return this.saveToString(section());
     }
 
     public @NotNull MemorySection loadFromString(@NotNull String data) throws Exception {
@@ -186,6 +177,70 @@ public class YAMLSource extends FileConfigSource<MemorySection, Map<?, ?>, YAMLS
         }
     }
 
+    @Override
+    public String serializeValue(@NotNull String key, @NotNull Object value) {
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put(key, value);
+        return saveToString(MemorySection.root(this, map));
+    }
+
+    @Override
+    public @Nullable Set<String> getKeys(@Nullable String sectionKey, boolean deep) {
+        if (sectionKey == null) return section().getKeys(deep);
+        ConfigureSection sub = section().getSection(sectionKey);
+        if (sub == null) return null;
+        return sub.getKeys(deep);
+    }
+
+    @Override
+    public @Nullable Object getValue(@NotNull String key) {
+        return get(key);
+    }
+
+    @Override
+    public @Nullable String getInlineComment(@NotNull String key) {
+        String comment = getInlineComment(key, null);
+        if (comment != null) return comment;
+
+        String sep = String.valueOf(separator());
+        
+        // If the comment is not found, try to get the comment from the parent section
+        String[] keys = key.split(sep);
+        if (keys.length == 1) return null;
+
+        // Try every possible parent key&child key combination
+        for (int i = 1; i < keys.length; i++) {
+            String parentKey = String.join(sep, Arrays.copyOfRange(keys, 0, i));
+            String childKey = String.join(sep, Arrays.copyOfRange(keys, i, keys.length));
+            comment = getInlineComment(childKey, parentKey);
+            if (comment != null) return comment;
+        }
+        return null;
+    }
+
+    public @Nullable String getInlineComment(@NotNull String key, @Nullable String sectionKey) {
+        Map<String, String> pathComment = holder().metadata(key).get(CommentableMeta.INLINE);
+        if (pathComment == null || pathComment.isEmpty()) return null;
+        if (sectionKey == null) return pathComment.get(null);
+
+        for (Map.Entry<String, String> entry : pathComment.entrySet()) {
+            if (entry.getKey().equals(sectionKey)) return entry.getValue();
+            Pattern pattern = Pattern.compile(entry.getKey().replace(".", "\\.").replace("*", ".*"));
+            if (pattern.matcher(sectionKey).matches()) return entry.getValue();
+        }
+        return null;
+    }
+
+    @Override
+    public @Nullable List<String> getHeaderComments(@Nullable String key) {
+        return holder().metadata(key).get(CommentableMeta.HEADER);
+    }
+
+    @Override
+    public @Nullable List<String> getFooterComments(@Nullable String key) {
+        return holder().metadata(key).get(CommentableMeta.FOOTER);
+    }
+
     public static class YamlRepresenter extends Representer {
 
         public YamlRepresenter(@NotNull final DumperOptions dumperOptions) {
@@ -213,7 +268,7 @@ public class YAMLSource extends FileConfigSource<MemorySection, Map<?, ?>, YAMLS
         }
 
         @Override
-        protected void flattenMapping(@NotNull final MappingNode mappingNode) {
+        public void flattenMapping(@NotNull final MappingNode mappingNode) {
             super.flattenMapping(mappingNode);
         }
     }

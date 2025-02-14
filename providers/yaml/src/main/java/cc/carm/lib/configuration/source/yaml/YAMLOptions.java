@@ -6,24 +6,39 @@ import org.yaml.snakeyaml.LoaderOptions;
 
 public interface YAMLOptions {
 
-
+    /**
+     * The {@link LoaderOptions} for SnakeYAML.
+     *
+     * @see LoaderOptions
+     */
     ConfigurationOption<LoaderOptions> LOADER = ConfigurationOption.of(() -> {
-        LoaderOptions loaderOptions = new LoaderOptions();
+        LoaderOptions opt = new LoaderOptions();
+
         // As we handle comments ourselves,
         // we don't want SnakeYAML to read them when loading the configs.
-        loaderOptions.setProcessComments(false);
-        loaderOptions.setMaxAliasesForCollections(100); // 100 aliases
-        loaderOptions.setCodePointLimit(5 * 1024 * 1024); // 5MB
-        return loaderOptions;
+        opt.setProcessComments(false);
+
+        opt.setMaxAliasesForCollections(100); // 100 aliases
+        opt.setCodePointLimit(5 * 1024 * 1024); // 5MB
+        return opt;
     });
 
+    /**
+     * The {@link DumperOptions} for SnakeYAML.
+     *
+     * @see DumperOptions
+     */
     ConfigurationOption<DumperOptions> DUMPER = ConfigurationOption.of(() -> {
-        DumperOptions options = new DumperOptions();
-        options.setIndent(2);
-        options.setWidth(120);
-        options.setProcessComments(true);
-        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-        return options;
+        DumperOptions opt = new DumperOptions();
+
+        // As we handle comments ourselves,
+        // we don't want SnakeYAML to read them when saving the configs.
+        opt.setProcessComments(false);
+
+        opt.setIndent(2);
+        opt.setWidth(120);
+        opt.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        return opt;
     });
 
 

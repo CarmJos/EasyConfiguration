@@ -2,15 +2,15 @@ package cc.carm.lib.configuration.demo;
 
 import cc.carm.lib.configuration.Configuration;
 import cc.carm.lib.configuration.annotation.ConfigPath;
-import cc.carm.lib.configuration.annotation.HeaderComment;
+import cc.carm.lib.configuration.annotation.HeaderComments;
 import cc.carm.lib.configuration.value.ConfigValue;
 import cc.carm.lib.configuration.value.standard.ConfiguredValue;
 
-@HeaderComment({"", "数据库配置", "  用于提供数据库连接，进行数据库操作。"})
+@HeaderComments({"", "数据库配置", "  用于提供数据库连接，进行数据库操作。"})
 public class DatabaseConfiguration implements Configuration {
 
     @ConfigPath("driver")
-    @HeaderComment({
+    @HeaderComments({
             "数据库驱动配置，请根据数据库类型设置。",
             "- MySQL(旧): com.mysql.jdbc.Driver",
             "- MySQL(新): com.mysql.cj.jdbc.Driver",

@@ -2,7 +2,7 @@ package sample;
 
 import cc.carm.lib.configuration.Configuration;
 import cc.carm.lib.configuration.annotation.ConfigPath;
-import cc.carm.lib.configuration.annotation.HeaderComment;
+import cc.carm.lib.configuration.annotation.HeaderComments;
 import cc.carm.lib.configuration.annotation.InlineComment;
 import cc.carm.lib.configuration.value.standard.ConfiguredList;
 import cc.carm.lib.configuration.value.standard.ConfiguredValue;
@@ -10,11 +10,14 @@ import cc.carm.lib.configuration.value.standard.ConfiguredValue;
 import java.util.UUID;
 
 @ConfigPath(root = true)
-@HeaderComment("Configurations for sample")
+@HeaderComments("Configurations for sample")
 public interface SampleConfig extends Configuration {
 
     @InlineComment("Enabled?") // Inline comment
     ConfiguredValue<Boolean> ENABLED = ConfiguredValue.of(true);
+
+    @HeaderComments("Server configurations") // Header comment
+    ConfiguredValue<Integer> PORT = ConfiguredValue.of(Integer.class);
 
     ConfiguredList<UUID> UUIDS = ConfiguredList.builderOf(UUID.class).fromString()
             .parse(UUID::fromString).serialize(UUID::toString)
@@ -26,11 +29,12 @@ public interface SampleConfig extends Configuration {
     @ConfigPath("info") // Custom path
     interface INFO extends Configuration {
 
-        @HeaderComment("Configure your name!") // Header comment
+        @HeaderComments("Configure your name!") // Header comment
         ConfiguredValue<String> NAME = ConfiguredValue.of("Joker");
 
-        @ConfigPath("year") // Custom path
+        @ConfigPath("how-old-are-you") // Custom path
         ConfiguredValue<Integer> AGE = ConfiguredValue.of(24);
 
     }
+
 }

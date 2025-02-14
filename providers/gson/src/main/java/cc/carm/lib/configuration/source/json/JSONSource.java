@@ -67,15 +67,15 @@ public class JSONSource extends FileConfigSource<MemorySection, Map<?, ?>, JSONS
         fileWriter(writer -> gson.toJson(original(), writer));
     }
 
-    public @NotNull String saveToString() {
-        return gson.toJson(original());
+    @Override
+    protected void onReload() throws Exception {
+        Map<?, ?> data = fileReader(reader -> gson.fromJson(reader, LinkedHashMap.class));
+        this.rootSection = MemorySection.root(this, data);
+        this.lastUpdateMillis = System.currentTimeMillis(); // 更新时间
     }
 
     @Override
-    protected void onReload() throws Exception {
-        this.rootSection = MemorySection.root(
-                this, fileReader(reader -> gson.fromJson(reader, LinkedHashMap.class))
-        );
-        this.lastUpdateMillis = System.currentTimeMillis(); // 更新时间
+    public String toString() {
+        return gson.toJson(original());
     }
 }

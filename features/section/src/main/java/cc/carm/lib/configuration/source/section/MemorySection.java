@@ -68,11 +68,7 @@ public class MemorySection implements ConfigureSection {
 
     @Override
     public @NotNull Map<String, Object> getValues(boolean deep) {
-        if (deep) {
-            Map<String, Object> values = new LinkedHashMap<>();
-            mapChildrenValues(values, this, null, true);
-            return Collections.unmodifiableMap(values);
-        } else return Collections.unmodifiableMap(data());
+        return Collections.unmodifiableMap(deep ? mapChildrenValues(this, null, true) : data());
     }
 
     @Override
@@ -81,13 +77,11 @@ public class MemorySection implements ConfigureSection {
 
         MemorySection section = getSectionFor(path);
         if (section == this) {
-            if (value == null) {
-                this.data.remove(path);
-            } else {
-                this.data.put(path, value);
-            }
+            // Even this value is null, we still need to put it in the map
+            // to ensure that the path is marked as existing.
+            this.data.put(path, value);
         } else {
-            section.set(getChild(path), value);
+            section.set(childPath(path), value);
         }
     }
 
@@ -99,7 +93,7 @@ public class MemorySection implements ConfigureSection {
     @Override
     public @Nullable Object get(@NotNull String path) {
         MemorySection section = getSectionFor(path);
-        return section == this ? data.get(path) : section.get(getChild(path));
+        return section == this ? data.get(path) : section.get(childPath(path));
     }
 
     @Override
@@ -138,29 +132,29 @@ public class MemorySection implements ConfigureSection {
         return (MemorySection) section;
     }
 
-    private String getChild(String path) {
+    private String childPath(String path) {
         int index = path.indexOf(separator());
         return (index == -1) ? path : path.substring(index + 1);
     }
 
-
     /**
      * Map the values of the children of the section to the output map.
      *
-     * @param output  The map to map the values to
      * @param section The section to map the values from
      * @param parent  The parent path
      * @param deep    If the mapping should be deep
      */
-    protected void mapChildrenValues(@NotNull Map<String, Object> output, @NotNull MemorySection section,
-                                     @Nullable String parent, boolean deep) {
+    protected Map<String, Object> mapChildrenValues(@NotNull MemorySection section,
+                                                    @Nullable String parent, boolean deep) {
+        Map<String, Object> output = new LinkedHashMap<>();
         for (Map.Entry<String, Object> entry : section.data().entrySet()) {
             String path = (parent == null ? "" : parent + separator()) + entry.getKey();
             output.remove(path);
             output.put(path, entry.getValue());
             if (deep && entry.getValue() instanceof MemorySection) {
-                this.mapChildrenValues(output, (MemorySection) entry.getValue(), path, true);
+                output.putAll(mapChildrenValues((MemorySection) entry.getValue(), path, true));
             }
         }
+        return output;
     }
 }

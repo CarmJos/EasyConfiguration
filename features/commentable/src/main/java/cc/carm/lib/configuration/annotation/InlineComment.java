@@ -2,10 +2,7 @@ package cc.carm.lib.configuration.annotation;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * Inline comments,
@@ -17,6 +14,7 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
+@Repeatable(InlineComments.class)
 public @interface InlineComment {
 
     /**
@@ -35,8 +33,9 @@ public @interface InlineComment {
      * If the regex is not empty, the comment will be added to
      * all sub paths if the regex matches the value.
      * If the regex is empty, the comment will be added to the current path.
-     * <p> e.g. <b>"^foo\\.*\\.bar"</b> will be set like
+     * <p> e.g. for section, set <b>{"^foo", "*", "bar"}</b> will be set like
      * <blockquote><pre>
+     *   section:
      *     foo:
      *       some:
      *         lover: "bar" <- not matched so no comments

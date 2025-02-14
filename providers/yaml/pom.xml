@@ -14,6 +14,7 @@
         <maven.compiler.target>${project.jdk.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
+        <deps.yamlcommentwriter.version>1.1.0</deps.yamlcommentwriter.version>
     </properties>
 
     <artifactId>easyconfiguration-yaml</artifactId>
@@ -53,6 +54,13 @@
             <groupId>${project.parent.groupId}</groupId>
             <artifactId>easyconfiguration-feature-commentable</artifactId>
             <version>${project.parent.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>cc.carm.lib</groupId>
+            <artifactId>yamlcommentwriter</artifactId>
+            <version>${deps.yamlcommentwriter.version}</version>
             <scope>compile</scope>
         </dependency>
 

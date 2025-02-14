@@ -1,6 +1,6 @@
 package cc.carm.lib.configuration.source.yaml;
 
-import cc.carm.lib.configuration.commentable.CommentableMetaTypes;
+import cc.carm.lib.configuration.commentable.CommentableMeta;
 import cc.carm.lib.configuration.source.ConfigurationHolder;
 import cc.carm.lib.configuration.source.file.FileConfigFactory;
 import org.jetbrains.annotations.NotNull;
@@ -9,8 +9,7 @@ import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Arrays;
 import java.util.function.Consumer;
 
 public class YAMLConfigFactory extends FileConfigFactory<YAMLSource, ConfigurationHolder<YAMLSource>, YAMLConfigFactory> {
@@ -60,17 +59,30 @@ public class YAMLConfigFactory extends FileConfigFactory<YAMLSource, Configurati
         return option(YAMLOptions.DUMPER, modifier);
     }
 
+    /**
+     * Set the header comments for the configuration file.
+     * <p> This will override any existing header comments.
+     *
+     * @param header The header comments to set
+     * @return The current factory instance
+     */
+    public YAMLConfigFactory header(@NotNull String... header) {
+        return metadata(null, holder -> holder.set(CommentableMeta.HEADER, Arrays.asList(header)));
+    }
+
+    public YAMLConfigFactory footer(@NotNull String... footer) {
+        return metadata(null, holder -> holder.set(CommentableMeta.FOOTER, Arrays.asList(footer)));
+    }
+
     @Override
     public @NotNull ConfigurationHolder<YAMLSource> build() {
 
         File configFile = this.file;
         String sourcePath = this.resourcePath;
 
-        CommentableMetaTypes.register(this.initializer); // Register commentable meta types
+        CommentableMeta.register(this.initializer); // Register commentable meta types
 
-        return new ConfigurationHolder<YAMLSource>(
-                this.adapters, this.options, new HashMap<>(), this.initializer
-        ) {
+        return new ConfigurationHolder<YAMLSource>(this.adapters, this.options, this.metadata, this.initializer) {
             final @NotNull YAMLSource source = new YAMLSource(this, configFile, sourcePath);
 
             @Override

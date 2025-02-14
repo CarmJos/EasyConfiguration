@@ -10,12 +10,6 @@ import java.util.Arrays;
 
 public class PrimitiveAdapter<T> extends ValueAdapter<T> {
 
-    public static final PrimitiveAdapter<?>[] ADAPTERS = new PrimitiveAdapter[]{
-            ofString(), ofBoolean(), ofBooleanType(), ofCharacter(), ofCharacterType(),
-            ofInteger(), ofIntegerType(), ofLong(), ofLongType(), ofDouble(), ofDoubleType(),
-            ofFloat(), ofFloatType(), ofShort(), ofShortType(), ofByte(), ofByteType()
-    };
-
     public static final String[] TRUE_VALUES = new String[]{
             "true", "yes", "on", "1", "enabled", "enable", "active"
     };

@@ -72,7 +72,7 @@ public abstract class ConfigValue<T> extends ValueManifest<T> {
      *
      * @return Non-null value
      * @throws NullPointerException Thrown when the corresponding data is null
-     * @see #resolve()
+     * @see #resolve() for a more descriptive function
      */
     public @NotNull T getNotNull() {
         return resolve();
@@ -114,7 +114,7 @@ public abstract class ConfigValue<T> extends ValueManifest<T> {
      */
     public void setDefault(boolean override) {
         if (!override && config().contains(path())) return;
-        Optional.ofNullable(defaults()).ifPresent(this::set);
+        set(defaults()); // Set the default value
     }
 
     /**

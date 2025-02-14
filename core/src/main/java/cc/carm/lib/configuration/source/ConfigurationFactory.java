@@ -1,18 +1,21 @@
 package cc.carm.lib.configuration.source;
 
 import cc.carm.lib.configuration.adapter.*;
-import cc.carm.lib.configuration.adapter.strandard.PrimitiveAdapter;
 import cc.carm.lib.configuration.adapter.strandard.StandardAdapters;
 import cc.carm.lib.configuration.function.DataFunction;
 import cc.carm.lib.configuration.source.loader.ConfigurationInitializer;
 import cc.carm.lib.configuration.source.loader.PathGenerator;
+import cc.carm.lib.configuration.source.meta.ConfigurationMetaHolder;
 import cc.carm.lib.configuration.source.meta.ConfigurationMetadata;
 import cc.carm.lib.configuration.source.option.ConfigurationOption;
 import cc.carm.lib.configuration.source.option.ConfigurationOptionHolder;
 import cc.carm.lib.configuration.source.section.ConfigureSource;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -25,11 +28,13 @@ public abstract class ConfigurationFactory<
 
     protected ValueAdapterRegistry adapters = new ValueAdapterRegistry();
     protected ConfigurationOptionHolder options = new ConfigurationOptionHolder();
+    protected @NotNull Map<String, ConfigurationMetaHolder> metadata = new HashMap<>();
     protected ConfigurationInitializer initializer = new ConfigurationInitializer();
 
     public ConfigurationFactory() {
-        this.adapters.register(PrimitiveAdapter.ADAPTERS);
-        this.adapters.register(StandardAdapters.SECTION_ADAPTER);
+        this.adapters.register(StandardAdapters.PRIMITIVES);
+        this.adapters.register(StandardAdapters.SECTIONS);
+        this.adapters.register(StandardAdapters.ENUMS);
     }
 
     protected abstract SELF self();
@@ -99,6 +104,27 @@ public abstract class ConfigurationFactory<
             O current = holder.get(type);
             modifier.accept(current);
             holder.set(type, current);
+        });
+    }
+
+    public SELF metadata(@NotNull Map<String, ConfigurationMetaHolder> metadata) {
+        this.metadata = metadata;
+        return self();
+    }
+
+    public SELF metadata(@NotNull Consumer<Map<String, ConfigurationMetaHolder>> handler) {
+        handler.accept(this.metadata);
+        return self();
+    }
+
+    public SELF metadata(@Nullable String path, @NotNull ConfigurationMetaHolder meta) {
+        return metadata(m -> m.put(path, meta));
+    }
+
+    public SELF metadata(@Nullable String path, @NotNull Consumer<ConfigurationMetaHolder> handler) {
+        return metadata(map -> {
+            ConfigurationMetaHolder meta = map.computeIfAbsent(path, k -> new ConfigurationMetaHolder());
+            handler.accept(meta);
         });
     }
 
