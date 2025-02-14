@@ -3,6 +3,7 @@ package cc.carm.lib.configuration.builder.impl;
 import cc.carm.lib.configuration.adapter.ValueAdapter;
 import cc.carm.lib.configuration.adapter.ValueType;
 import cc.carm.lib.configuration.builder.CommonConfigBuilder;
+import cc.carm.lib.configuration.function.DataConsumer;
 import cc.carm.lib.configuration.function.DataFunction;
 import cc.carm.lib.configuration.function.ValueHandler;
 import cc.carm.lib.configuration.source.section.ConfigureSection;
@@ -11,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 
 public abstract class AbstractSectionBuilder<
         TYPE, PARAM,
@@ -19,14 +19,15 @@ public abstract class AbstractSectionBuilder<
         SELF extends AbstractSectionBuilder<TYPE, PARAM, RESULT, SELF>
         > extends CommonConfigBuilder<TYPE, RESULT, SELF> {
 
+
     protected final @NotNull ValueType<PARAM> paramType;
 
     protected @NotNull ValueHandler<ConfigureSection, PARAM> parser;
     protected @NotNull ValueHandler<PARAM, ? extends Map<String, Object>> serializer;
 
-    public AbstractSectionBuilder(@NotNull ValueType<TYPE> type, @NotNull ValueType<PARAM> paramType,
-                                  @NotNull ValueHandler<ConfigureSection, PARAM> parser,
-                                  @NotNull ValueHandler<PARAM, ? extends Map<String, Object>> serializer) {
+    protected AbstractSectionBuilder(@NotNull ValueType<TYPE> type, @NotNull ValueType<PARAM> paramType,
+                                     @NotNull ValueHandler<ConfigureSection, PARAM> parser,
+                                     @NotNull ValueHandler<PARAM, ? extends Map<String, Object>> serializer) {
         super(type);
         this.paramType = paramType;
         this.parser = parser;
@@ -51,7 +52,7 @@ public abstract class AbstractSectionBuilder<
         return self();
     }
 
-    public @NotNull SELF serialize(Consumer<Map<String, Object>> serializer) {
+    public @NotNull SELF serialize(DataConsumer<Map<String, Object>> serializer) {
         return serialize((p, value) -> {
             Map<String, Object> map = new LinkedHashMap<>();
             serializer.accept(map);
@@ -71,4 +72,5 @@ public abstract class AbstractSectionBuilder<
                     return map == null || map.isEmpty() ? null : map;
                 });
     }
+
 }

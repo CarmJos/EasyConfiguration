@@ -4,6 +4,7 @@ import cc.carm.lib.configuration.adapter.ValueAdapter;
 import cc.carm.lib.configuration.adapter.ValueParser;
 import cc.carm.lib.configuration.adapter.ValueSerializer;
 import cc.carm.lib.configuration.adapter.ValueType;
+import cc.carm.lib.configuration.builder.map.ConfigMapCreator;
 import cc.carm.lib.configuration.source.section.ConfigureSection;
 import cc.carm.lib.configuration.value.ValueManifest;
 import cc.carm.lib.configuration.value.impl.CachedConfigValue;
@@ -18,14 +19,28 @@ import java.util.function.Supplier;
 
 public class ConfiguredMap<K, V> extends CachedConfigValue<Map<K, V>> implements Map<K, V> {
 
+    public static <K, V> ConfigMapCreator<K, V> builderOf(@NotNull ValueType<K> keyType, @NotNull ValueType<V> valueType) {
+        return new ConfigMapCreator<>(keyType, valueType);
+    }
+
+    public static <K, V> ConfigMapCreator<K, V> builderOf(@NotNull Class<K> keyType, @NotNull Class<V> valueType) {
+        return new ConfigMapCreator<>(ValueType.of(keyType), ValueType.of(valueType));
+    }
+
+    public static <K, V> ConfiguredMap<K, V> of(@NotNull Supplier<? extends Map<K, V>> constructor,
+                                                @NotNull ValueAdapter<K> keyAdapter, @NotNull ValueAdapter<V> valueAdapter) {
+        return new ConfiguredMap<>(new ValueManifest<>(new ValueType<Map<K, V>>() {
+        }, constructor::get), constructor, keyAdapter, valueAdapter);
+    }
+
     protected final @NotNull Supplier<? extends Map<K, V>> constructor;
 
     protected final @NotNull ValueAdapter<K> keyAdapter;
     protected final @NotNull ValueAdapter<V> valueAdapter;
 
-    protected ConfiguredMap(@NotNull ValueManifest<Map<K, V>> manifest,
-                            @NotNull Supplier<? extends Map<K, V>> constructor,
-                            @NotNull ValueAdapter<K> keyAdapter, @NotNull ValueAdapter<V> valueAdapter) {
+    public ConfiguredMap(@NotNull ValueManifest<Map<K, V>> manifest,
+                         @NotNull Supplier<? extends Map<K, V>> constructor,
+                         @NotNull ValueAdapter<K> keyAdapter, @NotNull ValueAdapter<V> valueAdapter) {
         super(manifest);
         this.constructor = constructor;
         this.keyAdapter = keyAdapter;
@@ -88,7 +103,7 @@ public class ConfiguredMap<K, V> extends CachedConfigValue<Map<K, V>> implements
         return get().get(key);
     }
 
-    public V getNotNull(Object key) {
+    public V getNotNull(@Nullable K key) {
         return Objects.requireNonNull(get(key));
     }
 

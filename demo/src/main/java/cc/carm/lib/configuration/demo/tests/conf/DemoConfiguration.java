@@ -6,18 +6,26 @@ import cc.carm.lib.configuration.annotation.FooterComments;
 import cc.carm.lib.configuration.annotation.HeaderComments;
 import cc.carm.lib.configuration.annotation.InlineComment;
 import cc.carm.lib.configuration.demo.DatabaseConfiguration;
+import cc.carm.lib.configuration.demo.tests.model.ItemStack;
 import cc.carm.lib.configuration.demo.tests.model.UserRecord;
 import cc.carm.lib.configuration.value.ConfigValue;
 import cc.carm.lib.configuration.value.standard.ConfiguredList;
+import cc.carm.lib.configuration.value.standard.ConfiguredMap;
 import cc.carm.lib.configuration.value.standard.ConfiguredValue;
 
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.UUID;
 
 @ConfigPath(root = true)
 @HeaderComments({"此处内容将显示在配置文件的最上方"})
-@FooterComments({"此处内容将显示在配置文件的最下方", "可用于显示版权信息等"})
+@FooterComments({
+        "------------------------------------------------",
+        "此处内容将显示在配置文件的最下方",
+        "可用于显示版权信息等",
+        "感谢您使用 https://github.com/CarmJos/EasyConfiguration !"
+})
 public interface DemoConfiguration extends Configuration {
 
     @ConfigPath(root = true)
@@ -40,16 +48,24 @@ public interface DemoConfiguration extends Configuration {
     @InlineComment("默认地注释会加到Section的首行末尾") // 通过注解给配置添加注释。
     @InlineComment(value = "用户名(匹配注释)", regex = "name") // 通过注解给配置添加注释。
     @InlineComment(value = "信息", regex = "info.*") // 通过注解给配置添加注释。
-    ConfiguredList<UserRecord> USERS = ConfiguredList.builderOf(UserRecord.class).fromSection()
+    ConfiguredList<UserRecord> ALLOWLISTS = ConfiguredList.builderOf(UserRecord.class).fromSection()
             .parse(UserRecord::deserialize).serialize(UserRecord::serialize)
             .defaults(UserRecord.CARM).build();
 
-//    @HeaderComment({"[ID - UUID]对照表", "", "用于测试Map类型的解析与序列化保存"})
-//    ConfiguredMap<Integer, UUID> USERS = ConfiguredMap.builderOf(Integer.class, UUID.class)
-//            .asLinkedMap().fromString()
-//            .parseKey(Integer::parseInt)
-//            .parseValue(v -> Objects.requireNonNull(UUID.fromString(v)))
-//            .build();
+    @HeaderComments({
+            "------------------------------------------------",
+            "[ID - ItemStack]对照表", "", "用于测试Map类型的解析与序列化保存"
+    })
+    @FooterComments("------------------------------------------------")
+    ConfiguredMap<Integer, ItemStack> ITEMS = ConfiguredMap.builderOf(Integer.class, ItemStack.class)
+            .asLinkedMap().fromSection()
+            .parseKey(data -> Integer.parseInt(data))
+            .parse(ItemStack::deserialize).serialize(ItemStack::serialize)
+            .defaults(m -> {
+                m.put(1, new ItemStack("stone", 64));
+                m.put(2, new ItemStack("iron", 64, "铁锭", Arrays.asList("一些铁锭", "可以制造东西")));
+            })
+            .build();
 
 
     /**

@@ -56,14 +56,21 @@ public interface ValueHandler<T, R> {
     }
 
     @Contract(pure = true)
-    static <T> @NotNull ValueHandler<Object, T> fromObject(ValueType<T> type) {
-        return (provider, input) -> provider.deserialize(type, input);
+    static <O, T> @NotNull ValueHandler<O, T> deserialize(ValueType<T> to) {
+        return (provider, input) -> provider.deserialize(to, input);
     }
-
 
     @Contract(pure = true)
     static <T, V> @NotNull ValueHandler<T, V> required() {
         return (provider, input) -> {
+            throw new IllegalArgumentException("Please specify the value parser.");
+        };
+    }
+
+    @Contract(pure = true)
+    static <T, V> @NotNull ValueHandler<T, V> required(ValueType<V> type) {
+        return (provider, input) -> {
+            if (type.isInstance(input)) return type.cast(input); // Simple cast
             throw new IllegalArgumentException("Please specify the value parser.");
         };
     }

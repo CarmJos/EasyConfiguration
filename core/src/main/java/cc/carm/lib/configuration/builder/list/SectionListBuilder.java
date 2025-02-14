@@ -14,10 +14,10 @@ public class SectionListBuilder<V> extends AbstractSectionBuilder<List<V>, V, Co
 
     protected @NotNull Supplier<? extends List<V>> constructor;
 
-    public SectionListBuilder(@NotNull ValueType<V> paramType,
+    public SectionListBuilder(@NotNull Supplier<? extends List<V>> constructor,
+                              @NotNull ValueType<V> paramType,
                               @NotNull ValueHandler<ConfigureSection, V> parser,
-                              @NotNull ValueHandler<V, ? extends Map<String, Object>> serializer,
-                              @NotNull Supplier<? extends List<V>> constructor) {
+                              @NotNull ValueHandler<V, ? extends Map<String, Object>> serializer) {
         super(new ValueType<List<V>>() {
         }, paramType, parser, serializer);
         this.constructor = constructor;

@@ -14,21 +14,21 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public abstract class AbstractConfigBuilder<
-        TYPE, RESULT extends ConfigValue<TYPE>, PROVIDER extends ConfigurationHolder<?>,
-        SELF extends AbstractConfigBuilder<TYPE, RESULT, PROVIDER, SELF>
+        TYPE, RESULT extends ConfigValue<TYPE>, HOLDER extends ConfigurationHolder<?>,
+        SELF extends AbstractConfigBuilder<TYPE, RESULT, HOLDER, SELF>
         > {
 
-    protected final Class<? super PROVIDER> providerClass;
+    protected final Class<? super HOLDER> providerClass;
     protected final ValueType<TYPE> type;
 
-    protected @Nullable PROVIDER provider;
+    protected @Nullable HOLDER holder;
     protected @Nullable String path;
 
-    protected @NotNull Supplier<TYPE> defaultValueSupplier = () -> null;
-    protected @NotNull BiConsumer<ConfigurationHolder<?>, String> initializer = (provider, path) -> {
+    protected @NotNull Supplier<@Nullable TYPE> defaultValueSupplier = () -> null;
+    protected @NotNull BiConsumer<ConfigurationHolder<?>, String> initializer = (h, p) -> {
     };
 
-    protected AbstractConfigBuilder(Class<? super PROVIDER> providerClass, ValueType<TYPE> type) {
+    protected AbstractConfigBuilder(Class<? super HOLDER> providerClass, ValueType<TYPE> type) {
         this.providerClass = providerClass;
         this.type = type;
     }
@@ -41,8 +41,8 @@ public abstract class AbstractConfigBuilder<
 
     public abstract @NotNull RESULT build();
 
-    public @NotNull SELF holder(@Nullable PROVIDER provider) {
-        this.provider = provider;
+    public @NotNull SELF holder(@Nullable HOLDER holder) {
+        this.holder = holder;
         return self();
     }
 
@@ -61,7 +61,7 @@ public abstract class AbstractConfigBuilder<
     }
 
     public @NotNull SELF append(@NotNull Consumer<ConfigurationHolder<?>> initializer) {
-        return append((provider, path) -> initializer.accept(provider));
+        return append((provider, valuePath) -> initializer.accept(provider));
     }
 
     public @NotNull SELF defaults(@Nullable TYPE defaultValue) {
@@ -74,17 +74,17 @@ public abstract class AbstractConfigBuilder<
     }
 
     public <M> @NotNull SELF meta(@NotNull Consumer<@NotNull ConfigurationMetaHolder> metaConsumer) {
-        return append((provider, path) -> metaConsumer.accept(provider.metadata(path)));
+        return append((h, p) -> metaConsumer.accept(h.metadata(p)));
     }
 
     public <M> @NotNull SELF meta(@NotNull ConfigurationMetadata<M> type, @Nullable M value) {
-        return meta(holder -> holder.set(type, value));
+        return meta(h -> h.set(type, value));
     }
 
     protected @NotNull ValueManifest<TYPE> buildManifest() {
         return new ValueManifest<>(
                 type(), this.defaultValueSupplier, this.initializer,
-                this.provider, this.path
+                this.holder, this.path
         );
     }
 

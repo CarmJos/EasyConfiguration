@@ -1,6 +1,7 @@
 package cc.carm.lib.configuration.builder.value;
 
 import cc.carm.lib.configuration.adapter.ValueType;
+import cc.carm.lib.configuration.builder.impl.AbstractSectionBuilder;
 import cc.carm.lib.configuration.function.ValueHandler;
 import cc.carm.lib.configuration.source.section.ConfigureSection;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +21,7 @@ public class ConfigValueBuilder<V> {
     }
 
     public @NotNull <S> SourceValueBuilder<S, V> from(@NotNull ValueType<S> sourceType) {
-        return from(sourceType, ValueHandler.required(), ValueHandler.required());
+        return from(sourceType, ValueHandler.required(type), ValueHandler.required(sourceType));
     }
 
     public @NotNull <S> SourceValueBuilder<S, V> from(@NotNull ValueType<S> sourceType,
@@ -30,11 +31,11 @@ public class ConfigValueBuilder<V> {
     }
 
     public @NotNull SourceValueBuilder<String, V> fromString() {
-        return from(ValueType.STRING, ValueHandler.required(), ValueHandler.stringValue());
+        return from(ValueType.STRING, ValueHandler.required(type), ValueHandler.stringValue());
     }
 
     public @NotNull SectionValueBuilder<V> fromSection() {
-        return fromSection(ValueHandler.required(), ValueHandler.required());
+        return fromSection(ValueHandler.required(type), ValueHandler.required());
     }
 
     public @NotNull SectionValueBuilder<V> fromSection(

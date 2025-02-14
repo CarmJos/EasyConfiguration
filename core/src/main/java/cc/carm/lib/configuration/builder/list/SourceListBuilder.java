@@ -17,9 +17,9 @@ public class SourceListBuilder<SOURCE, V>
 
     protected @NotNull Supplier<? extends List<V>> constructor;
 
-    public SourceListBuilder(@NotNull ValueType<SOURCE> sourceType, @NotNull ValueType<V> paramType,
-                             @NotNull ValueHandler<SOURCE, V> parser, @NotNull ValueHandler<V, SOURCE> serializer,
-                             @NotNull Supplier<? extends List<V>> constructor) {
+    public SourceListBuilder(@NotNull Supplier<? extends List<V>> constructor,
+                             @NotNull ValueType<SOURCE> sourceType, @NotNull ValueType<V> paramType,
+                             @NotNull ValueHandler<SOURCE, V> parser, @NotNull ValueHandler<V, SOURCE> serializer) {
         super(new ValueType<List<V>>() {
         }, sourceType, paramType, parser, serializer);
         this.constructor = constructor;

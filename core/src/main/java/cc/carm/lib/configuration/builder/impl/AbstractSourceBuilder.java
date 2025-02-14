@@ -18,7 +18,7 @@ public abstract class AbstractSourceBuilder<
     protected @NotNull ValueHandler<SOURCE, PARAM> valueParser;
     protected @NotNull ValueHandler<PARAM, SOURCE> valueSerializer;
 
-    public AbstractSourceBuilder(@NotNull ValueType<V> type,
+    protected AbstractSourceBuilder(@NotNull ValueType<V> type,
                                  @NotNull ValueType<SOURCE> sourceType, @NotNull ValueType<PARAM> paramType,
                                  @NotNull ValueHandler<SOURCE, PARAM> parser,
                                  @NotNull ValueHandler<PARAM, SOURCE> serializer) {

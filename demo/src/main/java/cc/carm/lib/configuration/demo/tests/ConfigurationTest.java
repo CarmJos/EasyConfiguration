@@ -49,8 +49,8 @@ public class ConfigurationTest {
         System.out.println(" After size :" + DemoConfiguration.SUB.That.OPERATORS.size());
 
         System.out.println("> Test Section:");
-        System.out.println(DemoConfiguration.USERS.get());
-        DemoConfiguration.USERS.add(UserRecord.random());
+        System.out.println(DemoConfiguration.ALLOWLISTS.get());
+        DemoConfiguration.ALLOWLISTS.add(UserRecord.random());
 
 //        System.out.println("> Test Maps:");
 //        DemoConfiguration.USERS.forEach((k, v) -> System.out.println(k + ": " + v));

@@ -19,15 +19,25 @@ public class ConfigListBuilder<V> {
     }
 
     public <S> @NotNull SourceListBuilder<S, V> from(@NotNull ValueType<S> sourceType) {
-        return new SourceListBuilder<>(sourceType, type, ValueHandler.required(), ValueHandler.required(), ArrayList::new);
+        return new SourceListBuilder<>(
+                ArrayList::new, sourceType, type,
+                ValueHandler.required(type),
+                ValueHandler.required(sourceType)
+        );
     }
 
     public @NotNull SourceListBuilder<String, V> fromString() {
-        return new SourceListBuilder<>(ValueType.STRING, type, ValueHandler.required(), ValueHandler.stringValue(), ArrayList::new);
+        return new SourceListBuilder<>(
+                ArrayList::new, ValueType.STRING, type,
+                ValueHandler.required(type), ValueHandler.stringValue()
+        );
     }
 
     public @NotNull SectionListBuilder<V> fromSection() {
-        return new SectionListBuilder<>(type, ValueHandler.required(), ValueHandler.required(), ArrayList::new);
+        return new SectionListBuilder<>(
+                ArrayList::new, type,
+                ValueHandler.required(type), ValueHandler.required()
+        );
     }
 
 
