@@ -8,7 +8,7 @@ public interface CommentableOptions {
 //     * Whether to keep modified comments in configuration,
 //     * that means we only set comments for values that are not exists in configuration.
 //     */
-//    ConfigurationOption<Boolean> KEEP_COMMENTS = ConfigurationOption.of(true); // TODO: Implement this feature
+//    ConfigurationOption<Boolean> KEEP_COMMENTS = ConfigurationOption.of(true);
 
     /**
      * Whether to comment values name that are not exists in configuration and no default value offered.
@@ -20,5 +20,16 @@ public interface CommentableOptions {
      * </pre></blockquote>
      */
     ConfigurationOption<Boolean> COMMENT_EMPTY_VALUE = ConfigurationOption.of(false);
+
+
+//    /**
+//     * The resource path of the comment file.
+//     * <p>
+//     * Use this option to specify the path of the comment file,
+//     * which will be used to load comments for the configuration.
+//     * </p>
+//     */
+//    ConfigurationOption<String> COMMENT_RESOURCE = ConfigurationOption.of(String.class, "config-comments");
+
 
 }
