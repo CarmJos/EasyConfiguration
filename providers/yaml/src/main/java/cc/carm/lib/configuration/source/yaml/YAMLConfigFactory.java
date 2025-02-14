@@ -43,14 +43,6 @@ public class YAMLConfigFactory extends FileConfigFactory<YAMLSource, Configurati
         return option(YAMLOptions.LOADER, modifier);
     }
 
-    public YAMLConfigFactory indent(@Range(from = 2, to = 8) int indent) {
-        return dumper(d -> d.setIndent(indent));
-    }
-
-    public YAMLConfigFactory width(@Range(from = 8, to = 1000) int width) {
-        return dumper(d -> d.setWidth(width));
-    }
-
     public YAMLConfigFactory dumper(@NotNull DumperOptions dumperOptions) {
         return option(YAMLOptions.DUMPER, dumperOptions);
     }
@@ -60,8 +52,54 @@ public class YAMLConfigFactory extends FileConfigFactory<YAMLSource, Configurati
     }
 
     /**
+     * Set the indent(in spaces) for the yaml file.
+     * <p>e.g. for 2 spaces indent, the yaml file will look like:
+     * <blockquote><pre>
+     *     key:
+     *       value: 1
+     * </pre></blockquote>
+     *
+     * @param indent The indent (space) count, from 2 to 8.
+     * @return Current {@link YAMLConfigFactory}
+     * @see DumperOptions#setIndent(int)
+     */
+    public YAMLConfigFactory indent(@Range(from = 2, to = 8) int indent) {
+        return dumper(d -> d.setIndent(indent));
+    }
+
+    /**
+     * Set the indicator indent for the yaml file.
+     * <p>Indicator indent is the indent for the indicators like '-'.
+     * <p>e.g. for 2 spaces indicator indent, the yaml file will look like:
+     * <blockquote><pre>
+     *     key:
+     *       - value1
+     *       - value2
+     * </pre></blockquote>
+     *
+     * @param indent The indicator indent, from 2 to 8.
+     * @return Current {@link YAMLConfigFactory}
+     * @see DumperOptions#setIndicatorIndent(int)
+     */
+    public YAMLConfigFactory indicatorIndent(@Range(from = 0, to = 9) int indent) {
+        return dumper(d -> d.setIndicatorIndent(indent));
+    }
+
+    /**
+     * Set the line width for a yaml file.
+     * <p>When the line width is reached, the yaml file will be split into multiple lines.
+     *
+     * @param width The line width, from 8 to 1000.
+     * @return Current {@link YAMLConfigFactory}
+     * @see DumperOptions#setWidth(int)
+     */
+    public YAMLConfigFactory width(@Range(from = 8, to = 1000) int width) {
+        return dumper(d -> d.setWidth(width));
+    }
+
+    /**
      * Set the header comments for the configuration file.
-     * <p> This will override any existing header comments.
+     * <p> This will override {@link cc.carm.lib.configuration.annotation.HeaderComments} in root classes.
      *
      * @param header The header comments to set
      * @return The current factory instance
@@ -70,6 +108,13 @@ public class YAMLConfigFactory extends FileConfigFactory<YAMLSource, Configurati
         return metadata(null, holder -> holder.set(CommentableMeta.HEADER, Arrays.asList(header)));
     }
 
+    /**
+     * Set the footer comments for the configuration file.
+     * <p> This will override {@link cc.carm.lib.configuration.annotation.FooterComments} in root classes.
+     *
+     * @param footer The footer comments to set
+     * @return The current factory instance
+     */
     public YAMLConfigFactory footer(@NotNull String... footer) {
         return metadata(null, holder -> holder.set(CommentableMeta.FOOTER, Arrays.asList(footer)));
     }
