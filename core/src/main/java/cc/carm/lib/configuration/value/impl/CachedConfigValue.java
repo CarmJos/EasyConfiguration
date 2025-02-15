@@ -59,6 +59,8 @@ public abstract class CachedConfigValue<T> extends ConfigValue<T> {
     }
 
     /**
+     * @param adapter Value adapter
+     * @param <O>     Base object type
      * @return Value's parser, parse base object to value.
      */
     protected <O> @Nullable ValueParser<O> parserFor(@NotNull ValueAdapter<O> adapter) {
@@ -69,6 +71,8 @@ public abstract class CachedConfigValue<T> extends ConfigValue<T> {
     }
 
     /**
+     * @param adapter Value adapter
+     * @param <O>     Base object type
      * @return Value's serializer, parse value to base object.
      */
     protected <O> @Nullable ValueSerializer<O> serializerFor(@NotNull ValueAdapter<O> adapter) {

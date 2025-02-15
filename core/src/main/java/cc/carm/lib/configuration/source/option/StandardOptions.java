@@ -13,7 +13,7 @@ public interface StandardOptions {
     ConfigurationOption<Character> PATH_SEPARATOR = of('.');
 
     /**
-     * Whether to set & save default values if offered and not exists in configuration.
+     * Whether to set and save default values if offered and not exists in configuration.
      */
     ConfigurationOption<Boolean> SET_DEFAULTS = of(true);
 

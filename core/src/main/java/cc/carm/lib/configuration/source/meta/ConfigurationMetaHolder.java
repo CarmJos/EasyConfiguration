@@ -108,6 +108,7 @@ public class ConfigurationMetaHolder {
      * @param type  {@link ConfigurationMetadata}
      * @param value Value of meta
      * @param <V>   Value type
+     * @return Previous value of meta
      */
     @SuppressWarnings("unchecked")
     public <V> @Nullable V setIfPresent(@NotNull ConfigurationMetadata<V> type, @Nullable V value) {

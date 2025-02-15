@@ -87,7 +87,7 @@ public class PathGenerator {
      * Get the configuration name of the specified element.
      * Use the naming convention of all lowercase and "-" links.
      * <p>
-     * e.g. "SOME_NAME" -> "some-name"
+     * e.g. "SOME_NAME" will be "some-name"
      *
      * @param name source name
      * @return the final path
@@ -104,7 +104,7 @@ public class PathGenerator {
                 // The content that is not named in all caps is then converted
                 .replaceAll("([a-z])=([A-Z])", "$1_$2")
                 // Remove any extra horizontal lines
-                .replaceAll("=", "")
+                .replace("=", "")
                 // Replace the underscore with a dash
                 .replace("_", "-")
                 // Finally, convert it to all lowercase
