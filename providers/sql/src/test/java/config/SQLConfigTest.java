@@ -1,18 +1,10 @@
 package config;
 
-import cc.carm.lib.configuration.demo.tests.ConfigurationTest;
-import cc.carm.lib.configuration.sql.SQLConfigProvider;
 import cc.carm.lib.easysql.EasySQL;
 import cc.carm.lib.easysql.api.SQLManager;
 import cc.carm.lib.easysql.beecp.BeeDataSourceConfig;
-import org.junit.Test;
 
 public class SQLConfigTest {
-
-    @Test
-    public void onTest() {
-//        test();
-    }
 
 
     public void test() {
@@ -22,14 +14,14 @@ public class SQLConfigTest {
         SQLManager manager = EasySQL.createManager(config);
         manager.setDebugMode(true);
 
-        SQLConfigProvider provider = EasyConfiguration.from(manager, "conf_test", "TESTING");
-
-        ConfigurationTest.testDemo(provider);
-        ConfigurationTest.testInner(provider);
-
-        ConfigurationTest.save(provider);
-
-        EasySQL.shutdownManager(manager);
+//        SQLConfigProvider provider = EasyConfiguration.from(manager, "conf_test", "TESTING");
+//
+//        ConfigurationTest.testDemo(provider);
+//        ConfigurationTest.testInner(provider);
+//
+//        ConfigurationTest.save(provider);
+//
+//        EasySQL.shutdownManager(manager);
     }
 
 }
