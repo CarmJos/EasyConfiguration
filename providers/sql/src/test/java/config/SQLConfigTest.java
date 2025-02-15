@@ -1,6 +1,5 @@
 package config;
 
-import cc.carm.lib.configuration.EasyConfiguration;
 import cc.carm.lib.configuration.demo.tests.ConfigurationTest;
 import cc.carm.lib.configuration.sql.SQLConfigProvider;
 import cc.carm.lib.easysql.EasySQL;
@@ -19,7 +18,7 @@ public class SQLConfigTest {
     public void test() {
         BeeDataSourceConfig config = new BeeDataSourceConfig();
         config.setDriverClassName("org.h2.Driver");
-        config.setJdbcUrl("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;MODE=MySQL;");
+        config.setJdbcUrl("jdbc:h2:file:target/test;DB_CLOSE_DELAY=-1;MODE=MySQL;");
         SQLManager manager = EasySQL.createManager(config);
         manager.setDebugMode(true);
 

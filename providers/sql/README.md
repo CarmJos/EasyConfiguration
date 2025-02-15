@@ -6,15 +6,16 @@ SQL database implementation, support for MySQL or MariaDB.
 ```mysql
 CREATE TABLE IF NOT EXISTS conf
 (
-    `namespace`    VARCHAR(32)      NOT NULL,                           # 命名空间 (代表其属于谁，类似于单个配置文件地址的概念)
-    `path`         VARCHAR(96)      NOT NULL,                           # 配置路径 (ConfigPath)
-    `type`         TINYINT UNSIGNED NOT NULL DEFAULT 0,                 # 数据类型 (Integer/Byte/List/Map/...)
-    `value`        MEDIUMTEXT,                                          # 配置项的值 (可能为JSON格式)
-    `usage`        TEXT,                                                # 配置项的用法，本质是行内注释
-    `descriptions` MEDIUMTEXT,                                          # 配置项的描述，本质是顶部注释
-    `version`      INT UNSIGNED     NOT NULL DEFAULT 0,                 # 配置项的版本
-    `create_time`  DATETIME         NOT NULL DEFAULT CURRENT_TIMESTAMP, # 创建时间
-    `update_time`  DATETIME         NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `namespace`      VARCHAR(32)      NOT NULL,                           # 命名空间 (代表其属于谁，类似于单个配置文件地址的概念)
+    `path`           VARCHAR(96)      NOT NULL,                           # 配置路径 (ConfigPath)
+    `type`           TINYINT UNSIGNED NOT NULL DEFAULT 0,                 # 数据类型 (Integer/Byte/List/Map/...)
+    `value`          MEDIUMTEXT,                                          # 配置项的值 (可能为JSON格式)
+    `inline_comment` TEXT,                                                # 配置项的用法，本质是行内注释
+    `header_comment` MEDIUMTEXT,                                          # 配置项的描述，本质是顶部注释
+    `footer_comment` MEDIUMTEXT,                                          # 配置项的描述，本质是顶部注释
+    `version`        INT UNSIGNED     NOT NULL DEFAULT 0,                 # 配置项的版本
+    `create_time`    DATETIME         NOT NULL DEFAULT CURRENT_TIMESTAMP, # 创建时间
+    `update_time`    DATETIME         NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`namespace`, `path`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
