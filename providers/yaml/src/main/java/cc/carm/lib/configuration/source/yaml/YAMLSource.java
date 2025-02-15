@@ -104,17 +104,10 @@ public class YAMLSource extends FileConfigSource<MemorySection, Map<?, ?>, YAMLS
     public String saveToString(ConfigureSection section) {
         MappingNode mappingNode = this.toNodeTree(section);
         StringWriter writer = new StringWriter();
-        if ((mappingNode.getBlockComments() == null || mappingNode.getBlockComments().isEmpty())
-                && (mappingNode.getEndComments() == null || mappingNode.getEndComments().isEmpty())
-                && (mappingNode.getInLineComments() == null || mappingNode.getInLineComments().isEmpty())
-                && mappingNode.getValue().isEmpty()) {
-            writer.write("");
-        } else {
-            if (mappingNode.getValue().isEmpty()) {
-                mappingNode.setFlowStyle(DumperOptions.FlowStyle.FLOW);
-            }
-            this.yaml.serialize(mappingNode, writer);
+        if (mappingNode.getValue().isEmpty()) {
+            mappingNode.setFlowStyle(DumperOptions.FlowStyle.FLOW);
         }
+        this.yaml.serialize(mappingNode, writer);
         return writer.toString();
     }
 
@@ -149,6 +142,7 @@ public class YAMLSource extends FileConfigSource<MemorySection, Map<?, ?>, YAMLS
             mappingNode = (MappingNode) rawNode;
         }
         if (mappingNode == null) return MemorySection.root(this);
+
 
         Map<String, Object> map = new LinkedHashMap<>();
         this.constructMap(mappingNode, map);
@@ -203,7 +197,7 @@ public class YAMLSource extends FileConfigSource<MemorySection, Map<?, ?>, YAMLS
         if (comment != null) return comment;
 
         String sep = String.valueOf(separator());
-        
+
         // If the comment is not found, try to get the comment from the parent section
         String[] keys = key.split(sep);
         if (keys.length == 1) return null;
