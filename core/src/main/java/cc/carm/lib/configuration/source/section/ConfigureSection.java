@@ -2,7 +2,10 @@ package cc.carm.lib.configuration.source.section;
 
 import cc.carm.lib.configuration.function.DataFunction;
 import cc.carm.lib.configuration.source.option.StandardOptions;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.*;
 import java.util.function.Function;
@@ -37,11 +40,15 @@ public interface ConfigureSection {
         return typeClass.isInstance(get(path));
     }
 
-    boolean isList(@NotNull String path);
+    default boolean isList(@NotNull String path) {
+        return isType(path, List.class);
+    }
 
     @Nullable List<?> getList(@NotNull String path);
 
-    boolean isSection(@NotNull String path);
+    default boolean isSection(@NotNull String path) {
+        return isType(path, ConfigureSection.class);
+    }
 
     @Nullable
     ConfigureSection getSection(@NotNull String path);

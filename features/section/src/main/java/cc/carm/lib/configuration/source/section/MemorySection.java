@@ -97,19 +97,9 @@ public class MemorySection implements ConfigureSection {
     }
 
     @Override
-    public boolean isList(@NotNull String path) {
-        return get(path) instanceof List<?>;
-    }
-
-    @Override
     public @Nullable List<?> getList(@NotNull String path) {
         Object val = get(path);
         return (val instanceof List<?>) ? (List<?>) val : null;
-    }
-
-    @Override
-    public boolean isSection(@NotNull String path) {
-        return get(path) instanceof ConfigureSection;
     }
 
     @Override

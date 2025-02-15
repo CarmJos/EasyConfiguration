@@ -6,7 +6,7 @@
     <parent>
         <groupId>cc.carm.lib</groupId>
         <artifactId>easyconfiguration-parent</artifactId>
-        <version>3.9.1</version>
+        <version>4.0.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <properties>
@@ -22,6 +22,24 @@
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
             <artifactId>easyconfiguration-core</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>easyconfiguration-feature-commentable</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>easyconfiguration-feature-file</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>easyconfiguration-feature-section</artifactId>
             <version>${project.parent.version}</version>
             <scope>compile</scope>
         </dependency>

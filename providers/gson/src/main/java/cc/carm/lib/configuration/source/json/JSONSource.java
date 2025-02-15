@@ -14,7 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class JSONSource extends FileConfigSource<MemorySection, Map<?, ?>, JSONSource> {
+public class JSONSource extends FileConfigSource<MemorySection, Map<String, Object>, JSONSource> {
 
     public static final @NotNull Gson DEFAULT_GSON = new GsonBuilder()
             .serializeNulls().disableHtmlEscaping().setPrettyPrinting()
@@ -53,7 +53,7 @@ public class JSONSource extends FileConfigSource<MemorySection, Map<?, ?>, JSONS
     }
 
     @Override
-    public @NotNull Map<?, ?> original() {
+    public @NotNull Map<String, Object> original() {
         return section().data();
     }
 

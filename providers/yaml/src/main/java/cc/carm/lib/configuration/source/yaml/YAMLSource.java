@@ -27,7 +27,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
 
-public class YAMLSource extends FileConfigSource<MemorySection, Map<?, ?>, YAMLSource> implements CommentedSection {
+public class YAMLSource extends FileConfigSource<MemorySection, Map<String, Object>, YAMLSource> implements CommentedSection {
 
     protected final @NotNull YamlConstructor yamlConstructor;
     protected final @NotNull YamlRepresenter yamlRepresenter;
@@ -60,7 +60,7 @@ public class YAMLSource extends FileConfigSource<MemorySection, Map<?, ?>, YAMLS
     }
 
     @Override
-    public @NotNull Map<?, ?> original() {
+    public @NotNull Map<String, Object> original() {
         return section().data();
     }
 
