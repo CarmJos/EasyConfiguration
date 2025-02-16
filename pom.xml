@@ -22,6 +22,7 @@
         <module>features/file</module>
         <module>features/commentable</module>
         <module>features/versioned</module>
+        <module>features/text</module>
 
         <module>providers/yaml</module>
         <module>providers/gson</module>
