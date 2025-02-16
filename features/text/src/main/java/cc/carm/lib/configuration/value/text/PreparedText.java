@@ -10,6 +10,12 @@ public class PreparedText<MSG, RECEIVER> extends TextDispatcher<MSG, RECEIVER, P
         super(texts, params);
     }
 
+    public PreparedText<MSG, RECEIVER> insert(@NotNull String key,
+                                              @NotNull ConfiguredText<MSG, RECEIVER> message,
+                                              @NotNull Object... values) {
+        return insert(key, receiver -> message.parse(receiver, values));
+    }
+
     @Override
     public PreparedText<MSG, RECEIVER> self() {
         return this;

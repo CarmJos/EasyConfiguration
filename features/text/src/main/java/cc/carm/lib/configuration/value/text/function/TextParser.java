@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,7 +46,7 @@ public abstract class TextParser<RECEIVER, SELF extends TextParser<RECEIVER, SEL
     /**
      * Used to store the insertion of the message
      */
-    protected @NotNull Map<String, List<String>> insertion = new HashMap<>();
+    protected @NotNull Map<String, Function<RECEIVER, List<String>>> insertion = new HashMap<>();
     protected boolean disableInsertion = false;
 
     protected TextParser(@NotNull TextContents texts, @NotNull String... params) {
@@ -147,12 +148,12 @@ public abstract class TextParser<RECEIVER, SELF extends TextParser<RECEIVER, SEL
     /**
      * Insert the specific contents by the id.
      *
-     * @param id    the id of the insertion text
-     * @param lines the lines to insert
+     * @param id            the id of the insertion text
+     * @param linesSupplier to supply the lines to insert
      * @return the current {@link TextParser} instance
      */
-    public SELF insert(@NotNull String id, @NotNull String... lines) {
-        this.insertion.put(id, Arrays.asList(lines));
+    public SELF insert(@NotNull String id, @NotNull Function<RECEIVER, List<String>> linesSupplier) {
+        this.insertion.put(id, linesSupplier);
         return self();
     }
 
@@ -163,9 +164,19 @@ public abstract class TextParser<RECEIVER, SELF extends TextParser<RECEIVER, SEL
      * @param lines the lines to insert
      * @return the current {@link TextParser} instance
      */
+    public SELF insert(@NotNull String id, @NotNull String... lines) {
+        return insert(id, Arrays.asList(lines));
+    }
+
+    /**
+     * Insert the specific contents by the id.
+     *
+     * @param id    the id of the insertion text
+     * @param lines the lines to insert
+     * @return the current {@link TextParser} instance
+     */
     public SELF insert(@NotNull String id, @NotNull List<String> lines) {
-        this.insertion.put(id, lines);
-        return self();
+        return insert(id, receiver -> lines);
     }
 
     /**
@@ -273,8 +284,10 @@ public abstract class TextParser<RECEIVER, SELF extends TextParser<RECEIVER, SEL
             }
 
             String id = matcher.group("id");
-            List<String> values = this.insertion.get(id);
-            if (values == null) continue;
+            List<String> values = Optional.ofNullable(this.insertion.get(id))
+                    .map(f -> f.apply(receiver))
+                    .orElse(null);
+            if (values == null || values.isEmpty()) continue;
 
             String prefix = matcher.group("prefix");
             String type = matcher.group("type");
