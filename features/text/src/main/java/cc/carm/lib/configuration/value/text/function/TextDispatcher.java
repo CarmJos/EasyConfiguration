@@ -13,10 +13,6 @@ public abstract class TextDispatcher<MSG, RECEIVER, SELF extends TextDispatcher<
     protected @NotNull BiConsumer<RECEIVER, List<MSG>> dispatcher = (receiver, msg) -> {
     };
 
-    protected TextDispatcher(@NotNull TextContents texts, @NotNull String... params) {
-        super(texts, params);
-    }
-
     /**
      * Set the dispatcher to send the message to the receiver
      *

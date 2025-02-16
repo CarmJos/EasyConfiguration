@@ -1,6 +1,5 @@
 package cc.carm.lib.configuration.value.text.function;
 
-import cc.carm.lib.configuration.value.text.data.TextContents;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,10 +9,6 @@ import java.util.function.BiFunction;
 public abstract class TextCompiler<MSG, RECEIVER, SELF extends TextCompiler<MSG, RECEIVER, SELF>> extends TextParser<RECEIVER, SELF> {
 
     protected BiFunction<RECEIVER, String, MSG> compiler = (receiver, value) -> null;
-
-    protected TextCompiler(@NotNull TextContents texts, @NotNull String... params) {
-        super(texts, params);
-    }
 
     /**
      * Set the text compiler.

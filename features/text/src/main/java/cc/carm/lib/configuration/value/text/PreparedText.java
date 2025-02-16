@@ -6,8 +6,21 @@ import org.jetbrains.annotations.NotNull;
 
 public class PreparedText<MSG, RECEIVER> extends TextDispatcher<MSG, RECEIVER, PreparedText<MSG, RECEIVER>> {
 
+    protected final @NotNull TextContents texts;
+
     public PreparedText(@NotNull TextContents texts, @NotNull String... params) {
-        super(texts, params);
+        this.params = params;
+        this.texts = texts;
+    }
+
+    @Override
+    public TextContents texts() {
+        return this.texts;
+    }
+
+    @Override
+    public PreparedText<MSG, RECEIVER> self() {
+        return this;
     }
 
     public PreparedText<MSG, RECEIVER> insert(@NotNull String key,
@@ -16,8 +29,4 @@ public class PreparedText<MSG, RECEIVER> extends TextDispatcher<MSG, RECEIVER, P
         return insert(key, receiver -> message.parse(receiver, values));
     }
 
-    @Override
-    public PreparedText<MSG, RECEIVER> self() {
-        return this;
-    }
 }
