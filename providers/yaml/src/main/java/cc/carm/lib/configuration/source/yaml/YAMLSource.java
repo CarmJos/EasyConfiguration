@@ -1,7 +1,7 @@
 package cc.carm.lib.configuration.source.yaml;
 
-import cc.carm.lib.configuration.commentable.CommentableMeta;
-import cc.carm.lib.configuration.option.CommentableOptions;
+import cc.carm.lib.configuration.commentable.Commentable;
+import cc.carm.lib.configuration.commentable.CommentableOptions;
 import cc.carm.lib.configuration.source.ConfigurationHolder;
 import cc.carm.lib.configuration.source.file.FileConfigSource;
 import cc.carm.lib.configuration.source.option.StandardOptions;
@@ -25,9 +25,10 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.regex.Pattern;
 
-public class YAMLSource extends FileConfigSource<MemorySection, Map<String, Object>, YAMLSource> implements CommentedSection {
+public class YAMLSource
+        extends FileConfigSource<MemorySection, Map<String, Object>, YAMLSource>
+        implements CommentedSection {
 
     protected final @NotNull YamlConstructor yamlConstructor;
     protected final @NotNull YamlRepresenter yamlRepresenter;
@@ -192,47 +193,18 @@ public class YAMLSource extends FileConfigSource<MemorySection, Map<String, Obje
     }
 
     @Override
-    public @Nullable String getInlineComment(@NotNull String path) {
-        String comment = getInlineComment(path, null);
-        if (comment != null) return comment;
-
-        String sep = String.valueOf(separator());
-
-        // If the comment is not found, try to get the comment from the parent section
-        String[] keys = path.split(Pattern.quote(sep));
-        if (keys.length == 1) return null;
-
-        // Try every possible parent key&child key combination
-        for (int i = 1; i < keys.length; i++) {
-            String parentKey = String.join(sep, Arrays.copyOfRange(keys, 0, i));
-            String childKey = String.join(sep, Arrays.copyOfRange(keys, i, keys.length));
-            comment = getInlineComment(parentKey, childKey);
-            if (comment != null) return comment;
-        }
-        return null;
-    }
-
-    public @Nullable String getInlineComment(@NotNull String path, @Nullable String sectionKey) {
-        Map<String, String> pathComment = holder().metadata(path).get(CommentableMeta.INLINE);
-        if (pathComment == null || pathComment.isEmpty()) return null;
-        if (sectionKey == null) return pathComment.get(null);
-        for (Map.Entry<String/*regex*/, String/*content*/> entry : pathComment.entrySet()) {
-            if (entry.getKey() == null) continue;
-            if (Objects.equals(entry.getKey(), sectionKey)) return entry.getValue();
-            Pattern pattern = Pattern.compile(entry.getKey().replace(".", "\\.").replace("*", "(.*)"));
-            if (pattern.matcher(sectionKey).matches()) return entry.getValue();
-        }
-        return null;
+    public @Nullable String getInlineComment(@NotNull String key) {
+        return Commentable.getInlineComment(holder(), key);
     }
 
     @Override
     public @Nullable List<String> getHeaderComments(@Nullable String key) {
-        return holder().metadata(key).get(CommentableMeta.HEADER);
+        return Commentable.getHeaderComments(holder(), key);
     }
 
     @Override
     public @Nullable List<String> getFooterComments(@Nullable String key) {
-        return holder().metadata(key).get(CommentableMeta.FOOTER);
+        return Commentable.getFooterComments(holder(), key);
     }
 
     public static class YamlRepresenter extends Representer {

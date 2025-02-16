@@ -1,5 +1,6 @@
 package cc.carm.lib.configuration.source.yaml;
 
+import cc.carm.lib.configuration.commentable.Commentable;
 import cc.carm.lib.configuration.commentable.CommentableMeta;
 import cc.carm.lib.configuration.source.ConfigurationHolder;
 import cc.carm.lib.configuration.source.file.FileConfigFactory;
@@ -125,7 +126,7 @@ public class YAMLConfigFactory extends FileConfigFactory<YAMLSource, Configurati
         File configFile = this.file;
         String sourcePath = this.resourcePath;
 
-        CommentableMeta.register(this.initializer); // Register commentable meta types
+        Commentable.registerMeta(this.initializer); // Register commentable meta types
 
         return new ConfigurationHolder<YAMLSource>(this.adapters, this.options, this.metadata, this.initializer) {
             final @NotNull YAMLSource source = new YAMLSource(this, configFile, sourcePath);

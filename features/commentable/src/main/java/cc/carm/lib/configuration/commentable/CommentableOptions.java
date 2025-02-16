@@ -1,4 +1,4 @@
-package cc.carm.lib.configuration.option;
+package cc.carm.lib.configuration.commentable;
 
 import cc.carm.lib.configuration.source.option.ConfigurationOption;
 
