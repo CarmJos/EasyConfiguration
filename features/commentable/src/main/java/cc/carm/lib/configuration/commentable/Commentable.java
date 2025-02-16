@@ -14,6 +14,10 @@ import java.util.regex.Pattern;
 
 public class Commentable {
 
+    private Commentable() {
+        throw new UnsupportedOperationException();
+    }
+
     public static void registerMeta(@NotNull ConfigurationInitializer initializer) {
         CommentableMeta.register(initializer);
     }
