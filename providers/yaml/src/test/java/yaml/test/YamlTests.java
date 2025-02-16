@@ -4,17 +4,19 @@ import cc.carm.lib.configuration.commentable.CommentableMeta;
 import cc.carm.lib.configuration.demo.tests.ConfigurationTest;
 import cc.carm.lib.configuration.source.ConfigurationHolder;
 import cc.carm.lib.configuration.source.yaml.YAMLConfigFactory;
+import cc.carm.lib.configuration.source.yaml.YAMLSource;
 import org.junit.Test;
 
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class YamlTests {
 
     @Test
     public void test() {
 
-        ConfigurationHolder<?> holder = YAMLConfigFactory.from("target/tests.yml")
+        ConfigurationHolder<YAMLSource> holder = YAMLConfigFactory.from("target/tests.yml")
                 .resourcePath("configs/sample.yml").build();
 
         ConfigurationTest.testDemo(holder);

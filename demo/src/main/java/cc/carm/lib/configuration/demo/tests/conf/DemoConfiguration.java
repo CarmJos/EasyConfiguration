@@ -46,8 +46,6 @@ public interface DemoConfiguration extends Configuration {
     @ConfigPath("registered_users") // 通过注解规定配置文件中的路径，若不进行注解则以变量名自动生成。
     @HeaderComments({"Section类型数据测试"}) // 通过注解给配置添加注释。
     @InlineComment("默认地注释会加到Section的首行末尾") // 通过注解给配置添加注释。
-    @InlineComment(value = "用户名(匹配注释)", regex = "name") // 通过注解给配置添加注释。
-    @InlineComment(value = "信息", regex = "info.*") // 通过注解给配置添加注释。
     ConfiguredList<UserRecord> ALLOWLISTS = ConfiguredList.builderOf(UserRecord.class).fromSection()
             .parse(UserRecord::deserialize).serialize(UserRecord::serialize)
             .defaults(UserRecord.CARM).build();
@@ -81,6 +79,7 @@ public interface DemoConfiguration extends Configuration {
                 .build();
 
         @HeaderComments({"内部类的内部类测试", "通过这种方式，您可以轻易实现多层次的配置文件结构"})
+        @FooterComments({"-------------"})
         public interface That extends Configuration {
 
             ConfiguredList<UUID> OPERATORS = ConfiguredList

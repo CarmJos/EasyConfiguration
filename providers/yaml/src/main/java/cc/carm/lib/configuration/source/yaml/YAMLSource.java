@@ -192,34 +192,34 @@ public class YAMLSource extends FileConfigSource<MemorySection, Map<String, Obje
     }
 
     @Override
-    public @Nullable String getInlineComment(@NotNull String key) {
-        String comment = getInlineComment(key, null);
+    public @Nullable String getInlineComment(@NotNull String path) {
+        String comment = getInlineComment(path, null);
         if (comment != null) return comment;
 
         String sep = String.valueOf(separator());
 
         // If the comment is not found, try to get the comment from the parent section
-        String[] keys = key.split(sep);
+        String[] keys = path.split(Pattern.quote(sep));
         if (keys.length == 1) return null;
 
         // Try every possible parent key&child key combination
         for (int i = 1; i < keys.length; i++) {
             String parentKey = String.join(sep, Arrays.copyOfRange(keys, 0, i));
             String childKey = String.join(sep, Arrays.copyOfRange(keys, i, keys.length));
-            comment = getInlineComment(childKey, parentKey);
+            comment = getInlineComment(parentKey, childKey);
             if (comment != null) return comment;
         }
         return null;
     }
 
-    public @Nullable String getInlineComment(@NotNull String key, @Nullable String sectionKey) {
-        Map<String, String> pathComment = holder().metadata(key).get(CommentableMeta.INLINE);
+    public @Nullable String getInlineComment(@NotNull String path, @Nullable String sectionKey) {
+        Map<String, String> pathComment = holder().metadata(path).get(CommentableMeta.INLINE);
         if (pathComment == null || pathComment.isEmpty()) return null;
         if (sectionKey == null) return pathComment.get(null);
-
-        for (Map.Entry<String, String> entry : pathComment.entrySet()) {
-            if (entry.getKey().equals(sectionKey)) return entry.getValue();
-            Pattern pattern = Pattern.compile(entry.getKey().replace(".", "\\.").replace("*", ".*"));
+        for (Map.Entry<String/*regex*/, String/*content*/> entry : pathComment.entrySet()) {
+            if (entry.getKey() == null) continue;
+            if (Objects.equals(entry.getKey(), sectionKey)) return entry.getValue();
+            Pattern pattern = Pattern.compile(entry.getKey().replace(".", "\\.").replace("*", "(.*)"));
             if (pattern.matcher(sectionKey).matches()) return entry.getValue();
         }
         return null;

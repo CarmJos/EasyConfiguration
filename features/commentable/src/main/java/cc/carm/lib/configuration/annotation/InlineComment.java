@@ -33,7 +33,7 @@ public @interface InlineComment {
      * If the regex is not empty, the comment will be added to
      * all sub paths if the regex matches the value.
      * If the regex is empty, the comment will be added to the current path.
-     * <p> e.g. for section, set <b>{"^foo", "*", "bar"}</b> will be set like
+     * <p> e.g. for section, set <b>"foo.*.bar"</b> will be set like
      * <blockquote><pre>
      *   section:
      *     foo:
