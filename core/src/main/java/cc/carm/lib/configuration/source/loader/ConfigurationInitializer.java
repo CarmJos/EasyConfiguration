@@ -3,6 +3,7 @@ package cc.carm.lib.configuration.source.loader;
 import cc.carm.lib.configuration.Configuration;
 import cc.carm.lib.configuration.source.ConfigurationHolder;
 import cc.carm.lib.configuration.source.meta.ConfigurationMetadata;
+import cc.carm.lib.configuration.source.meta.StandardMeta;
 import cc.carm.lib.configuration.source.option.StandardOptions;
 import cc.carm.lib.configuration.value.ConfigValue;
 import org.jetbrains.annotations.NotNull;
@@ -168,6 +169,7 @@ public class ConfigurationInitializer {
                 String path = getFieldPath(holder, parent, field);
                 if (path == null) return;
                 value.initialize(holder, path);
+                holder.metadata(path).set(StandardMeta.UNIT, true); // Mark the minimal config value unit.
                 try {
                     this.fieldInitializer.whenInitialize(holder, path, field);
                 } catch (Exception e) {
