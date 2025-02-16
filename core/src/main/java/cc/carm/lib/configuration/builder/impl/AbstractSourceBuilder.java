@@ -19,9 +19,9 @@ public abstract class AbstractSourceBuilder<
     protected @NotNull ValueHandler<PARAM, SOURCE> valueSerializer;
 
     protected AbstractSourceBuilder(@NotNull ValueType<V> type,
-                                 @NotNull ValueType<SOURCE> sourceType, @NotNull ValueType<PARAM> paramType,
-                                 @NotNull ValueHandler<SOURCE, PARAM> parser,
-                                 @NotNull ValueHandler<PARAM, SOURCE> serializer) {
+                                    @NotNull ValueType<SOURCE> sourceType, @NotNull ValueType<PARAM> paramType,
+                                    @NotNull ValueHandler<SOURCE, PARAM> parser,
+                                    @NotNull ValueHandler<PARAM, SOURCE> serializer) {
         super(type);
         this.sourceType = sourceType;
         this.paramType = paramType;
@@ -29,7 +29,7 @@ public abstract class AbstractSourceBuilder<
         this.valueSerializer = serializer;
     }
 
-    public @NotNull SELF parse(DataFunction<SOURCE, PARAM> parser) {
+    public @NotNull SELF parse(@NotNull DataFunction<SOURCE, PARAM> parser) {
         return parse((p, source) -> parser.handle(source));
     }
 

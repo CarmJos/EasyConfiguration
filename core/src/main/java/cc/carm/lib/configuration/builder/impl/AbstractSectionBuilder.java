@@ -3,8 +3,8 @@ package cc.carm.lib.configuration.builder.impl;
 import cc.carm.lib.configuration.adapter.ValueAdapter;
 import cc.carm.lib.configuration.adapter.ValueType;
 import cc.carm.lib.configuration.builder.CommonConfigBuilder;
-import cc.carm.lib.configuration.function.DataConsumer;
 import cc.carm.lib.configuration.function.DataFunction;
+import cc.carm.lib.configuration.function.ValueConsumer;
 import cc.carm.lib.configuration.function.ValueHandler;
 import cc.carm.lib.configuration.source.section.ConfigureSection;
 import cc.carm.lib.configuration.value.ConfigValue;
@@ -34,28 +34,30 @@ public abstract class AbstractSectionBuilder<
         this.serializer = serializer;
     }
 
-    public @NotNull SELF parse(DataFunction<ConfigureSection, PARAM> valueParser) {
+    public @NotNull SELF parse(@NotNull DataFunction<ConfigureSection, PARAM> valueParser) {
         return parse((p, section) -> valueParser.handle(section));
     }
 
-    public @NotNull SELF parse(ValueHandler<ConfigureSection, PARAM> valueParser) {
+    public @NotNull SELF parse(@NotNull ValueHandler<ConfigureSection, PARAM> valueParser) {
         this.parser = valueParser;
         return self();
     }
 
-    public @NotNull SELF serialize(DataFunction<PARAM, ? extends Map<String, Object>> serializer) {
-        return serialize((p, value) -> serializer.handle(value));
-    }
-
-    public @NotNull SELF serialize(ValueHandler<PARAM, ? extends Map<String, Object>> serializer) {
+    public @NotNull SELF serialize(@NotNull ValueHandler<PARAM, ? extends Map<String, Object>> serializer) {
         this.serializer = serializer;
         return self();
     }
 
-    public @NotNull SELF serialize(DataConsumer<Map<String, Object>> serializer) {
+    public @NotNull SELF serialize(@NotNull DataFunction<PARAM, ? extends Map<String, Object>> serializer) {
         return serialize((p, value) -> {
+            return serializer.handle(value);
+        });
+    }
+
+    public @NotNull SELF serialize(@NotNull ValueConsumer<Map<String, Object>, PARAM> serializer) {
+        return serialize((h, value) -> {
             Map<String, Object> map = new LinkedHashMap<>();
-            serializer.accept(map);
+            serializer.accept(h, map, value);
             return map;
         });
     }
