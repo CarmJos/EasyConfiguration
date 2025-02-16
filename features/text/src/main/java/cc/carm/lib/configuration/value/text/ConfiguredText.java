@@ -9,6 +9,7 @@ import cc.carm.lib.configuration.value.standard.ConfiguredValue;
 import cc.carm.lib.configuration.value.text.data.TextContents;
 import cc.carm.lib.configuration.value.text.function.TextDispatcher;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -62,7 +63,7 @@ public class ConfiguredText<MSG, RECEIVER> extends ConfiguredValue<TextContents>
      * @param values   The values to replace the {@link #params}.
      * @return The parsed message.
      */
-    public List<String> parse(@NotNull RECEIVER receiver, @NotNull Object... values) {
+    public List<String> parse(@Nullable RECEIVER receiver, @NotNull Object... values) {
         return prepare(values).parse(receiver);
     }
 
@@ -73,7 +74,7 @@ public class ConfiguredText<MSG, RECEIVER> extends ConfiguredValue<TextContents>
      * @param values   The values to replace the {@link #params}.
      * @return The parsed message.
      */
-    public String parseLine(@NotNull RECEIVER receiver, @NotNull Object... values) {
+    public String parseLine(@Nullable RECEIVER receiver, @NotNull Object... values) {
         return prepare(values).parseLine(receiver);
     }
 
@@ -84,7 +85,7 @@ public class ConfiguredText<MSG, RECEIVER> extends ConfiguredValue<TextContents>
      * @param values   The values to replace the {@link #params}.
      * @return The compiled message.
      */
-    public List<MSG> compile(@NotNull RECEIVER receiver, @NotNull Object... values) {
+    public List<MSG> compile(@Nullable RECEIVER receiver, @NotNull Object... values) {
         return prepare(values).compile(receiver);
     }
 
@@ -95,7 +96,7 @@ public class ConfiguredText<MSG, RECEIVER> extends ConfiguredValue<TextContents>
      * @param values   The values to replace the {@link #params}.
      * @return The compiled message.
      */
-    public MSG compileLine(@NotNull RECEIVER receiver, @NotNull Object... values) {
+    public MSG compileLine(@Nullable RECEIVER receiver, @NotNull Object... values) {
         return prepare(values).compileLine(receiver);
     }
 
