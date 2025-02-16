@@ -9,10 +9,10 @@ public interface ValueConsumer<U, T> {
 
     void accept(@NotNull ConfigurationHolder<?> holder, @NotNull U unit, @NotNull T data) throws Exception;
 
-    default ValueConsumer<U, T> andThen(ValueConsumer<? super T, ? super U> after) {
+    default ValueConsumer<U, T> andThen(ValueConsumer<? super U, ? super T> after) {
         return (holder, unit, data) -> {
             accept(holder, unit, data);
-            after.accept(holder, data, unit);
+            after.accept(holder, unit, data);
         };
     }
 
