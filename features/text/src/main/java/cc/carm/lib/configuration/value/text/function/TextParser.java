@@ -113,7 +113,7 @@ public abstract class TextParser<RECEIVER, SELF extends TextParser<RECEIVER, SEL
     /**
      * Set the placeholders for the text.
      *
-     * @param values the values of the placeholders
+     * @param values The values to replace the {@link #params(String...)}.
      * @return the current {@link TextParser} instance
      */
     public SELF placeholders(@Nullable Object... values) {
@@ -197,6 +197,18 @@ public abstract class TextParser<RECEIVER, SELF extends TextParser<RECEIVER, SEL
      * Parse the texts for the receiver.
      *
      * @param receiver the receiver
+     * @return the parsed line
+     */
+    public List<String> parse(@Nullable RECEIVER receiver) {
+        List<String> result = new ArrayList<>();
+        handleTexts(receiver, result::add);
+        return result;
+    }
+
+    /**
+     * Parse the texts for the receiver.
+     *
+     * @param receiver the receiver
      * @param compiler the compiler
      * @param <V>      the type of the message
      * @return the parsed line
@@ -211,17 +223,26 @@ public abstract class TextParser<RECEIVER, SELF extends TextParser<RECEIVER, SEL
      * Parse the texts as a single line for the receiver.
      *
      * @param receiver the receiver
-     * @param compiler the compiler
-     * @param <V>      the type of the message
      * @return the parsed line
      */
-    public <V> @Nullable V parseLine(@Nullable RECEIVER receiver, @NotNull BiFunction<RECEIVER, String, V> compiler) {
+    public @Nullable String parseLine(@Nullable RECEIVER receiver) {
         if (this.texts.isEmpty()) return null;
         StringBuilder builder = new StringBuilder();
         handleTexts(receiver, s -> builder.append(s).append(this.lineSeparator));
         // Remove the last line separator, if it exists
         if (builder.length() > 0) builder.delete(builder.length() - this.lineSeparator.length(), builder.length());
-        return compiler.apply(receiver, builder.toString());
+        return builder.toString();
+    }
+
+    /**
+     * Parse the texts as a single line for the receiver.
+     *
+     * @param receiver the receiver
+     * @param <V>      the type of the message
+     * @return the parsed line
+     */
+    public <V> @Nullable V parseLine(@Nullable RECEIVER receiver, @NotNull BiFunction<RECEIVER, String, V> compiler) {
+        return Optional.ofNullable(parseLine(receiver)).map(s -> compiler.apply(receiver, s)).orElse(null);
     }
 
 
@@ -235,7 +256,6 @@ public abstract class TextParser<RECEIVER, SELF extends TextParser<RECEIVER, SEL
     protected @Nullable String parseText(@Nullable RECEIVER receiver, @NotNull String text) {
         return this.parser.apply(receiver, setPlaceholders(text, this.placeholders));
     }
-
 
     public void handleTexts(@Nullable RECEIVER receiver, @NotNull Consumer<String> lineConsumer) {
         if (this.texts.isEmpty()) return; // Nothing to parse

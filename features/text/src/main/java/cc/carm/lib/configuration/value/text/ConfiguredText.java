@@ -56,10 +56,32 @@ public class ConfiguredText<MSG, RECEIVER> extends ConfiguredValue<TextContents>
     }
 
     /**
+     * Parse the message for the receiver.
+     *
+     * @param receiver The receiver of the message.
+     * @param values   The values to replace the {@link #params}.
+     * @return The parsed message.
+     */
+    public List<String> parse(@NotNull RECEIVER receiver, @NotNull Object... values) {
+        return prepare(values).parse(receiver);
+    }
+
+    /**
+     * Parse the message for the receiver and send it.
+     *
+     * @param receiver The receiver of the message.
+     * @param values   The values to replace the {@link #params}.
+     * @return The parsed message.
+     */
+    public String parseLine(@NotNull RECEIVER receiver, @NotNull Object... values) {
+        return prepare(values).parseLine(receiver);
+    }
+
+    /**
      * Compile the message for the receiver.
      *
      * @param receiver The receiver of the message.
-     * @param values   The values to replace the placeholders.
+     * @param values   The values to replace the {@link #params}.
      * @return The compiled message.
      */
     public List<MSG> compile(@NotNull RECEIVER receiver, @NotNull Object... values) {
@@ -70,7 +92,7 @@ public class ConfiguredText<MSG, RECEIVER> extends ConfiguredValue<TextContents>
      * Compile the message for the receiver and send it.
      *
      * @param receiver The receiver of the message.
-     * @param values   The values to replace the placeholders.
+     * @param values   The values to replace the {@link #params}.
      * @return The compiled message.
      */
     public MSG compileLine(@NotNull RECEIVER receiver, @NotNull Object... values) {
@@ -81,7 +103,7 @@ public class ConfiguredText<MSG, RECEIVER> extends ConfiguredValue<TextContents>
      * Send the message to the receiver.
      *
      * @param receiver The receiver of the message.
-     * @param values   The values to replace the placeholders.
+     * @param values   The values to replace the {@link #params}.
      */
     public void sendTo(@NotNull RECEIVER receiver, @NotNull Object... values) {
         prepare(values).to(receiver);
@@ -91,7 +113,7 @@ public class ConfiguredText<MSG, RECEIVER> extends ConfiguredValue<TextContents>
      * Send the message to the multiple receivers.
      *
      * @param receivers The receivers of the message.
-     * @param values    The values to replace the placeholders.
+     * @param values    The values to replace the {@link #params}.
      */
     public void sendToAll(@NotNull Iterable<? extends RECEIVER> receivers, @NotNull Object... values) {
         prepare(values).to(receivers);
