@@ -2,6 +2,7 @@ package sample;
 
 import cc.carm.lib.configuration.Configuration;
 import cc.carm.lib.configuration.annotation.ConfigPath;
+import cc.carm.lib.configuration.annotation.FooterComments;
 import cc.carm.lib.configuration.annotation.HeaderComments;
 import cc.carm.lib.configuration.annotation.InlineComment;
 import cc.carm.lib.configuration.value.standard.ConfiguredList;
@@ -19,6 +20,8 @@ public interface SampleConfig extends Configuration {
     @HeaderComments("Server configurations") // Header comment
     ConfiguredValue<Integer> PORT = ConfiguredValue.of(Integer.class);
 
+    @HeaderComments({"[ UUID >-----------------------------------", "A lot of UUIDs"})
+    @FooterComments("[ UUID >-----------------------------------")
     ConfiguredList<UUID> UUIDS = ConfiguredList.builderOf(UUID.class).fromString()
             .parse(UUID::fromString).serialize(UUID::toString)
             .defaults(

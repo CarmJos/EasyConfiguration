@@ -43,42 +43,57 @@ README LANGUAGES [ [English](README.md) | [**中文**](README_CN.md)  ]
 您可以 [点击这里](demo/src/main/java/cc/carm/lib/configuration/demo) 直接查看现有的代码演示，更多复杂情况演示详见 [开发介绍](.doc/README.md) 。
 
 
+
 ```java
-@HeaderComment("Configurations for sample")
-interface SampleConfig extends Configuration {
+@ConfigPath(root = true)
+@HeaderComments("Configurations for sample")
+public interface SampleConfig extends Configuration {
 
-    @InlineComment("Enabled?") // 行内注释
-    ConfiguredValue<Boolean> ENABLED = ConfiguredValue.of(true);
+  @InlineComment("Enabled?") // 行后注释
+  ConfiguredValue<Boolean> ENABLED = ConfiguredValue.of(true);
 
-    ConfiguredList<UUID> UUIDS = ConfiguredList.builderOf(UUID.class).fromString()
-            .parseValue(UUID::fromString).serializeValue(UUID::toString)
-            .defaults(
-                    UUID.fromString("00000000-0000-0000-0000-000000000000"),
-                    UUID.fromString("00000000-0000-0000-0000-000000000001")
-            ).build();
+  @HeaderComments("Server configurations") // 头部注释
+  ConfiguredValue<Integer> PORT = ConfiguredValue.of(Integer.class);
 
-    interface INFO extends Configuration {
-        
-        @HeaderComment("Configure your name!") // 头部注释
-        ConfiguredValue<String> NAME = ConfiguredValue.of("Joker");
+  @HeaderComments({"[ UUID >-----------------------------------", "A lot of UUIDs"})
+  @FooterComments("[ UUID >-----------------------------------")
+  ConfiguredList<UUID> UUIDS = ConfiguredList.builderOf(UUID.class).fromString()
+          .parse(UUID::fromString).serialize(UUID::toString)
+          .defaults(
+                  UUID.fromString("00000000-0000-0000-0000-000000000000"),
+                  UUID.fromString("00000000-0000-0000-0000-000000000001")
+          ).build();
+  
+  interface INFO extends Configuration {
 
-        @ConfigPath("year") // 自定义配置路径，若不定义，则按照默认规则生成
-        ConfiguredValue<Integer> AGE = ConfiguredValue.of(24);
-    
-    }
+    @HeaderComments("Configure your name!") // Header comment
+    ConfiguredValue<String> NAME = ConfiguredValue.of("Joker");
+
+    @ConfigPath("how-old-are-you") // 自定义路径
+    ConfiguredValue<Integer> AGE = ConfiguredValue.of(24);
+
+  }
+
 }
+
 ```
 
 ```java
 public class Sample {
     public static void main(String[] args) {
-        // 1. 生成一个 “Provider” 用于给配置类提供源配置的文件。
-        ConfigurationProvider<?> provider = EasyConfiguration.from("config.yml");
-        // 2. 通过 “Provider” 初始化配置类或配置实例。
-        provider.initialize(SampleConfig.class);
+        // 1. 生成一个 “holder” 用于给配置类提供源配置的文件。
+        ConfigurationHolder<?> holder = YAMLConfigFactory.from("target/config.yml")
+                .resourcePath("configs/sample.yml")
+                .indent(4) // Optional: Set the indentation of the configuration file.
+                .build();
+
+        // 2. 通过 “holder” 初始化配置类或配置实例。
+        holder.initialize(SampleConfig.class);
         // 3. 现在可以享受快捷方便的配置文件使用方式了~
+        System.out.println("Enabled? -> " + SampleConfig.ENABLED.resolve());
         SampleConfig.ENABLED.set(false);
-        System.out.println("Your name is " + SampleConfig.INFO.NAME.getNotNull() + " !");
+        System.out.println("And now? -> " + SampleConfig.ENABLED.resolve());
+        // p.s. 在本示例里的更改未保存，因此启用值在下次运行中仍将为 true。
     }
 }
 ```
@@ -86,16 +101,22 @@ public class Sample {
 ```yaml
 # Configurations for sample
 
-enabled: true # Enabled?
+enabled: true #Enabled?
 
+# Server configurations
+port:
+
+# [ UUID >-----------------------------------
+# A lot of UUIDs
 uuids:
   - 00000000-0000-0000-0000-000000000000
   - 00000000-0000-0000-0000-000000000001
+# [ UUID >-----------------------------------
 
 info:
   # Configure your name!
   name: Joker
-  year: 24
+  how-old-are-you: 24
 ```
 
 ### 依赖方式
@@ -164,7 +185,7 @@ info:
         <!--需要注意的是，JSON不支持文件注释。-->
         <dependency>
             <groupId>cc.carm.lib</groupId>
-            <artifactId>easyconfiguration-json</artifactId>
+            <artifactId>easyconfiguration-gson</artifactId>
             <version>[LATEST RELEASE]</version>
             <scope>compile</scope>
         </dependency>
@@ -225,7 +246,7 @@ dependencies {
 
      //基于JSON文件的实现版本，可用于全部Java环境。
     //需要注意的是，JSON不支持文件注释。
-    api "cc.carm.lib:easyconfiguration-json:[LATEST RELEASE]"
+    api "cc.carm.lib:easyconfiguration-gson:[LATEST RELEASE]"
     
     api "cc.carm.lib:easyconfiguration-hocon:[LATEST RELEASE]"
     

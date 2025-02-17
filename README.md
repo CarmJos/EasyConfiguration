@@ -49,41 +49,58 @@ Check out all code demonstrations [HERE](demo/src/main/java/cc/carm/lib/configur
 For more examples, see the [Development Guide](.doc/README.md).
 
 ```java
-@HeaderComment("Configurations for sample")
-interface SampleConfig extends Configuration {
+@ConfigPath(root = true)
+@HeaderComments("Configurations for sample")
+public interface SampleConfig extends Configuration {
 
-    @InlineComment("Enabled?") // Inline comment
-    ConfiguredValue<Boolean> ENABLED = ConfiguredValue.of(true);
+  @InlineComment("Enabled?") // Inline comment
+  ConfiguredValue<Boolean> ENABLED = ConfiguredValue.of(true);
 
-    ConfiguredList<UUID> UUIDS = ConfiguredList.builderOf(UUID.class).fromString()
-            .parseValue(UUID::fromString).serializeValue(UUID::toString)
-            .defaults(
-                    UUID.fromString("00000000-0000-0000-0000-000000000000"),
-                    UUID.fromString("00000000-0000-0000-0000-000000000001")
-            ).build();
+  @HeaderComments("Server configurations") // Header comment
+  ConfiguredValue<Integer> PORT = ConfiguredValue.of(Integer.class);
 
-    interface INFO extends Configuration {
-        
-        @HeaderComment("Configure your name!") // Header comment
-        ConfiguredValue<String> NAME = ConfiguredValue.of("Joker");
+  @HeaderComments({"[ UUID >-----------------------------------", "A lot of UUIDs"})
+  @FooterComments("[ UUID >-----------------------------------")
+  ConfiguredList<UUID> UUIDS = ConfiguredList.builderOf(UUID.class).fromString()
+          .parse(UUID::fromString).serialize(UUID::toString)
+          .defaults(
+                  UUID.fromString("00000000-0000-0000-0000-000000000000"),
+                  UUID.fromString("00000000-0000-0000-0000-000000000001")
+          ).build();
 
-        @ConfigPath("year") // Custom path
-        ConfiguredValue<Integer> AGE = ConfiguredValue.of(24);
-    
-    }
+  @ConfigPath("info") // Custom path
+  interface INFO extends Configuration {
+
+    @HeaderComments("Configure your name!") // Header comment
+    ConfiguredValue<String> NAME = ConfiguredValue.of("Joker");
+
+    @ConfigPath("how-old-are-you") // Custom path
+    ConfiguredValue<Integer> AGE = ConfiguredValue.of(24);
+
+  }
+
 }
+
 ```
 
 ```java
 public class Sample {
   public static void main(String[] args) {
     // 1. Make a configuration provider from a file.
-    ConfigurationProvider<?> provider = EasyConfiguration.from("config.yml");
+    ConfigurationHolder<?> holder = YAMLConfigFactory.from("target/config.yml")
+            .resourcePath("configs/sample.yml")
+            .indent(4) // Optional: Set the indentation of the configuration file.
+            .build();
+
     // 2. Initialize the configuration classes or instances.
-    provider.initialize(SampleConfig.class);
+    holder.initialize(SampleConfig.class);
     // 3. Enjoy using the configuration!
+    System.out.println("Enabled? -> " + SampleConfig.ENABLED.resolve());
     SampleConfig.ENABLED.set(false);
-    System.out.println("Your name is " + SampleConfig.INFO.NAME.getNotNull() + " !");
+    System.out.println("And now? -> " + SampleConfig.ENABLED.resolve());
+    // p.s. Changes not save so enable value will still be true in the next run.
+
+    System.out.println("Your name is " + SampleConfig.INFO.NAME.resolve() + " (age=" + SampleConfig.INFO.AGE.resolve() + ")!");
   }
 }
 
@@ -92,16 +109,22 @@ public class Sample {
 ```yaml
 # Configurations for sample
 
-enabled: true # Enabled?
+enabled: true #Enabled?
 
+# Server configurations
+port:
+
+# [ UUID >-----------------------------------
+# A lot of UUIDs
 uuids:
   - 00000000-0000-0000-0000-000000000000
   - 00000000-0000-0000-0000-000000000001
+# [ UUID >-----------------------------------
 
 info:
   # Configure your name!
   name: Joker
-  year: 24
+  how-old-are-you: 24
 ```
 
 ### Dependencies
@@ -159,10 +182,10 @@ info:
             <scope>compile</scope>
         </dependency>
 
-        <!-- JSON file-based implementation, compatible with all Java environments. Note: JSON does not support file comments. -->
+        <!-- JSON file-based implementation, compatible with all Java environments. -->
         <dependency>
             <groupId>cc.carm.lib</groupId>
-            <artifactId>easyconfiguration-json</artifactId>
+            <artifactId>easyconfiguration-gson</artifactId>
             <version>[LATEST RELEASE]</version>
             <scope>compile</scope>
         </dependency>
@@ -205,8 +228,8 @@ dependencies {
     // YAML file-based implementation, compatible with all Java environments.
     api "cc.carm.lib:easyconfiguration-yaml:[LATEST RELEASE]"
 
-    // JSON file-based implementation, compatible with all Java environments. Note: JSON does not support file comments.
-    api "cc.carm.lib:easyconfiguration-json:[LATEST RELEASE]"
+    // JSON file-based implementation, compatible with all Java environments.
+    api "cc.carm.lib:easyconfiguration-gson:[LATEST RELEASE]"
 
 }
 ```
@@ -220,7 +243,8 @@ dependencies {
 EasyConfiguration for MineCraft!
 Easily manage configurations on MineCraft-related server platforms.
 
-Currently supports BungeeCord, Bukkit (Spigot) servers, with more platforms to be supported soon.
+Currently, it supports BungeeCord, Velocity, Bukkit (Spigot) servers, 
+with more platforms to be supported soon.
 
 ## Support and Donation
 
