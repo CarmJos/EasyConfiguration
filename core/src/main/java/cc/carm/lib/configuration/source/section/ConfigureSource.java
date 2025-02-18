@@ -110,6 +110,11 @@ public abstract class ConfigureSource<
     }
 
     @Override
+    public void remove(@NotNull String path) {
+        section().remove(path);
+    }
+
+    @Override
     public @Nullable List<?> getList(@NotNull String path) {
         return section().getList(path);
     }
