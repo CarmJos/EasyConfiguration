@@ -7,6 +7,7 @@ import cc.carm.lib.configuration.source.loader.ConfigurationInitializer;
 import cc.carm.lib.configuration.source.meta.ConfigurationMetaHolder;
 import cc.carm.lib.configuration.source.meta.ConfigurationMetadata;
 import cc.carm.lib.configuration.source.option.ConfigurationOptionHolder;
+import cc.carm.lib.configuration.source.option.StandardOptions;
 import cc.carm.lib.configuration.source.section.ConfigureSource;
 import cc.carm.lib.configuration.value.ValueManifest;
 import org.jetbrains.annotations.Contract;

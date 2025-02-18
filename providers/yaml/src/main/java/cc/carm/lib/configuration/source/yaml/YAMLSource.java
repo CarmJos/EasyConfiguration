@@ -4,7 +4,6 @@ import cc.carm.lib.configuration.commentable.Commentable;
 import cc.carm.lib.configuration.commentable.CommentableOptions;
 import cc.carm.lib.configuration.source.ConfigurationHolder;
 import cc.carm.lib.configuration.source.file.FileConfigSource;
-import cc.carm.lib.configuration.source.option.StandardOptions;
 import cc.carm.lib.configuration.source.section.ConfigureSection;
 import cc.carm.lib.configuration.source.section.MemorySection;
 import cc.carm.lib.yamlcommentupdater.CommentedSection;
@@ -56,7 +55,7 @@ public class YAMLSource
     }
 
     @Override
-    protected YAMLSource self() {
+    protected @NotNull YAMLSource self() {
         return null;
     }
 
@@ -68,11 +67,6 @@ public class YAMLSource
     @Override
     public @NotNull MemorySection section() {
         return Objects.requireNonNull(this.rootSection, "Root section is not initialized.");
-    }
-
-    @Override
-    public char separator() {
-        return holder().options().get(StandardOptions.PATH_SEPARATOR);
     }
 
     public @NotNull LoaderOptions loaderOptions() {
@@ -115,7 +109,7 @@ public class YAMLSource
     @Override
     public void save() throws Exception {
         CommentedYAMLWriter writer = new CommentedYAMLWriter(
-                String.valueOf(this.separator()),
+                String.valueOf(this.pathSeparator()),
                 dumperOptions().getIndent(),
                 holder.options().get(CommentableOptions.COMMENT_EMPTY_VALUE)
         );

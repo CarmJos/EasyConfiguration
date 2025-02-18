@@ -53,7 +53,6 @@ public class MemorySection implements ConfigureSection {
         return createChild(new LinkedHashMap<>());
     }
 
-    @Override
     public @NotNull ConfigureSource<? extends MemorySection, ?, ?> source() {
         return this.source;
     }
@@ -64,6 +63,10 @@ public class MemorySection implements ConfigureSection {
 
     public @Nullable MemorySection parent() {
         return this.parent;
+    }
+
+    public char pathSeparator() {
+        return source.pathSeparator();
     }
 
     @Override
@@ -109,7 +112,7 @@ public class MemorySection implements ConfigureSection {
     }
 
     private MemorySection getSectionFor(String path) {
-        int index = path.indexOf(separator());
+        int index = path.indexOf(pathSeparator());
         if (index == -1) return this;
 
         String root = path.substring(0, index);
@@ -123,7 +126,7 @@ public class MemorySection implements ConfigureSection {
     }
 
     private String childPath(String path) {
-        int index = path.indexOf(separator());
+        int index = path.indexOf(pathSeparator());
         return (index == -1) ? path : path.substring(index + 1);
     }
 
@@ -138,7 +141,7 @@ public class MemorySection implements ConfigureSection {
                                                     @Nullable String parent, boolean deep) {
         Map<String, Object> output = new LinkedHashMap<>();
         for (Map.Entry<String, Object> entry : section.data().entrySet()) {
-            String path = (parent == null ? "" : parent + separator()) + entry.getKey();
+            String path = (parent == null ? "" : parent + pathSeparator()) + entry.getKey();
             output.remove(path);
             output.put(path, entry.getValue());
             if (deep && entry.getValue() instanceof MemorySection) {

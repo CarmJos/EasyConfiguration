@@ -1,6 +1,9 @@
 package cc.carm.lib.configuration.source.section;
 
 import cc.carm.lib.configuration.source.ConfigurationHolder;
+import cc.carm.lib.configuration.source.option.StandardOptions;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,27 +27,45 @@ public abstract class ConfigureSource<
         return holder;
     }
 
-
     public void reload() throws Exception {
         onReload(); // 调用重写的Reload方法
         this.lastUpdateMillis = System.currentTimeMillis();
     }
 
-    protected abstract SELF self();
+    @Contract(pure = true)
+    @ApiStatus.Internal
+    protected abstract @NotNull SELF self();
 
     /**
-     * @return Original configuration object
+     * @return The original configuration object.
      */
+    @Contract(pure = true)
     public abstract @NotNull ORIGINAL original();
 
     /**
-     * @return The root {@link ConfigureSection}
+     * @return The root {@link ConfigureSection}, which represents the entire configuration.
      */
     public abstract @NotNull SECTION section();
 
+    /**
+     * Save the whole configuration.
+     *
+     * @throws Exception If any error occurs while saving.
+     */
     public abstract void save() throws Exception;
 
+    /**
+     * Reload the configuration.
+     * <br>This used for implementation, for external usage, use {@link #reload()}
+     *
+     * @throws Exception If any error occurs while reloading.
+     */
+    @ApiStatus.OverrideOnly
     protected abstract void onReload() throws Exception;
+
+    public char pathSeparator() {
+        return holder().options().get(StandardOptions.PATH_SEPARATOR);
+    }
 
     public long getLastUpdateMillis() {
         return this.lastUpdateMillis;
@@ -54,14 +75,15 @@ public abstract class ConfigureSource<
         return getLastUpdateMillis() > parsedTime;
     }
 
+    /**
+     * Source also represents the root section, so it has no parent
+     *
+     * @return null
+     */
     @Override
+    @Contract(pure = true, value = "->null")
     public @Nullable ConfigureSection parent() {
-        return null; // Source also represents the root section, so it has no parent
-    }
-
-    @Override
-    public @NotNull ConfigureSource<?, ?, ?> source() {
-        return self();
+        return null;
     }
 
     @Override
@@ -80,18 +102,8 @@ public abstract class ConfigureSource<
     }
 
     @Override
-    public boolean isList(@NotNull String path) {
-        return section().isList(path);
-    }
-
-    @Override
     public @Nullable List<?> getList(@NotNull String path) {
         return section().getList(path);
-    }
-
-    @Override
-    public boolean isSection(@NotNull String path) {
-        return section().isSection(path);
     }
 
     @Override

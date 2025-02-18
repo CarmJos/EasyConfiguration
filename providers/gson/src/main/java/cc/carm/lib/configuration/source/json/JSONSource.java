@@ -48,7 +48,7 @@ public class JSONSource extends FileConfigSource<MemorySection, Map<String, Obje
     }
 
     @Override
-    protected JSONSource self() {
+    protected @NotNull JSONSource self() {
         return this;
     }
 

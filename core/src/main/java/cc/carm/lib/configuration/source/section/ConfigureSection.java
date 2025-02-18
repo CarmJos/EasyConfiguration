@@ -1,7 +1,6 @@
 package cc.carm.lib.configuration.source.section;
 
 import cc.carm.lib.configuration.function.DataFunction;
-import cc.carm.lib.configuration.source.option.StandardOptions;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,13 +13,7 @@ import java.util.stream.Stream;
 
 public interface ConfigureSection {
 
-    @NotNull ConfigureSource<?, ?, ?> source();
-
     @Nullable ConfigureSection parent();
-
-    default char separator() {
-        return source().holder().options().get(StandardOptions.PATH_SEPARATOR);
-    }
 
     @NotNull
     @UnmodifiableView
