@@ -9,6 +9,12 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Field;
 import java.util.function.UnaryOperator;
 
+/**
+ * Path generator for configuration.
+ * <p>
+ * Path generator is a utility class that helps to generate the path of the configuration.
+ * It can be used to generate the path of the field or class.
+ */
 public class PathGenerator {
 
     public static PathGenerator of() {

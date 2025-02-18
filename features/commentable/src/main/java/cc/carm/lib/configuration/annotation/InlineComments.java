@@ -9,7 +9,12 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface InlineComments {
 
-
+    /**
+     * Multiple inline comments support.
+     *
+     * @return inline comment contents.
+     * @see InlineComment
+     */
     InlineComment[] value();
 
 }

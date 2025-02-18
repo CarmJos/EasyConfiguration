@@ -89,6 +89,16 @@ public class MemorySection implements ConfigureSection {
     }
 
     @Override
+    public void remove(@NotNull String path) {
+        MemorySection section = getSectionFor(path);
+        if (section != this) {
+            section.remove(childPath(path));
+        } else {
+            this.data.remove(path);
+        }
+    }
+
+    @Override
     public boolean contains(@NotNull String path) {
         return get(path) != null;
     }

@@ -10,6 +10,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * ConfigureSource represents the source of configuration,
+ * which can be a file, a database, or any other source.
+ *
+ * @param <SECTION>  The type of the root section.
+ * @param <ORIGINAL> The original configuration object.
+ * @param <SELF>     The type of the source itself, for further implement support.
+ */
 public abstract class ConfigureSource<
         SECTION extends ConfigureSection, ORIGINAL,
         SELF extends ConfigureSource<SECTION, ORIGINAL, SELF>>

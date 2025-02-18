@@ -20,6 +20,13 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+/**
+ * ConfigurationFactory, used to create configuration holder.
+ *
+ * @param <SOURCE> The {@link ConfigureSource} type
+ * @param <HOLDER> The {@link ConfigurationHolder} type.
+ * @param <SELF>   Self builder, for further implement support.
+ */
 public abstract class ConfigurationFactory<
         SOURCE extends ConfigureSource<?, ?, SOURCE>,
         HOLDER extends ConfigurationHolder<SOURCE>,
@@ -139,18 +146,39 @@ public abstract class ConfigurationFactory<
         return self();
     }
 
+    /**
+     * Supply the base path generator for this configuration holder
+     *
+     * @param generator {@link  PathGenerator}
+     * @return this
+     */
     public SELF pathGenerator(PathGenerator generator) {
         return initializer(loader -> {
             loader.pathGenerator(generator);
         });
     }
 
+    /**
+     * Register a new annotation for metadata to the configuration loader
+     *
+     * @param annotation The {@link Annotation}
+     * @param metadata   The {@link ConfigurationMetadata} type
+     * @param extractor  The {@link Function} to extract the metadata from the annotation
+     * @param <M>        The metadata type
+     * @param <A>        The annotation type
+     * @return this
+     */
     public <M, A extends Annotation> SELF metaAnnotation(@NotNull Class<A> annotation,
                                                          @NotNull ConfigurationMetadata<M> metadata,
                                                          @NotNull Function<A, M> extractor) {
         return initializer(loader -> loader.registerAnnotation(annotation, metadata, extractor));
     }
 
+    /**
+     * Build the configuration holder.
+     *
+     * @return The configuration holder
+     */
     public abstract @NotNull HOLDER build();
 
 }
