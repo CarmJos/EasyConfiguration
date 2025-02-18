@@ -6,30 +6,18 @@ import java.util.function.Supplier;
 
 public class ConfigurationOption<V> {
 
-    @SuppressWarnings("unchecked")
     public static <T> ConfigurationOption<T> of(@NotNull T defaultValue) {
-        return of((Class<T>) defaultValue.getClass(), defaultValue);
-    }
-
-    public static <T> ConfigurationOption<T> of(@NotNull Class<T> valueClazz, @NotNull T defaultValue) {
-        return new ConfigurationOption<>(valueClazz, defaultValue);
+        return new ConfigurationOption<>(defaultValue);
     }
 
     public static <T> ConfigurationOption<T> of(@NotNull Supplier<T> defaultValue) {
         return of(defaultValue.get());
     }
 
-    private final @NotNull Class<V> valueClazz;
     private @NotNull V defaultValue;
 
-    public ConfigurationOption(@NotNull Class<V> valueClazz, @NotNull V defaultValue) {
-        this.valueClazz = valueClazz;
+    public ConfigurationOption(@NotNull V defaultValue) {
         this.defaultValue = defaultValue;
-    }
-
-    @NotNull
-    public Class<V> valueClass() {
-        return this.valueClazz;
     }
 
     public @NotNull V defaults() {

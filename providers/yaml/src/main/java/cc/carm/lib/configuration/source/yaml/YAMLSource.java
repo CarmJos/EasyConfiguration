@@ -111,7 +111,7 @@ public class YAMLSource
         CommentedYAMLWriter writer = new CommentedYAMLWriter(
                 String.valueOf(this.pathSeparator()),
                 dumperOptions().getIndent(),
-                holder.options().get(CommentableOptions.COMMENT_EMPTY_VALUE)
+                holder.option(CommentableOptions.COMMENT_EMPTY_VALUE)
         );
         try {
             fileWriter(w -> w.write(writer.saveToString(this)));

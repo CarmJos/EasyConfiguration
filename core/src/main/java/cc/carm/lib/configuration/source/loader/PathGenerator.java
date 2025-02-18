@@ -86,7 +86,7 @@ public class PathGenerator {
     }
 
     public static char pathSeparator(ConfigurationHolder<?> holder) {
-        return holder.options().get(StandardOptions.PATH_SEPARATOR);
+        return holder.option(StandardOptions.PATH_SEPARATOR);
     }
 
     /**

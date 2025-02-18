@@ -108,13 +108,13 @@ public class ConfigurationInitializer {
     public void initialize(@NotNull ConfigurationHolder<?> holder,
                            @NotNull Configuration config) throws Exception {
         initializeInstance(holder, config, null, null);
-        if (holder.options().get(StandardOptions.SET_DEFAULTS)) holder.save();
+        if (holder.option(StandardOptions.SET_DEFAULTS)) holder.save();
     }
 
     public void initialize(@NotNull ConfigurationHolder<?> holder,
                            @NotNull Class<? extends Configuration> clazz) throws Exception {
         initializeStaticClass(holder, clazz, null, null);
-        if (holder.options().get(StandardOptions.SET_DEFAULTS)) holder.save();
+        if (holder.option(StandardOptions.SET_DEFAULTS)) holder.save();
     }
 
 
@@ -149,7 +149,7 @@ public class ConfigurationInitializer {
             initializeField(holder, clazz, field, path);
         }
 
-        if (holder.options().get(StandardOptions.LOAD_SUB_CLASSES)) {
+        if (holder.option(StandardOptions.LOAD_SUB_CLASSES)) {
             Class<?>[] classes = clazz.getDeclaredClasses();
             for (int i = classes.length - 1; i >= 0; i--) {   // 逆向加载，保持顺序。
                 initializeStaticClass(holder, classes[i], path, null);
@@ -175,8 +175,11 @@ public class ConfigurationInitializer {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                if (holder.options().get(StandardOptions.SET_DEFAULTS)) {
-                    value.setDefault();
+                if (holder.option(StandardOptions.SET_DEFAULTS)) {
+                    value.setDefault(); // Set default value.
+                }
+                if (holder.option(StandardOptions.PRELOAD)) {
+                    value.get(); // Preload the value by calling #get method.
                 }
             } else if (source instanceof Configuration && object instanceof Configuration) {
                 // 当且仅当 源字段与字段 均为Configuration实例时，才对目标字段进行下一步初始化加载。

@@ -26,7 +26,7 @@ public class Commentable {
         String comment = getInlineComment(holder, path, null);
         if (comment != null) return comment;
 
-        String sep = String.valueOf(holder.options().get(StandardOptions.PATH_SEPARATOR));
+        String sep = String.valueOf(holder.option(StandardOptions.PATH_SEPARATOR));
 
         // If the comment is not found, try to get the comment from the parent section
         String[] keys = path.split(Pattern.quote(sep));

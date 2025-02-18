@@ -113,7 +113,7 @@ public abstract class ConfigValue<T> extends ValueManifest<T> {
      * @param override Whether to overwrite existing configured value
      */
     public void setDefault(boolean override) {
-        if (!override && config().contains(path())) return;
+        if (config().contains(path()) && !override) return; // Skip if the value is already set
         set(defaults()); // Set the default value
     }
 
