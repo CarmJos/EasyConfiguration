@@ -44,6 +44,9 @@ public @interface InlineComment {
      *         bar: "foobar" # Comment Contents
      * </pre></blockquote>
      *
+     * <p><i>Some implements may not support this feature
+     * in list values or other complex structures.</i>
+     *
      * @return The path regexes of this comment
      */
     @NotNull
