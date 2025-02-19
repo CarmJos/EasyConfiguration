@@ -10,9 +10,12 @@ public abstract class MapSection<R extends MapSection<R>> implements ConfigureSe
     protected final @NotNull Map<String, Object> data;
     protected final @Nullable R parent;
 
-    protected MapSection(@NotNull Map<?, ?> data, @Nullable R parent) {
+    protected MapSection(@Nullable R parent) {
         this.parent = parent;
         this.data = new LinkedHashMap<>();
+    }
+
+    public void migrate(Map<?, ?> data) {
         for (Map.Entry<?, ?> entry : data.entrySet()) {
             String key = (entry.getKey() == null) ? "null" : entry.getKey().toString();
             if (entry.getValue() instanceof Map) {

@@ -8,22 +8,22 @@ import java.util.Map;
 
 public class MemorySection extends MapSection<MemorySection> {
 
-
     public static @NotNull MemorySection root(@NotNull ConfigureSource<? extends MemorySection, ?, ?> source) {
         return new MemorySection(source, new LinkedHashMap<>(), null);
     }
 
     public static @NotNull MemorySection root(@NotNull ConfigureSource<? extends MemorySection, ?, ?> source,
-                                              @Nullable Map<?, ?> data) {
-        return new MemorySection(source, data == null ? new LinkedHashMap<>() : data, null);
+                                              @Nullable Map<?, ?> raw) {
+        return new MemorySection(source, raw == null ? new LinkedHashMap<>() : raw, null);
     }
 
     protected final @NotNull ConfigureSource<? extends MemorySection, ?, ?> source;
 
     protected MemorySection(@NotNull ConfigureSource<? extends MemorySection, ?, ?> source,
-                            @NotNull Map<?, ?> data, @Nullable MemorySection parent) {
-        super(data, parent);
+                            @NotNull Map<?, ?> raw, @Nullable MemorySection parent) {
+        super(parent);
         this.source = source;
+        migrate(raw);
     }
 
     public @NotNull ConfigureSource<? extends MemorySection, ?, ?> source() {
@@ -32,7 +32,7 @@ public class MemorySection extends MapSection<MemorySection> {
 
     @Override
     public char pathSeparator() {
-        return source.pathSeparator();
+        return source().pathSeparator();
     }
 
     @Override
@@ -42,7 +42,7 @@ public class MemorySection extends MapSection<MemorySection> {
 
     @Override
     protected @NotNull MemorySection createChild(@NotNull Map<?, ?> data) {
-        return new MemorySection(source, data, this);
+        return new MemorySection(source(), data, this);
     }
 
 }
