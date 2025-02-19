@@ -5,7 +5,7 @@ import cc.carm.lib.configuration.commentable.CommentableOptions;
 import cc.carm.lib.configuration.source.ConfigurationHolder;
 import cc.carm.lib.configuration.source.file.FileConfigSource;
 import cc.carm.lib.configuration.source.section.ConfigureSection;
-import cc.carm.lib.configuration.source.section.MemorySection;
+import cc.carm.lib.configuration.source.section.MapSection;
 import cc.carm.lib.yamlcommentupdater.CommentedSection;
 import cc.carm.lib.yamlcommentupdater.CommentedYAMLWriter;
 import org.jetbrains.annotations.NotNull;
@@ -26,14 +26,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class YAMLSource
-        extends FileConfigSource<MemorySection, Map<String, Object>, YAMLSource>
+        extends FileConfigSource<MapSection, Map<String, Object>, YAMLSource>
         implements CommentedSection {
 
     protected final @NotNull YamlConstructor yamlConstructor;
     protected final @NotNull YamlRepresenter yamlRepresenter;
     protected final @NotNull Yaml yaml;
 
-    protected @Nullable MemorySection rootSection;
+    protected @Nullable MapSection rootSection;
 
     protected YAMLSource(@NotNull ConfigurationHolder<? extends YAMLSource> holder,
                          @NotNull File file, @Nullable String resourcePath) {
@@ -65,7 +65,7 @@ public class YAMLSource
     }
 
     @Override
-    public @NotNull MemorySection section() {
+    public @NotNull MapSection section() {
         return Objects.requireNonNull(this.rootSection, "Root section is not initialized.");
     }
 
@@ -130,18 +130,18 @@ public class YAMLSource
         return this.saveToString(section());
     }
 
-    public @NotNull MemorySection loadFromString(@NotNull String data) throws Exception {
+    public @NotNull MapSection loadFromString(@NotNull String data) throws Exception {
         MappingNode mappingNode;
         try (Reader reader = new UnicodeReader(new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8)))) {
             Node rawNode = this.yaml.compose(reader);
             mappingNode = (MappingNode) rawNode;
         }
-        if (mappingNode == null) return MemorySection.root(this);
+        if (mappingNode == null) return MapSection.root(this);
 
 
         Map<String, Object> map = new LinkedHashMap<>();
         this.constructMap(mappingNode, map);
-        return MemorySection.root(this, map);
+        return MapSection.root(this, map);
     }
 
     private void constructMap(@NotNull MappingNode mappingNode, @NotNull Map<String, Object> section) {
@@ -170,7 +170,7 @@ public class YAMLSource
     public String serializeValue(@NotNull String key, @NotNull Object value) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put(key, value);
-        return saveToString(MemorySection.root(this, map));
+        return saveToString(MapSection.root(this, map));
     }
 
     @Override
