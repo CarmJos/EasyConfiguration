@@ -360,7 +360,7 @@ public interface ConfigureSection extends Cloneable {
      * Predicate the value of given path is a {@link Integer}.
      *
      * @param path The path to check.
-     * @return True if the value is present and is a int, false otherwise.
+     * @return True if the value is present and is an int, false otherwise.
      */
     default boolean isInt(@NotNull String path) {
         return isType(path, Integer.class);
@@ -370,7 +370,7 @@ public interface ConfigureSection extends Cloneable {
      * Get the value as a {@link Integer} from the specified path.
      *
      * @param path The path to get the int.
-     * @return The int if the path exists and is a int, otherwise 0.
+     * @return The int if the path exists and is an int, otherwise 0.
      */
     default @Nullable Integer getInt(@NotNull String path) {
         return getInt(path, 0);
@@ -381,7 +381,7 @@ public interface ConfigureSection extends Cloneable {
      *
      * @param path The path to get the int.
      * @param def  The default value to return if the path does not exist.
-     * @return The int if the path exists and is a int, otherwise the default value.
+     * @return The int if the path exists and is an int, otherwise the default value.
      */
     @Contract("_, !null -> !null")
     default @Nullable Integer getInt(@NotNull String path, @Nullable Integer def) {
