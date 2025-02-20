@@ -2,6 +2,7 @@ package cc.carm.lib.configuration.source.section;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.*;
 
@@ -46,6 +47,19 @@ public abstract class MapSection<R extends MapSection<R>> implements ConfigureSe
 
     public @NotNull Map<String, Object> data() {
         return this.data;
+    }
+
+    @UnmodifiableView
+    public @NotNull Map<String, Object> original() {
+        Map<String, Object> output = new LinkedHashMap<>();
+        for (Map.Entry<String, Object> entry : this.data.entrySet()) {
+            if (entry.getValue() instanceof MapSection<?>) {
+                output.put(entry.getKey(), ((MapSection<?>) entry.getValue()).original());
+            } else {
+                output.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return output;
     }
 
     public @Nullable R parent() {
