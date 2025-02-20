@@ -280,7 +280,7 @@ EasyConfiguration for MineCraft!
 
 万分感谢来自 [ArtformGames](https://github.com/ArtformGames) 对本项目的大力支持与积极贡献！
 
-[![](https://raw.githubusercontent.com/ArtformGames/.github/refs/heads/master/logo/logo_full.png | width=500)](https://www.artform.cn/)
+<img src="https://raw.githubusercontent.com/ArtformGames/.github/refs/heads/master/logo/logo_full.png" alt="ArtfromGames" width="500">
 
 ## 开源协议
 

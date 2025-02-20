@@ -259,7 +259,7 @@ Many thanks to Jetbrains for kindly providing a license for us to work on this a
 Many thanks to [ArtformGames](https://github.com/ArtformGames) for their 
 strong support and active contribution to this project!
 
-[![](https://raw.githubusercontent.com/ArtformGames/.github/refs/heads/master/logo/logo_full.png | width=500)](https://www.artform.cn/)
+<img src="https://raw.githubusercontent.com/ArtformGames/.github/refs/heads/master/logo/logo_full.png" alt="ArtfromGames" width="500">
 
 ## Open Source License
 
