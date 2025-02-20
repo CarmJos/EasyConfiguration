@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -17,8 +18,8 @@ import java.util.stream.Stream;
  * @author Carm
  * @since 4.0.0
  */
-public interface ConfigureSection {
-
+public interface ConfigureSection extends Cloneable {
+    
     /**
      * Gets the parent section of this section.
      * <p>
@@ -48,6 +49,17 @@ public interface ConfigureSection {
     }
 
     /**
+     * Gets a set containing all primary keys in this section.
+     *
+     * @return Set of keys contained within this Section.
+     */
+    @NotNull
+    @UnmodifiableView
+    default Set<String> keys() {
+        return getKeys(false);
+    }
+
+    /**
      * Gets a set containing all values in this section.
      * <p>
      * If deep is set to true, then this will contain all the keys within any
@@ -62,6 +74,36 @@ public interface ConfigureSection {
     @NotNull
     @UnmodifiableView
     Map<String, Object> getValues(boolean deep);
+
+    /**
+     * Gets a set containing all key-values in this section.
+     *
+     * @return Map of data values contained within this Section.
+     * @see #getValues(boolean)
+     */
+    @NotNull
+    @UnmodifiableView
+    default Map<String, Object> values() {
+        return getValues(false);
+    }
+
+    /**
+     * Create a stream of all values in this section.
+     *
+     * @return Stream of all values in this section.
+     */
+    default Stream<Map.Entry<String, Object>> stream() {
+        return values().entrySet().stream();
+    }
+
+    /**
+     * Iterates over all keys in this section.
+     *
+     * @param action The action to apply to each key.
+     */
+    default void forEach(@NotNull BiConsumer<String, Object> action) {
+        values().forEach(action);
+    }
 
     /**
      * Sets the value at the given path.
