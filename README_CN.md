@@ -32,47 +32,49 @@ README LANGUAGES [ [English](README.md) | [**中文**](README_CN.md)  ]
 
 ## 开发
 
-详细开发介绍请 [点击这里](.doc/README.md) , JavaDoc(最新Release) 请 [点击这里](https://CarmJos.github.io/EasyConfiguration) 。
+详细开发介绍请 [点击这里](.doc/README.md) , JavaDoc(最新Release)
+请 [点击这里](https://CarmJos.github.io/EasyConfiguration) 。
 
 ### 示例代码
 
 为快速的展示该项目的适用性，这里有几个实际演示：
+
 - [数据库配置文件实例](demo/src/main/java/cc/carm/lib/configuration/demo/DatabaseConfiguration.java)
 - [全种类配置实例类演示](demo/src/main/java/cc/carm/lib/configuration/demo/tests/conf/DemoConfiguration.java)
 
-您可以 [点击这里](demo/src/main/java/cc/carm/lib/configuration/demo) 直接查看现有的代码演示，更多复杂情况演示详见 [开发介绍](.doc/README.md) 。
-
-
+您可以 [点击这里](demo/src/main/java/cc/carm/lib/configuration/demo)
+直接查看现有的代码演示，更多复杂情况演示详见 [开发介绍](.doc/README.md) 。
 
 ```java
+
 @ConfigPath(root = true)
 @HeaderComments("Configurations for sample")
 public interface SampleConfig extends Configuration {
 
-  @InlineComment("Enabled?") // 行后注释
-  ConfiguredValue<Boolean> ENABLED = ConfiguredValue.of(true);
+    @InlineComment("Enabled?") // 行后注释
+    ConfiguredValue<Boolean> ENABLED = ConfiguredValue.of(true);
 
-  @HeaderComments("Server configurations") // 头部注释
-  ConfiguredValue<Integer> PORT = ConfiguredValue.of(Integer.class);
+    @HeaderComments("Server configurations") // 头部注释
+    ConfiguredValue<Integer> PORT = ConfiguredValue.of(Integer.class);
 
-  @HeaderComments({"[ UUID >-----------------------------------", "A lot of UUIDs"})
-  @FooterComments("[ UUID >-----------------------------------")
-  ConfiguredList<UUID> UUIDS = ConfiguredList.builderOf(UUID.class).fromString()
-          .parse(UUID::fromString).serialize(UUID::toString)
-          .defaults(
-                  UUID.fromString("00000000-0000-0000-0000-000000000000"),
-                  UUID.fromString("00000000-0000-0000-0000-000000000001")
-          ).build();
-  
-  interface INFO extends Configuration {
+    @HeaderComments({"[ UUID >-----------------------------------", "A lot of UUIDs"})
+    @FooterComments("[ UUID >-----------------------------------")
+    ConfiguredList<UUID> UUIDS = ConfiguredList.builderOf(UUID.class).fromString()
+            .parse(UUID::fromString).serialize(UUID::toString)
+            .defaults(
+                    UUID.fromString("00000000-0000-0000-0000-000000000000"),
+                    UUID.fromString("00000000-0000-0000-0000-000000000001")
+            ).build();
 
-    @HeaderComments("Configure your name!") // Header comment
-    ConfiguredValue<String> NAME = ConfiguredValue.of("Joker");
+    interface INFO extends Configuration {
 
-    @ConfigPath("how-old-are-you") // 自定义路径
-    ConfiguredValue<Integer> AGE = ConfiguredValue.of(24);
+        @HeaderComments("Configure your name!") // Header comment
+        ConfiguredValue<String> NAME = ConfiguredValue.of("Joker");
 
-  }
+        @ConfigPath("how-old-are-you") // 自定义路径
+        ConfiguredValue<Integer> AGE = ConfiguredValue.of(24);
+
+    }
 
 }
 
@@ -137,7 +139,7 @@ info:
             <name>Maven Central</name>
             <url>https://repo1.maven.org/maven2</url>
         </repository>
-  
+
         <repository>
             <!--采用github依赖库，实时更新，但需要配置 (推荐) -->
             <id>EasyConfiguration</id>
@@ -203,7 +205,7 @@ info:
             <version>[LATEST RELEASE]</version>
             <scope>compile</scope>
         </dependency>
-        
+
     </dependencies>
 </project>
 ```
@@ -220,7 +222,7 @@ repositories {
 
     // 采用Maven中心库，安全稳定，但版本更新需要等待同步 
     mavenCentral()
-  
+
     // 采用github依赖库，实时更新，但需要配置 (推荐)
     maven { url 'https://maven.pkg.github.com/CarmJos/EasyConfiguration' }
 
@@ -244,12 +246,12 @@ dependencies {
     //基于YAML文件的实现版本，可用于全部Java环境。
     api "cc.carm.lib:easyconfiguration-yaml:[LATEST RELEASE]"
 
-     //基于JSON文件的实现版本，可用于全部Java环境。
+    //基于JSON文件的实现版本，可用于全部Java环境。
     //需要注意的是，JSON不支持文件注释。
     api "cc.carm.lib:easyconfiguration-gson:[LATEST RELEASE]"
-    
+
     api "cc.carm.lib:easyconfiguration-hocon:[LATEST RELEASE]"
-    
+
     api "cc.carm.lib:easyconfiguration-sql:[LATEST RELEASE]"
 
 }
@@ -275,6 +277,10 @@ EasyConfiguration for MineCraft!
 万分感谢 Jetbrains 为我们提供了从事此项目和其他开源项目的许可！
 
 [![](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg)](https://www.jetbrains.com/?from=https://github.com/CarmJos/EasyConfiguration)
+
+万分感谢来自 [ArtformGames](https://github.com/ArtformGames) 对本项目的大力支持与积极贡献！
+
+[![](https://raw.githubusercontent.com/ArtformGames/.github/refs/heads/master/logo/logo_full.png | width=500)](https://www.artform.cn/)
 
 ## 开源协议
 

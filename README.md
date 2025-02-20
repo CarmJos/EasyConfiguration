@@ -256,6 +256,11 @@ Many thanks to Jetbrains for kindly providing a license for us to work on this a
 
 [![](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg)](https://www.jetbrains.com/?from=https://github.com/CarmJos/EasyConfiguration)
 
+Many thanks to [ArtformGames](https://github.com/ArtformGames) for their 
+strong support and active contribution to this project!
+
+[![](https://raw.githubusercontent.com/ArtformGames/.github/refs/heads/master/logo/logo_full.png | width=500)](https://www.artform.cn/)
+
 ## Open Source License
 
 This project's source code is licensed under
