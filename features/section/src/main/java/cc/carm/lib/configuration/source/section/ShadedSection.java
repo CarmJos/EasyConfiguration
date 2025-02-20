@@ -1,24 +1,25 @@
 package cc.carm.lib.configuration.source.section;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class ShadedSection extends MapSection<ShadedSection> {
-    private final ConfigureSection template;
 
-    // 构造方法
-    public ShadedSection(@Nullable ShadedSection parent, @Nullable ConfigureSection template) {
+    private final @Nullable Supplier<@Nullable ConfigureSection> templateSupplier;
+
+    public ShadedSection(@Nullable ShadedSection parent, @Nullable Supplier<ConfigureSection> templateSupplier) {
         super(parent);
-        this.template = template;
+        this.templateSupplier = templateSupplier;
     }
 
-    public ShadedSection(@NotNull Map<?, ?> data, @Nullable ShadedSection parent, @Nullable ConfigureSection template) {
+    public ShadedSection(@NotNull Map<?, ?> data, @Nullable ShadedSection parent, @Nullable Supplier<ConfigureSection> templateSupplier) {
         super(parent);
-        this.template = template;
+        this.templateSupplier = templateSupplier;
         migrate(data);
     }
 
@@ -32,6 +33,20 @@ public class ShadedSection extends MapSection<ShadedSection> {
         return new ShadedSection(data, this, null);
     }
 
+    protected @Nullable ConfigureSection template() {
+        return templateSupplier != null ? templateSupplier.get() : null;
+    }
+
+    @Nullable
+    protected <T> T template(@NotNull Function<ConfigureSection, T> function) {
+        return template(null, function);
+    }
+
+    @Contract("!null, _ -> !null")
+    protected <T> T template(@Nullable T defaults, @NotNull Function<ConfigureSection, T> function) {
+        return Optional.ofNullable(template()).map(function).orElse(defaults);
+    }
+
     @Override
     public @Nullable Object get(@NotNull String path) {
         // 优先从当前section获取
@@ -41,8 +56,8 @@ public class ShadedSection extends MapSection<ShadedSection> {
         }
 
         // 当前section无数据时从模板获取
-        if (template != null) {
-            Object templateValue = template.get(path);
+        if (templateSupplier != null) {
+            Object templateValue = template((template) -> template.get(path));
             return wrapTemplateNestedValues(path, templateValue);
         }
 
@@ -51,16 +66,10 @@ public class ShadedSection extends MapSection<ShadedSection> {
 
     private Object wrapNestedValues(String path, Object value) {
         if (value instanceof ConfigureSection) {
-            // 包装子Section，继承当前模板的对应子Section
-            ConfigureSection templateChild = template != null ? template.getSection(path) : null;
             return new ShadedSection(
                     ((ConfigureSection) value).getValues(false),
-                    this,
-                    templateChild
+                    this, () -> template(s -> s.getSection(path))
             );
-        } else if (value instanceof List) {
-            // 处理列表中的嵌套结构
-            return processList(path, (List<?>) value);
         }
         return value;
     }
@@ -78,26 +87,6 @@ public class ShadedSection extends MapSection<ShadedSection> {
             return processTemplateList(path, (List<?>) templateValue);
         }
         return templateValue;
-    }
-
-    private List<Object> processList(String path, List<?> list) {
-        List<Object> processed = new ArrayList<>();
-        for (Object item : list) {
-            if (item instanceof Map) {
-                processed.add(new ShadedSection(
-                        (Map<?, ?>) item, this,
-                        template != null ? template.getSection(path) : null
-                ));
-            } else if (item instanceof ConfigureSection) {
-                processed.add(new ShadedSection(
-                        ((ConfigureSection) item).getValues(false), this,
-                        template != null ? template.getSection(path) : null
-                ));
-            } else {
-                processed.add(item);
-            }
-        }
-        return processed;
     }
 
     private List<Object> processTemplateList(String path, List<?> list) {
@@ -118,7 +107,7 @@ public class ShadedSection extends MapSection<ShadedSection> {
     @Override
     public void set(@NotNull String path, @Nullable Object value) {
         // 获取模板值并深度比较
-        Object templateValue = template != null ? template.get(path) : null;
+        Object templateValue = templateSupplier != null ? templateSupplier.get(path) : null;
         Object processedValue = preprocessValue(path, value);
 
         if (isDeepEqual(processedValue, templateValue)) {
@@ -132,7 +121,7 @@ public class ShadedSection extends MapSection<ShadedSection> {
         if (value instanceof Map) {
             return new ShadedSection(
                     (Map<?, ?>) value, this,
-                    template != null ? template.getSection(path) : null
+                    () -> template(s -> s.getSection(path))
             );
         } else if (value instanceof List) {
             return processList(path, (List<?>) value);
@@ -147,15 +136,9 @@ public class ShadedSection extends MapSection<ShadedSection> {
         if (a instanceof ConfigureSection && b instanceof ConfigureSection) {
             return ((ConfigureSection) a).getValues(true)
                     .equals(((ConfigureSection) b).getValues(true));
-        } else if (a instanceof List && b instanceof List) {
-            List<?> listA = (List<?>) a;
-            List<?> listB = (List<?>) b;
-            if (listA.size() != listB.size()) return false;
-            for (int i = 0; i < listA.size(); i++) {
-                if (!isDeepEqual(listA.get(i), listB.get(i))) return false;
-            }
-            return true;
         }
-        return a.equals(b);
+
+        return Objects.equals(a, b);
     }
+
 }
