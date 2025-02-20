@@ -19,7 +19,7 @@ import java.util.stream.Stream;
  * @since 4.0.0
  */
 public interface ConfigureSection extends Cloneable {
-    
+
     /**
      * Gets the parent section of this section.
      * <p>
@@ -136,7 +136,9 @@ public interface ConfigureSection extends Cloneable {
      * @param path The path to check.
      * @return True if the value is present, false otherwise.
      */
-    boolean contains(@NotNull String path);
+    default boolean contains(@NotNull String path) {
+        return get(path) != null;
+    }
 
     /**
      * Predicate the value of given path is specific type.
@@ -166,7 +168,10 @@ public interface ConfigureSection extends Cloneable {
      * @param path The path to get the  {@link List}.
      * @return The list if the path exists and is a list, otherwise null.
      */
-    @Nullable List<?> getList(@NotNull String path);
+    default @Nullable List<?> getList(@NotNull String path) {
+        Object val = get(path);
+        return (val instanceof List<?>) ? (List<?>) val : null;
+    }
 
     /**
      * Predicate the value of given path is a {@link ConfigureSection}.

@@ -8,6 +8,14 @@ import java.util.*;
 
 public abstract class MapSection<R extends MapSection<R>> implements ConfigureSection {
 
+    public static RawMapSection of() {
+        return new RawMapSection(new LinkedHashMap<>(), null);
+    }
+
+    public static RawMapSection of(@NotNull Map<?, ?> data) {
+        return new RawMapSection(data, null);
+    }
+
     protected final @NotNull Map<String, Object> data;
     protected final @Nullable R parent;
 
@@ -50,11 +58,11 @@ public abstract class MapSection<R extends MapSection<R>> implements ConfigureSe
     }
 
     @UnmodifiableView
-    public @NotNull Map<String, Object> original() {
+    public @NotNull Map<String, Object> rawMap() {
         Map<String, Object> output = new LinkedHashMap<>();
         for (Map.Entry<String, Object> entry : this.data.entrySet()) {
             if (entry.getValue() instanceof MapSection<?>) {
-                output.put(entry.getKey(), ((MapSection<?>) entry.getValue()).original());
+                output.put(entry.getKey(), ((MapSection<?>) entry.getValue()).rawMap());
             } else {
                 output.put(entry.getKey(), entry.getValue());
             }
@@ -105,20 +113,9 @@ public abstract class MapSection<R extends MapSection<R>> implements ConfigureSe
     }
 
     @Override
-    public boolean contains(@NotNull String path) {
-        return get(path) != null;
-    }
-
-    @Override
     public @Nullable Object get(@NotNull String path) {
         R section = getSectionFor(path);
         return section == this ? data.get(path) : section.get(childPath(path));
-    }
-
-    @Override
-    public @Nullable List<?> getList(@NotNull String path) {
-        Object val = get(path);
-        return (val instanceof List<?>) ? (List<?>) val : null;
     }
 
     @Override
@@ -160,4 +157,5 @@ public abstract class MapSection<R extends MapSection<R>> implements ConfigureSe
         }
         return output;
     }
+
 }

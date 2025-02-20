@@ -7,7 +7,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -105,18 +104,8 @@ public abstract class ConfigureSource<
     }
 
     @Override
-    public boolean contains(@NotNull String path) {
-        return section().contains(path);
-    }
-
-    @Override
     public void remove(@NotNull String path) {
         section().remove(path);
-    }
-
-    @Override
-    public @Nullable List<?> getList(@NotNull String path) {
-        return section().getList(path);
     }
 
     @Override
