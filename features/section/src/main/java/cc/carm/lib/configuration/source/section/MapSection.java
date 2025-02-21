@@ -8,14 +8,6 @@ import java.util.*;
 
 public abstract class MapSection<R extends MapSection<R>> implements ConfigureSection {
 
-    public static RawMapSection of() {
-        return new RawMapSection(new LinkedHashMap<>(), null);
-    }
-
-    public static RawMapSection of(@NotNull Map<?, ?> data) {
-        return new RawMapSection(data, null);
-    }
-
     protected final @NotNull Map<String, Object> data;
     protected final @Nullable R parent;
 
@@ -55,6 +47,11 @@ public abstract class MapSection<R extends MapSection<R>> implements ConfigureSe
 
     public @NotNull Map<String, Object> data() {
         return this.data;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return data.isEmpty();
     }
 
     @UnmodifiableView
@@ -116,12 +113,6 @@ public abstract class MapSection<R extends MapSection<R>> implements ConfigureSe
     public @Nullable Object get(@NotNull String path) {
         R section = getSectionFor(path);
         return section == this ? data.get(path) : section.get(childPath(path));
-    }
-
-    @Override
-    public @Nullable ConfigureSection getSection(@NotNull String path) {
-        Object val = get(path);
-        return (val instanceof ConfigureSection) ? (ConfigureSection) val : null;
     }
 
     @SuppressWarnings("unchecked")

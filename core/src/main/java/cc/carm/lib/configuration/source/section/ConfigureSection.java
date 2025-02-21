@@ -18,7 +18,7 @@ import java.util.stream.Stream;
  * @author Carm
  * @since 4.0.0
  */
-public interface ConfigureSection extends Cloneable {
+public interface ConfigureSection {
 
     /**
      * Gets the parent section of this section.
@@ -29,6 +29,24 @@ public interface ConfigureSection extends Cloneable {
      */
     @Contract(pure = true)
     @Nullable ConfigureSection parent();
+
+    /**
+     * Gets if this section is a root section.
+     *
+     * @return True if this section is a root section, false otherwise.
+     */
+    default boolean isRoot() {
+        return parent() == null;
+    }
+
+    /**
+     * Gets if this section is empty.
+     *
+     * @return True if this section is empty, false otherwise.
+     */
+    default boolean isEmpty() {
+        return getValues(false).isEmpty();
+    }
 
     /**
      * Gets a set containing all keys in this section.
@@ -190,7 +208,10 @@ public interface ConfigureSection extends Cloneable {
      * @return The section if the path exists and is a section, otherwise null.
      */
     @Nullable
-    ConfigureSection getSection(@NotNull String path);
+    default ConfigureSection getSection(@NotNull String path) {
+        Object val = get(path);
+        return (val instanceof ConfigureSection) ? (ConfigureSection) val : null;
+    }
 
     /**
      * Get the origin value of the path.
@@ -686,7 +707,8 @@ public interface ConfigureSection extends Cloneable {
     }
 
     static <T, C extends Collection<T>> @NotNull C parseCollection(
-            @Nullable List<?> data, @NotNull Supplier<C> constructor,
+            @Nullable List<?> data,
+            @NotNull Supplier<C> constructor,
             @NotNull DataFunction<Object, T> parser
     ) {
         C values = constructor.get();

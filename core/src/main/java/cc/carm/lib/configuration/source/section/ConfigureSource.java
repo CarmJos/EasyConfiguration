@@ -109,11 +109,6 @@ public abstract class ConfigureSource<
     }
 
     @Override
-    public @Nullable ConfigureSection getSection(@NotNull String path) {
-        return section().getSection(path);
-    }
-
-    @Override
     public @Nullable Object get(@NotNull String path) {
         return section().get(path);
     }
