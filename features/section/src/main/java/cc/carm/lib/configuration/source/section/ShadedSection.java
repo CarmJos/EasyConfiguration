@@ -10,9 +10,21 @@ import java.util.Map;
 public class ShadedSection implements ConfigureSection {
 
 
+    protected final @Nullable ShadedSection parent;
+    protected final @NotNull ConfigureSection section;
+    protected final @Nullable ConfigureSection template;
+
+    public ShadedSection(@NotNull ShadedSection parent,
+                         @NotNull ConfigureSection section, @Nullable ConfigureSection template) {
+        this.parent = parent;
+        this.section = section;
+        this.template = template;
+    }
+
+
     @Override
-    public @Nullable ConfigureSection parent() {
-        return null;
+    public @Nullable ShadedSection parent() {
+        return this.parent;
     }
 
     @Override
@@ -23,16 +35,27 @@ public class ShadedSection implements ConfigureSection {
     @Override
     public void set(@NotNull String path, @Nullable Object value) {
 
-    }
+        if (value instanceof ConfigureSection) {
 
-    @Override
-    public void remove(@NotNull String path) {
+        }
 
     }
 
     @Override
     public @Nullable Object get(@NotNull String path) {
+
+        if (section.contains(path)) {
+
+
+            return section.get(path);
+        }
+
         return null;
     }
-    
+
+    @Override
+    public void remove(@NotNull String path) {
+        section.remove(path);
+    }
+
 }
