@@ -45,6 +45,16 @@ public abstract class MapSection<R extends MapSection<R>> implements ConfigureSe
         return createChild(new LinkedHashMap<>());
     }
 
+    @Override
+    public boolean contains(@NotNull String path) {
+        R section = getSectionFor(path);
+        if (section == this) {
+            return this.data().containsKey(path);
+        } else {
+            return section.contains(childPath(path));
+        }
+    }
+
     public @NotNull Map<String, Object> data() {
         return this.data;
     }
@@ -135,5 +145,6 @@ public abstract class MapSection<R extends MapSection<R>> implements ConfigureSe
         }
         return output;
     }
+
 
 }

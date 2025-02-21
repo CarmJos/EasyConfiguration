@@ -155,7 +155,7 @@ public interface ConfigureSection {
     void remove(@NotNull String path);
 
     /**
-     * Check if the value of given path is present.
+     * Check if the given path is present.
      * <p>
      * Path separator depends on holder's
      * {@link cc.carm.lib.configuration.source.option.StandardOptions#PATH_SEPARATOR}
@@ -164,6 +164,19 @@ public interface ConfigureSection {
      * @return True if the value is present, false otherwise.
      */
     default boolean contains(@NotNull String path) {
+        return getKeys(true).contains(path);
+    }
+
+    /**
+     * Check if the value of given path is present.
+     * <p>
+     * Path separator depends on holder's
+     * {@link cc.carm.lib.configuration.source.option.StandardOptions#PATH_SEPARATOR}
+     *
+     * @param path The path to check.
+     * @return True if the value is present, false otherwise.
+     */
+    default boolean containsValue(@NotNull String path) {
         return get(path) != null;
     }
 
