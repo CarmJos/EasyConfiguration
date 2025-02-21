@@ -1,7 +1,7 @@
 package test.section;
 
 import cc.carm.lib.configuration.source.section.ConfigureSection;
-import cc.carm.lib.configuration.source.section.RawMapSection;
+import cc.carm.lib.configuration.source.section.MemorySection;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -16,7 +16,7 @@ public class ShadeTest {
 
     @Test
     public void test() {
-        ConfigureSection template = RawMapSection.of(data -> {
+        ConfigureSection template = MemorySection.of(data -> {
             data.put("name", "GentleMan");
             data.put("age", 12);
             data.put("gender", "male");
@@ -26,14 +26,17 @@ public class ShadeTest {
             data.put("addresses", address);
             data.put("cards", Arrays.asList("00000", "11111", "22222"));
         });
-
-        ConfigureSection source = RawMapSection.of(data -> {
+        ConfigureSection source = MemorySection.of(data -> {
             data.put("age", 25);
             Map<String, Object> address = new LinkedHashMap<>();
             address.put("NewOne", "Guangdong Road 505");
             data.put("addresses", address);
             data.put("cards", Arrays.asList("33333", "55555")); // 应当直接覆盖原先的List
         });
+
+
+
+
 
     }
 

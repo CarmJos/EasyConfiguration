@@ -5,34 +5,42 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
-public class MemorySection extends MapSection<MemorySection> {
+public class MemorySection extends AbstractMapSection<MemorySection> {
 
-    public static @NotNull MemorySection root(@NotNull ConfigureSource<? extends MemorySection, ?, ?> source) {
-        return new MemorySection(source, new LinkedHashMap<>(), null);
+    public static MemorySection of() {
+        return of((MemorySection) null);
     }
 
-    public static @NotNull MemorySection root(@NotNull ConfigureSource<? extends MemorySection, ?, ?> source,
-                                              @Nullable Map<?, ?> raw) {
-        return new MemorySection(source, raw == null ? new LinkedHashMap<>() : raw, null);
+    public static MemorySection of(@NotNull Consumer<Map<String, Object>> data) {
+        return of(() -> {
+            Map<String, Object> map = new LinkedHashMap<>();
+            data.accept(map);
+            return map;
+        });
     }
 
-    protected final @NotNull ConfigureSource<? extends MemorySection, ?, ?> source;
+    public static MemorySection of(@NotNull Supplier<Map<?, ?>> data) {
+        return of(data.get(), null);
+    }
 
-    protected MemorySection(@NotNull ConfigureSource<? extends MemorySection, ?, ?> source,
-                            @NotNull Map<?, ?> raw, @Nullable MemorySection parent) {
+    public static MemorySection of(@NotNull Map<?, ?> data) {
+        return of(data, null);
+    }
+
+    public static MemorySection of(@Nullable MemorySection parent) {
+        return of(new LinkedHashMap<>(), parent);
+    }
+
+    public static MemorySection of(@NotNull Map<?, ?> data, @Nullable MemorySection parent) {
+        return new MemorySection(data, parent);
+    }
+
+    public MemorySection(@NotNull Map<?, ?> raw, @Nullable MemorySection parent) {
         super(parent);
-        this.source = source;
         migrate(raw);
-    }
-
-    public @NotNull ConfigureSource<? extends MemorySection, ?, ?> source() {
-        return source;
-    }
-
-    @Override
-    public char pathSeparator() {
-        return source().pathSeparator();
     }
 
     @Override
@@ -41,8 +49,8 @@ public class MemorySection extends MapSection<MemorySection> {
     }
 
     @Override
-    protected @NotNull MemorySection createChild(@NotNull Map<?, ?> data) {
-        return new MemorySection(source(), data, this);
+    public @NotNull MemorySection createSection(@NotNull Map<?, ?> data) {
+        return new MemorySection(data, this);
     }
 
 }

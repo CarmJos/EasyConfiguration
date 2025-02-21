@@ -236,6 +236,44 @@ public interface ConfigureSection {
     }
 
     /**
+     * Creates a new {@link ConfigureSection} with specified values.
+     * <p> The {@link #parent()} of the new section will be this section.
+     *
+     * @param data The data to be used to create section.
+     * @return Newly created section
+     */
+    @NotNull ConfigureSection createSection(@NotNull Map<?, ?> data);
+
+    /**
+     * Creates a new empty {@link ConfigureSection}.
+     * <p> The {@link #parent()} of the new section will be this section.
+     *
+     * @return Newly created section
+     */
+    default @NotNull ConfigureSection createSection() {
+        return createSection(new LinkedHashMap<>());
+    }
+
+    /**
+     * Get or create a section at the given path.
+     * <p>
+     * Any value previously set at this path will be replaced if it is not a section
+     * or will be returned if it is an exists {@link ConfigureSection}.
+     *
+     * @param path The path to get the section from.
+     * @return The section at the path, or a new section if it does not exist.
+     * @see #createSection()
+     */
+    default @NotNull ConfigureSection computeSection(@NotNull String path) {
+        ConfigureSection current = getSection(path);
+        if (current == null) {
+            current = createSection();
+            set(path, current);
+        }
+        return current;
+    }
+
+    /**
      * Get the origin value of the path.
      *
      * @param path The path to get the value from.

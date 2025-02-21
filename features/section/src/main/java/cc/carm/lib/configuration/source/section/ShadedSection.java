@@ -5,30 +5,33 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ShadedSection implements ConfigureSection {
 
-
-    protected final @Nullable ShadedSection parent;
     protected final @NotNull ConfigureSection section;
-    protected final @Nullable ConfigureSection template;
+    protected final @NotNull ConfigureSection template;
 
-    public ShadedSection(@NotNull ShadedSection parent,
-                         @NotNull ConfigureSection section, @Nullable ConfigureSection template) {
-        this.parent = parent;
+    public ShadedSection(@NotNull ConfigureSection section, @Nullable ConfigureSection template) {
         this.section = section;
         this.template = template;
     }
 
-
     @Override
     public @Nullable ShadedSection parent() {
-        return this.parent;
+        return null;
     }
 
     @Override
     public @NotNull @UnmodifiableView Map<String, Object> getValues(boolean deep) {
+        if (deep) {
+            Map<String, Object> values = new LinkedHashMap<>(template.getValues(true));
+            values.putAll(section.getValues(true));
+            return values;
+        }
+
+
         return Collections.emptyMap();
     }
 
@@ -56,6 +59,11 @@ public class ShadedSection implements ConfigureSection {
     @Override
     public void remove(@NotNull String path) {
         section.remove(path);
+    }
+
+    @Override
+    public @NotNull ConfigureSection createSection(@NotNull Map<?, ?> data) {
+        return null;
     }
 
 }
