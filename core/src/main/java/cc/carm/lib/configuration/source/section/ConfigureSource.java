@@ -16,6 +16,7 @@ import java.util.Map;
  * @param <SECTION>  The type of the root section.
  * @param <ORIGINAL> The original configuration object.
  * @param <SELF>     The type of the source itself, for further implement support.
+ * @see ConfigureSection
  */
 public abstract class ConfigureSource<
         SECTION extends ConfigureSection, ORIGINAL,

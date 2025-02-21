@@ -5,11 +5,25 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class RawMapSection extends MapSection<RawMapSection> {
 
     public static RawMapSection of() {
         return of((RawMapSection) null);
+    }
+
+    public static RawMapSection of(@NotNull Consumer<Map<String, Object>> data) {
+        return of(() -> {
+            Map<String, Object> map = new LinkedHashMap<>();
+            data.accept(map);
+            return map;
+        });
+    }
+
+    public static RawMapSection of(@NotNull Supplier<Map<?, ?>> data) {
+        return of(data.get(), null);
     }
 
     public static RawMapSection of(@NotNull Map<?, ?> data) {
