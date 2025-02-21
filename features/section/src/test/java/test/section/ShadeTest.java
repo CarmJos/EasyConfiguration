@@ -35,7 +35,6 @@ public class ShadeTest {
             data.put("cards", Arrays.asList("33333", "55555")); // 应当直接覆盖原先的List
         });
 
-
     }
 
 }

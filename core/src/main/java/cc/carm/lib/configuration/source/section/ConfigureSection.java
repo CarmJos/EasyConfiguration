@@ -31,6 +31,15 @@ public interface ConfigureSection {
     @Nullable ConfigureSection parent();
 
     /**
+     * Get the path separator for the section.
+     *
+     * @return The path separator
+     */
+    default char pathSeparator() {
+        return '.';
+    }
+
+    /**
      * Gets if this section is a root section.
      *
      * @return True if this section is a root section, false otherwise.
@@ -704,6 +713,11 @@ public interface ConfigureSection {
      */
     default <T> @NotNull Stream<T> stream(@NotNull String path, @NotNull Function<Object, T> parser) {
         return stream(path).map(parser);
+    }
+
+    default String childPath(String path) {
+        int index = path.indexOf(pathSeparator());
+        return (index == -1) ? path : path.substring(index + 1);
     }
 
     static <T, C extends Collection<T>> @NotNull C parseCollection(

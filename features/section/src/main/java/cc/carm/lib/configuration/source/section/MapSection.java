@@ -71,14 +71,6 @@ public abstract class MapSection<R extends MapSection<R>> implements ConfigureSe
         return this.parent;
     }
 
-    /**
-     * Get the path separator for the section.
-     *
-     * @return The path separator
-     */
-    public char pathSeparator() {
-        return '.';
-    }
 
     @Override
     public @NotNull Map<String, Object> getValues(boolean deep) {
@@ -122,11 +114,6 @@ public abstract class MapSection<R extends MapSection<R>> implements ConfigureSe
 
         String root = path.substring(0, index);
         return (R) data().computeIfAbsent(root, k -> createChild());
-    }
-
-    private String childPath(String path) {
-        int index = path.indexOf(pathSeparator());
-        return (index == -1) ? path : path.substring(index + 1);
     }
 
     /**
