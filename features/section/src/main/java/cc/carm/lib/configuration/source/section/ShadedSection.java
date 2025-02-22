@@ -96,7 +96,12 @@ public class ShadedSection implements ConfigureSection {
 
     @Override
     public @NotNull ConfigureSection createSection(@NotNull Map<?, ?> data) {
-        throw new UnsupportedOperationException("not supported yet");
+        if (source == null) {
+            return new ShadedSection(this, template, MemorySection.of(data));
+        } else {
+            ConfigureSection section = source.createSection(data);
+            return new ShadedSection(this, template, section);
+        }
     }
 
     @Override
