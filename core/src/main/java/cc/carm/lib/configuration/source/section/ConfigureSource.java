@@ -2,12 +2,10 @@ package cc.carm.lib.configuration.source.section;
 
 import cc.carm.lib.configuration.source.ConfigurationHolder;
 import cc.carm.lib.configuration.source.option.StandardOptions;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.*;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
  * ConfigureSource represents the source of configuration,
@@ -97,6 +95,16 @@ public abstract class ConfigureSource<
     @Override
     public @NotNull Map<String, Object> getValues(boolean deep) {
         return section().getValues(deep);
+    }
+
+    @Override
+    public @NotNull @UnmodifiableView Set<String> getKeys(boolean deep) {
+        return section().getKeys(deep);
+    }
+
+    @Override
+    public @NotNull ConfigureSection createSection(@NotNull Map<?, ?> data) {
+        return section().createSection(data);
     }
 
     @Override
