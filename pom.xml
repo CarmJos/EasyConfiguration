@@ -15,7 +15,7 @@
     <groupId>cc.carm.lib</groupId>
     <artifactId>easyconfiguration-parent</artifactId>
     <packaging>pom</packaging>
-    <version>4.0.6</version>
+    <version>4.0.7</version>
     <modules>
         <module>core</module>
         <module>features/section</module>
@@ -87,12 +87,6 @@
         <repository>
             <id>central</id>
             <url>https://repo1.maven.org/maven2/</url>
-        </repository>
-
-        <repository>
-            <id>github</id>
-            <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/CarmJos/*</url>
         </repository>
 
     </repositories>

@@ -93,6 +93,11 @@ public abstract class ConfigureSource<
     }
 
     @Override
+    public @NotNull String path() {
+        return "";
+    }
+
+    @Override
     public @NotNull Map<String, Object> getValues(boolean deep) {
         return section().getValues(deep);
     }
@@ -103,8 +108,8 @@ public abstract class ConfigureSource<
     }
 
     @Override
-    public @NotNull ConfigureSection createSection(@NotNull Map<?, ?> data) {
-        return section().createSection(data);
+    public @NotNull ConfigureSection createSection(@NotNull String path, @NotNull Map<?, ?> data) {
+        return section().createSection(path, data);
     }
 
     @Override

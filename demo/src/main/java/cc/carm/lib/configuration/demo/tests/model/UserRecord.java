@@ -36,6 +36,7 @@ public class UserRecord extends AbstractRecord {
     }
 
     public static UserRecord deserialize(ConfigureSection section) {
+        System.out.println(">  Deserializing  -> " + section.fullPath());
         String name = section.getString("name");
         if (name == null) throw new NullPointerException("name is null");
         String uuidString = section.getString("info.uuid");

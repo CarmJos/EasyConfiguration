@@ -29,6 +29,11 @@ public class ShadedSection implements ConfigureSection {
     }
 
     @Override
+    public @NotNull String path() {
+        return this.template.path();
+    }
+
+    @Override
     public @NotNull @UnmodifiableView Map<String, Object> getValues(boolean deep) {
         if (source == null) return template.getValues(deep);
         // 本函数为，当 getValues 时，递归合并 source 和 template
@@ -95,11 +100,11 @@ public class ShadedSection implements ConfigureSection {
     }
 
     @Override
-    public @NotNull ConfigureSection createSection(@NotNull Map<?, ?> data) {
+    public @NotNull ConfigureSection createSection(@NotNull String path, @NotNull Map<?, ?> data) {
         if (source == null) {
             return new ShadedSection(this, template, MemorySection.of(data));
         } else {
-            ConfigureSection section = source.createSection(data);
+            ConfigureSection section = source.computeSection(path, data);
             return new ShadedSection(this, template, section);
         }
     }

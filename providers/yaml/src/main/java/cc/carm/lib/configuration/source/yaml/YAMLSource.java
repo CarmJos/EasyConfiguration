@@ -56,7 +56,7 @@ public class YAMLSource
 
     @Override
     protected @NotNull YAMLSource self() {
-        return null;
+        return this;
     }
 
     @Override

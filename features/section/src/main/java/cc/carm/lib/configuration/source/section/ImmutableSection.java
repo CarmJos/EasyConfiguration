@@ -32,6 +32,11 @@ public class ImmutableSection implements ConfigureSection {
         return this.parent;
     }
 
+    @Override
+    public @NotNull String path() {
+        return section().path();
+    }
+
     private @NotNull ConfigureSection section() {
         return section;
     }
@@ -52,8 +57,8 @@ public class ImmutableSection implements ConfigureSection {
     }
 
     @Override
-    public @NotNull ConfigureSection createSection(@NotNull Map<?, ?> data) {
-        return new ImmutableSection(this, section().createSection(data));
+    public @NotNull ImmutableSection createSection(@NotNull String path, @NotNull Map<?, ?> data) {
+        return new ImmutableSection(this, section().createSection(path, data));
     }
 
     @Override

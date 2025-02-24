@@ -10,9 +10,11 @@ public abstract class AbstractMapSection<R extends AbstractMapSection<R>> implem
 
     protected final @NotNull Map<String, Object> data;
     protected final @Nullable R parent;
+    protected final @NotNull String path;
 
-    protected AbstractMapSection(@Nullable R parent) {
+    protected AbstractMapSection(@Nullable R parent, @NotNull String path) {
         this.parent = parent;
+        this.path = path;
         this.data = new LinkedHashMap<>();
     }
 
@@ -20,15 +22,17 @@ public abstract class AbstractMapSection<R extends AbstractMapSection<R>> implem
         for (Map.Entry<?, ?> entry : data.entrySet()) {
             String key = (entry.getKey() == null) ? "" : entry.getKey().toString();
             if (entry.getValue() instanceof Map) {
-                this.data.put(key, createSection((Map<?, ?>) entry.getValue()));
+                this.data.put(key, createSection(key, (Map<?, ?>) entry.getValue()));
             } else if (entry.getValue() instanceof List) {
                 List<Object> list = new ArrayList<>();
+                int index = 0;
                 for (Object obj : (List<?>) entry.getValue()) {
                     if (obj instanceof Map) {
-                        list.add(createSection((Map<?, ?>) obj));
+                        list.add(createSection(key + "[" + index + "]", (Map<?, ?>) obj));
                     } else {
                         list.add(obj);
                     }
+                    index++;
                 }
                 this.data.put(key, list);
             } else {
@@ -40,11 +44,11 @@ public abstract class AbstractMapSection<R extends AbstractMapSection<R>> implem
     public abstract @NotNull R self();
 
     @Override
-    public abstract @NotNull R createSection(@NotNull Map<?, ?> data);
+    public abstract @NotNull R createSection(@NotNull String path, @NotNull Map<?, ?> data);
 
     @Override
-    public @NotNull R createSection() {
-        return createSection(new LinkedHashMap<>());
+    public @NotNull String path() {
+        return this.path;
     }
 
     @Override
@@ -63,7 +67,12 @@ public abstract class AbstractMapSection<R extends AbstractMapSection<R>> implem
 
     @Override
     public boolean isEmpty() {
-        return data.isEmpty();
+        return this.data.isEmpty();
+    }
+
+    @Override
+    public int size(boolean deep) {
+        return deep ? getKeys(true).size() : this.data.size();
     }
 
     @UnmodifiableView
@@ -86,12 +95,12 @@ public abstract class AbstractMapSection<R extends AbstractMapSection<R>> implem
 
     @Override
     public @NotNull Map<String, Object> getValues(boolean deep) {
-        return Collections.unmodifiableMap(deep ? mappingValues(this, null, true) : data());
+        return Collections.unmodifiableMap(deep ? mappingValues(this, null, true, String.valueOf(pathSeparator())) : data());
     }
 
     @Override
     public void set(@NotNull String path, @Nullable Object value) {
-        if (value instanceof Map) value = createSection((Map<?, ?>) value);
+        if (value instanceof Map) value = createSection(path, (Map<?, ?>) value);
 
         R section = getSectionFor(path);
         if (section == this) {
@@ -125,7 +134,7 @@ public abstract class AbstractMapSection<R extends AbstractMapSection<R>> implem
         if (index == -1) return self();
 
         String root = path.substring(0, index);
-        return (R) data().computeIfAbsent(root, k -> createSection());
+        return (R) computeSection(root);
     }
 
     /**
@@ -135,14 +144,14 @@ public abstract class AbstractMapSection<R extends AbstractMapSection<R>> implem
      * @param parent  The parent path
      * @param deep    If the mapping should be deep
      */
-    protected Map<String, Object> mappingValues(@NotNull AbstractMapSection<?> section, @Nullable String parent, boolean deep) {
+    protected static Map<String, Object> mappingValues(@NotNull AbstractMapSection<?> section, @Nullable String parent, boolean deep, String pathSeparator) {
         Map<String, Object> output = new LinkedHashMap<>();
         for (Map.Entry<String, Object> entry : section.data().entrySet()) {
-            String path = (parent == null ? "" : parent + pathSeparator()) + entry.getKey();
+            String path = (parent == null ? "" : parent + pathSeparator) + entry.getKey();
             output.remove(path);
             output.put(path, entry.getValue());
             if (deep && entry.getValue() instanceof AbstractMapSection<?>) {
-                output.putAll(mappingValues((AbstractMapSection<?>) entry.getValue(), path, true));
+                output.putAll(mappingValues((AbstractMapSection<?>) entry.getValue(), path, true, pathSeparator));
             }
         }
         return output;

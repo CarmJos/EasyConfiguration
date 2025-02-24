@@ -8,6 +8,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -31,6 +32,24 @@ public interface ConfigureSection {
     @Nullable ConfigureSection parent();
 
     /**
+     * Get the current section's path from {@link #parent()} of this section.
+     *
+     * @return The current path of this section, if {@link #isRoot()}, return empty string.
+     */
+    @NotNull String path();
+
+    /**
+     * Get the full path of this section.
+     *
+     * @return The full path of this section, if {@link #isRoot()}, return empty string.
+     */
+    default @NotNull String fullPath() {
+        if (parent() == null) return "";
+        return (parent().isRoot() ? "" : parent().fullPath() + pathSeparator()) + path();
+    }
+
+
+    /**
      * Get the path separator for the section.
      *
      * @return The path separator
@@ -44,6 +63,7 @@ public interface ConfigureSection {
      *
      * @return True if this section is a root section, false otherwise.
      */
+    @Contract(pure = true)
     default boolean isRoot() {
         return parent() == null;
     }
@@ -55,6 +75,15 @@ public interface ConfigureSection {
      */
     default boolean isEmpty() {
         return getValues(false).isEmpty();
+    }
+
+    /**
+     * Gets the number of keys in this section.
+     *
+     * @return Number of keys in this section.
+     */
+    default int size(boolean deep) {
+        return getKeys(deep).size();
     }
 
     /**
@@ -238,11 +267,39 @@ public interface ConfigureSection {
     /**
      * Creates a new {@link ConfigureSection} with specified values.
      * <p> The {@link #parent()} of the new section will be this section.
+     * <p> This section will not be saved until {@link #set(String, Object)} is called.
+     * <p> If you want to create and use a section and set it to this section, use {@link #computeSection(String)}.
      *
      * @param data The data to be used to create section.
      * @return Newly created section
      */
-    @NotNull ConfigureSection createSection(@NotNull Map<?, ?> data);
+    @NotNull ConfigureSection createSection(@NotNull String path, @NotNull Map<?, ?> data);
+
+    /**
+     * Creates a new {@link ConfigureSection} with specified values.
+     * <p> The {@link #parent()} of the new section will be this section.
+     *
+     * @param data The data to be used to create section.
+     * @return Newly created section
+     */
+    default @NotNull ConfigureSection createSection(@NotNull String path, @NotNull Consumer<Map<String, Object>> data) {
+        return createSection(path, () -> {
+            Map<String, Object> map = new LinkedHashMap<>();
+            data.accept(map);
+            return map;
+        });
+    }
+
+    /**
+     * Creates a new {@link ConfigureSection} with specified values.
+     * <p> The {@link #parent()} of the new section will be this section.
+     *
+     * @param data The data to be used to create section.
+     * @return Newly created section
+     */
+    default @NotNull ConfigureSection createSection(@NotNull String path, @NotNull Supplier<Map<String, Object>> data) {
+        return createSection(path, data.get());
+    }
 
     /**
      * Creates a new empty {@link ConfigureSection}.
@@ -250,8 +307,8 @@ public interface ConfigureSection {
      *
      * @return Newly created section
      */
-    default @NotNull ConfigureSection createSection() {
-        return createSection(new LinkedHashMap<>());
+    default @NotNull ConfigureSection createSection(@NotNull String path) {
+        return createSection(path, new LinkedHashMap<>());
     }
 
     /**
@@ -262,16 +319,63 @@ public interface ConfigureSection {
      *
      * @param path The path to get the section from.
      * @return The section at the path, or a new section if it does not exist.
-     * @see #createSection()
+     * @see #createSection(String, Map)
      */
     default @NotNull ConfigureSection computeSection(@NotNull String path) {
+        return computeSection(path, new LinkedHashMap<>());
+    }
+
+    /**
+     * Get or create a section at the given path.
+     * <p>
+     * Any value previously set at this path will be replaced if it is not a section
+     * or will be returned if it is an exists {@link ConfigureSection}.
+     *
+     * @param path The path to get the section from.
+     * @return The section at the path, or a new section if it does not exist.
+     * @see #createSection(String, Map)
+     */
+    default @NotNull ConfigureSection computeSection(@NotNull String path, @NotNull Map<?, ?> data) {
         ConfigureSection current = getSection(path);
         if (current == null) {
-            current = createSection();
+            current = createSection(path, data);
             set(path, current);
         }
         return current;
     }
+
+    /**
+     * Get or create a section at the given path.
+     * <p>
+     * Any value previously set at this path will be replaced if it is not a section
+     * or will be returned if it is an exists {@link ConfigureSection}.
+     *
+     * @param path The path to get the section from.
+     * @return The section at the path, or a new section if it does not exist.
+     * @see #createSection(String, Map)
+     */
+    default @NotNull ConfigureSection computeSection(@NotNull String path, @NotNull Consumer<Map<String, Object>> data) {
+        return computeSection(path, () -> {
+            Map<String, Object> map = new LinkedHashMap<>();
+            data.accept(map);
+            return map;
+        });
+    }
+
+    /**
+     * Get or create a section at the given path.
+     * <p>
+     * Any value previously set at this path will be replaced if it is not a section
+     * or will be returned if it is an exists {@link ConfigureSection}.
+     *
+     * @param path The path to get the section from.
+     * @return The section at the path, or a new section if it does not exist.
+     * @see #createSection(String, Map)
+     */
+    default @NotNull ConfigureSection computeSection(@NotNull String path, @NotNull Supplier<Map<String, Object>> data) {
+        return computeSection(path, data.get());
+    }
+
 
     /**
      * Get the origin value of the path.

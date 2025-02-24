@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 public class MemorySection extends AbstractMapSection<MemorySection> {
 
     public static MemorySection of() {
-        return of((MemorySection) null);
+        return of(new LinkedHashMap<>());
     }
 
     public static MemorySection of(@NotNull Consumer<Map<String, Object>> data) {
@@ -23,23 +23,23 @@ public class MemorySection extends AbstractMapSection<MemorySection> {
     }
 
     public static MemorySection of(@NotNull Supplier<Map<?, ?>> data) {
-        return of(data.get(), null);
+        return of(data.get());
     }
 
     public static MemorySection of(@NotNull Map<?, ?> data) {
-        return of(data, null);
+        return of(data, null, "");
     }
 
-    public static MemorySection of(@Nullable MemorySection parent) {
-        return of(new LinkedHashMap<>(), parent);
+    public static MemorySection of(@Nullable MemorySection parent, @NotNull String path) {
+        return of(new LinkedHashMap<>(), parent, path);
     }
 
-    public static MemorySection of(@NotNull Map<?, ?> data, @Nullable MemorySection parent) {
-        return new MemorySection(data, parent);
+    public static MemorySection of(@NotNull Map<?, ?> data, @Nullable MemorySection parent, @NotNull String path) {
+        return new MemorySection(data, parent, path);
     }
 
-    public MemorySection(@NotNull Map<?, ?> raw, @Nullable MemorySection parent) {
-        super(parent);
+    public MemorySection(@NotNull Map<?, ?> raw, @Nullable MemorySection parent, @NotNull String path) {
+        super(parent, path);
         migrate(raw);
     }
 
@@ -49,8 +49,8 @@ public class MemorySection extends AbstractMapSection<MemorySection> {
     }
 
     @Override
-    public @NotNull MemorySection createSection(@NotNull Map<?, ?> data) {
-        return new MemorySection(data, this);
+    public @NotNull MemorySection createSection(@NotNull String path, @NotNull Map<?, ?> data) {
+        return new MemorySection(data, this, path);
     }
 
 }
