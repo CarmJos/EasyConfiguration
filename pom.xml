@@ -15,7 +15,7 @@
     <groupId>cc.carm.lib</groupId>
     <artifactId>easyconfiguration-parent</artifactId>
     <packaging>pom</packaging>
-    <version>4.0.7</version>
+    <version>4.0.8</version>
     <modules>
         <module>core</module>
         <module>features/section</module>
@@ -28,7 +28,7 @@
         <module>providers/gson</module>
         <!--        <module>providers/hocon</module>-->
         <!--        <module>providers/sql</module>-->
-        <!--        <module>providers/mongodb</module>-->
+        <module>providers/mongodb</module>
 
         <module>demo</module>
     </modules>

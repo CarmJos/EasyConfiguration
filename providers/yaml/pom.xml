@@ -6,7 +6,7 @@
     <parent>
         <artifactId>easyconfiguration-parent</artifactId>
         <groupId>cc.carm.lib</groupId>
-        <version>4.0.7</version>
+        <version>4.0.8</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <properties>

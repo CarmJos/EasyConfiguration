@@ -99,6 +99,11 @@ public abstract class AbstractMapSection<R extends AbstractMapSection<R>> implem
     }
 
     @Override
+    public @NotNull @UnmodifiableView Set<String> getKeys(boolean deep) {
+        return Collections.unmodifiableSet(deep ? mappingKeys(this, null, true, String.valueOf(pathSeparator())) : data().keySet());
+    }
+
+    @Override
     public void set(@NotNull String path, @Nullable Object value) {
         if (value instanceof Map) value = createSection(path, (Map<?, ?>) value);
 
@@ -155,6 +160,18 @@ public abstract class AbstractMapSection<R extends AbstractMapSection<R>> implem
             }
         }
         return output;
+    }
+
+    protected static Set<String> mappingKeys(@NotNull AbstractMapSection<?> section, @Nullable String parent, boolean deep, String pathSeparator) {
+        Set<String> keys = new LinkedHashSet<>();
+        for (Map.Entry<String, Object> entry : section.data().entrySet()) {
+            String path = (parent == null ? "" : parent + pathSeparator) + entry.getKey();
+            keys.add(path);
+            if (deep && entry.getValue() instanceof AbstractMapSection<?>) {
+                keys.addAll(mappingKeys((AbstractMapSection<?>) entry.getValue(), path, true, pathSeparator));
+            }
+        }
+        return keys;
     }
 
 
