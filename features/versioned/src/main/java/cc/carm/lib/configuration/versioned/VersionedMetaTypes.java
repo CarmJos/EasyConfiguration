@@ -1,4 +1,4 @@
-package cc.carm.lib.configuration.commentable;
+package cc.carm.lib.configuration.versioned;
 
 import cc.carm.lib.configuration.annotation.ConfigVersion;
 import cc.carm.lib.configuration.source.ConfigurationHolder;
@@ -19,7 +19,18 @@ public interface VersionedMetaTypes {
     }
 
     static void register(@NotNull ConfigurationInitializer initializer) {
-        initializer.registerFieldAnnotation(ConfigVersion.class, VERSION, ConfigVersion::value);
+        initializer.appendFieldInitializer((holder, path, field, value) -> {
+            ConfigVersion annotation = field.getAnnotation(ConfigVersion.class);
+            if (annotation == null || value == null) return;
+            int currentVersion = annotation.value();
+            int savedVersion = holder.metadata(path).get(VERSION, 0);
+            if (currentVersion == savedVersion) return;
+
+            if (currentVersion > savedVersion) { // This values updated.
+                value.setDefault(true); // Mark as default value, force write.
+            }
+            holder.metadata(path).set(VERSION, currentVersion);
+        });
     }
 
 }

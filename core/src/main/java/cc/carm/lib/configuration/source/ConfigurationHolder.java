@@ -6,9 +6,11 @@ import cc.carm.lib.configuration.adapter.ValueType;
 import cc.carm.lib.configuration.source.loader.ConfigurationInitializer;
 import cc.carm.lib.configuration.source.meta.ConfigurationMetaHolder;
 import cc.carm.lib.configuration.source.meta.ConfigurationMetadata;
+import cc.carm.lib.configuration.source.meta.StandardMeta;
 import cc.carm.lib.configuration.source.option.ConfigurationOption;
 import cc.carm.lib.configuration.source.option.ConfigurationOptionHolder;
 import cc.carm.lib.configuration.source.section.ConfigureSource;
+import cc.carm.lib.configuration.value.ConfigValue;
 import cc.carm.lib.configuration.value.ValueManifest;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -18,6 +20,8 @@ import org.jetbrains.annotations.UnmodifiableView;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Predicate;
 
 public abstract class ConfigurationHolder<SOURCE extends ConfigureSource<?, ?, SOURCE>> {
 
@@ -51,7 +55,7 @@ public abstract class ConfigurationHolder<SOURCE extends ConfigureSource<?, ?, S
         return options;
     }
 
-    public <O> O option(@NotNull ConfigurationOption<O> option) {
+    public <O> @NotNull O option(@NotNull ConfigurationOption<O> option) {
         return options().get(option);
     }
 
@@ -66,12 +70,24 @@ public abstract class ConfigurationHolder<SOURCE extends ConfigureSource<?, ?, S
     @NotNull
     @UnmodifiableView
     public <M> Map<String, M> extractMetadata(@NotNull ConfigurationMetadata<M> type) {
+        return extractMetadata(type, Objects::nonNull);
+    }
+
+    @NotNull
+    @UnmodifiableView
+    public <M> Map<String, M> extractMetadata(@NotNull ConfigurationMetadata<M> type, @NotNull Predicate<M> filter) {
         Map<String, M> metas = new LinkedHashMap<>();
         for (Map.Entry<String, ConfigurationMetaHolder> entry : this.metadata.entrySet()) {
             M data = entry.getValue().get(type);
-            if (data != null) metas.put(entry.getKey(), data);
+            if (filter.test(data)) metas.put(entry.getKey(), data);
         }
         return Collections.unmodifiableMap(metas);
+    }
+
+    @NotNull
+    @UnmodifiableView
+    public Map<String, ConfigValue<?>> registeredValues() {
+        return extractMetadata(StandardMeta.VALUE);
     }
 
     public ValueAdapterRegistry adapters() {

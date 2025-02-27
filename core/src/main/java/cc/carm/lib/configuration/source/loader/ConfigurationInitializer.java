@@ -21,18 +21,18 @@ import java.util.function.Function;
 public class ConfigurationInitializer {
 
     protected @NotNull PathGenerator pathGenerator;
-    protected @NotNull ConfigInitializeHandler<Field> fieldInitializer;
-    protected @NotNull ConfigInitializeHandler<Class<? extends Configuration>> classInitializer;
+    protected @NotNull ConfigInitializeHandler<Field, ConfigValue<?>> valueInitializer;
+    protected @NotNull ConfigInitializeHandler<Class<? extends Configuration>, Object> classInitializer;
 
     public ConfigurationInitializer() {
         this(PathGenerator.of(), ConfigInitializeHandler.start(), ConfigInitializeHandler.start());
     }
 
     public ConfigurationInitializer(@NotNull PathGenerator pathGenerator,
-                                    @NotNull ConfigInitializeHandler<Field> fieldInitializer,
-                                    @NotNull ConfigInitializeHandler<Class<? extends Configuration>> classInitializer) {
+                                    @NotNull ConfigInitializeHandler<Field, ConfigValue<?>> valueInitializer,
+                                    @NotNull ConfigInitializeHandler<Class<? extends Configuration>, Object> classInitializer) {
         this.pathGenerator = pathGenerator;
-        this.fieldInitializer = fieldInitializer;
+        this.valueInitializer = valueInitializer;
         this.classInitializer = classInitializer;
     }
 
@@ -44,34 +44,34 @@ public class ConfigurationInitializer {
         return pathGenerator;
     }
 
-    public ConfigInitializeHandler<Field> fieldInitializer() {
-        return fieldInitializer;
+    public ConfigInitializeHandler<Field, ConfigValue<?>> fieldInitializer() {
+        return valueInitializer;
     }
 
-    public void fieldInitializer(@NotNull ConfigInitializeHandler<Field> fieldInitializer) {
-        this.fieldInitializer = fieldInitializer;
+    public void fieldInitializer(@NotNull ConfigInitializeHandler<Field, ConfigValue<?>> fieldInitializer) {
+        this.valueInitializer = fieldInitializer;
     }
 
-    public ConfigInitializeHandler<Class<? extends Configuration>> classInitializer() {
+    public ConfigInitializeHandler<Class<? extends Configuration>, Object> classInitializer() {
         return classInitializer;
     }
 
-    public void classInitializer(@NotNull ConfigInitializeHandler<Class<? extends Configuration>> classInitializer) {
+    public void classInitializer(@NotNull ConfigInitializeHandler<Class<? extends Configuration>, Object> classInitializer) {
         this.classInitializer = classInitializer;
     }
 
-    public void appendFieldInitializer(@NotNull ConfigInitializeHandler<Field> fieldInitializer) {
-        this.fieldInitializer = this.fieldInitializer.andThen(fieldInitializer);
+    public void appendFieldInitializer(@NotNull ConfigInitializeHandler<Field, ConfigValue<?>> fieldInitializer) {
+        this.valueInitializer = this.valueInitializer.andThen(fieldInitializer);
     }
 
-    public void appendClassInitializer(@NotNull ConfigInitializeHandler<Class<? extends Configuration>> classInitializer) {
+    public void appendClassInitializer(@NotNull ConfigInitializeHandler<Class<? extends Configuration>, Object> classInitializer) {
         this.classInitializer = this.classInitializer.andThen(classInitializer);
     }
 
     public <T, A extends Annotation> void registerClassAnnotation(@NotNull Class<A> annotation,
                                                                   @NotNull ConfigurationMetadata<T> metadata,
                                                                   @NotNull Function<A, T> extractor) {
-        appendClassInitializer((holder, path, clazz) -> {
+        appendClassInitializer((holder, path, clazz, instance) -> {
             A data = clazz.getAnnotation(annotation);
             if (data == null) return;
             holder.metadata(path).setIfAbsent(metadata, extractor.apply(data));
@@ -81,7 +81,7 @@ public class ConfigurationInitializer {
     public <T, A extends Annotation> void registerFieldAnnotation(@NotNull Class<A> annotation,
                                                                   @NotNull ConfigurationMetadata<T> metadata,
                                                                   @NotNull Function<A, T> extractor) {
-        appendFieldInitializer((holder, path, field) -> {
+        appendFieldInitializer((holder, path, field, instance) -> {
             A data = field.getAnnotation(annotation);
             if (data == null) return;
             holder.metadata(path).setIfAbsent(metadata, extractor.apply(data));
@@ -123,7 +123,7 @@ public class ConfigurationInitializer {
                                       @Nullable String parentPath, @Nullable Field configField) {
         String path = getClassPath(holder, parentPath, root.getClass(), configField);
         try {
-            this.classInitializer.whenInitialize(holder, path, root.getClass());
+            this.classInitializer.whenInitialize(holder, path, root.getClass(), root);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -140,7 +140,7 @@ public class ConfigurationInitializer {
         String path = getClassPath(holder, parentPath, clazz, configField);
 
         try {
-            this.classInitializer.whenInitialize(holder, path, (Class<? extends Configuration>) clazz);
+            this.classInitializer.whenInitialize(holder, path, (Class<? extends Configuration>) clazz, configField);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -169,14 +169,14 @@ public class ConfigurationInitializer {
                 String path = getFieldPath(holder, parent, field);
                 if (path == null) return;
                 value.initialize(holder, path);
-                holder.metadata(path).set(StandardMeta.UNIT, true); // Mark the minimal config value unit.
-                try {
-                    this.fieldInitializer.whenInitialize(holder, path, field);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                holder.metadata(path).set(StandardMeta.VALUE, value); // Mark the minimal config value unit.
                 if (holder.option(StandardOptions.SET_DEFAULTS)) {
                     value.setDefault(); // Set default value.
+                }
+                try {
+                    this.valueInitializer.whenInitialize(holder, path, field, value);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
                 if (holder.option(StandardOptions.PRELOAD)) {
                     value.get(); // Preload the value by calling #get method.

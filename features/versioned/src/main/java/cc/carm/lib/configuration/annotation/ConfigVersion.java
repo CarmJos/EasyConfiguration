@@ -1,6 +1,5 @@
 package cc.carm.lib.configuration.annotation;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
 
 import java.lang.annotation.ElementType;
@@ -22,7 +21,7 @@ public @interface ConfigVersion {
      *
      * @return the version of the configuration field
      */
-    @Range(from = 0, to = Integer.MAX_VALUE)
+    @Range(from = 0, to = 65535)
     int value() default 0;
 
 }

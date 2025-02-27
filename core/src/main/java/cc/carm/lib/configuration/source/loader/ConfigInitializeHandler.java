@@ -5,26 +5,27 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @FunctionalInterface
-public interface ConfigInitializeHandler<T> {
+public interface ConfigInitializeHandler<T, V> {
 
-    static <T> ConfigInitializeHandler<T> start() {
-        return (provider, path, value) -> {
+    static <T, V> ConfigInitializeHandler<T, V> start() {
+        return (provider, path, value, instace) -> {
         };
     }
 
-    void whenInitialize(@NotNull ConfigurationHolder<?> holder, @Nullable String path, @NotNull T value) throws Exception;
+    void whenInitialize(@NotNull ConfigurationHolder<?> holder, @Nullable String path,
+                        @NotNull T value, @Nullable V instance) throws Exception;
 
-    default ConfigInitializeHandler<T> andThen(ConfigInitializeHandler<T> after) {
-        return (provider, path, value) -> {
-            whenInitialize(provider, path, value);
-            after.whenInitialize(provider, path, value);
+    default ConfigInitializeHandler<T, V> andThen(ConfigInitializeHandler<T, V> after) {
+        return (provider, path, value, instance) -> {
+            whenInitialize(provider, path, value, instance);
+            after.whenInitialize(provider, path, value, instance);
         };
     }
 
-    default ConfigInitializeHandler<T> compose(ConfigInitializeHandler<T> before) {
-        return (provider, path, value) -> {
-            before.whenInitialize(provider, path, value);
-            whenInitialize(provider, path, value);
+    default ConfigInitializeHandler<T, V> compose(ConfigInitializeHandler<T, V> before) {
+        return (provider, path, value, instance) -> {
+            before.whenInitialize(provider, path, value, instance);
+            whenInitialize(provider, path, value, instance);
         };
     }
 

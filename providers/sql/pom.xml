@@ -6,7 +6,7 @@
     <parent>
         <artifactId>easyconfiguration-parent</artifactId>
         <groupId>cc.carm.lib</groupId>
-        <version>4.0.0</version>
+        <version>4.0.8</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <properties>
@@ -15,7 +15,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
 
-        <log4j.version>2.24.3</log4j.version>
+        <deps.mysql-driver.version>8.0.26</deps.mysql-driver.version>
+        <deps.log4j.version>2.24.3</deps.log4j.version>
     </properties>
     <artifactId>easyconfiguration-sql</artifactId>
 
@@ -77,21 +78,35 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
-            <version>${log4j.version}</version>
+            <version>${deps.log4j.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>${log4j.version}</version>
+            <version>${deps.log4j.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
-            <version>${log4j.version}</version>
+            <version>${deps.log4j.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>easyconfiguration-gson</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${deps.mysql-driver.version}</version>
             <scope>test</scope>
         </dependency>
 

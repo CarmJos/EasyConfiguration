@@ -20,7 +20,6 @@ public class ValueManifest<T> {
 
     protected @NotNull Supplier<@Nullable T> defaultSupplier;
 
-
     public ValueManifest(@NotNull ValueType<T> type) {
         this(type, () -> null, EMPTY_INITIALIZER, null, null);
     }
@@ -93,12 +92,12 @@ public class ValueManifest<T> {
 
     public @NotNull String path() {
         if (path != null) return path;
-        else throw new IllegalStateException("No section path provided.");
+        else throw new IllegalStateException("No section path provided for Value(" + type() + ").");
     }
 
     public @NotNull ConfigurationHolder<?> holder() {
         if (this.holder != null) return this.holder;
-        throw new IllegalStateException("Value does not have a provider.");
+        throw new IllegalStateException("Value(" + type() + ") does not have a provider.");
     }
 
     public @NotNull ConfigureSource<?, ?, ?> config() {
@@ -118,7 +117,7 @@ public class ValueManifest<T> {
     }
 
 
-    private static final @NotNull BiConsumer<@NotNull ConfigurationHolder<?>, @NotNull String> EMPTY_INITIALIZER = (provider, path) -> {
+    private static final @NotNull BiConsumer<@NotNull ConfigurationHolder<?>, @NotNull String> EMPTY_INITIALIZER = (provider, valuePath) -> {
     };
 
 }

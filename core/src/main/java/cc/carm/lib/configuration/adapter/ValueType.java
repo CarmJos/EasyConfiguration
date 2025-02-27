@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -29,6 +28,7 @@ public abstract class ValueType<T> {
     public static final ValueType<Short> SHORT_TYPE = ofPrimitiveType(short.class);
     public static final ValueType<Character> CHAR = ofPrimitiveType(Character.class);
     public static final ValueType<Character> CHAR_TYPE = ofPrimitiveType(char.class);
+
 
     public static final ValueType<?>[] PRIMITIVE_TYPES = {
             STRING, INTEGER, LONG, DOUBLE, FLOAT, BOOLEAN, BYTE, SHORT, CHAR,
@@ -157,7 +157,7 @@ public abstract class ValueType<T> {
             ParameterizedType pt = (ParameterizedType) type;
             Type raw = pt.getRawType();
             StringBuilder sb = new StringBuilder();
-            sb.append(raw.getTypeName());
+            sb.append(raw.getClass().getName());
             sb.append('<');
             Type[] args = pt.getActualTypeArguments();
             for (int i = 0; i < args.length; i++) {
@@ -166,6 +166,7 @@ public abstract class ValueType<T> {
                 }
                 sb.append(args[i].getTypeName());
             }
+            sb.append('>');
             return sb.toString();
         }
         return type.getTypeName();

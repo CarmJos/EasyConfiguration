@@ -81,6 +81,16 @@ public abstract class AbstractMapSection<R extends AbstractMapSection<R>> implem
         for (Map.Entry<String, Object> entry : this.data.entrySet()) {
             if (entry.getValue() instanceof AbstractMapSection<?>) {
                 output.put(entry.getKey(), ((AbstractMapSection<?>) entry.getValue()).rawMap());
+            } else if (entry.getValue() instanceof List<?>) {
+                List<Object> list = new ArrayList<>();
+                for (Object obj : (List<?>) entry.getValue()) {
+                    if (obj instanceof AbstractMapSection<?>) {
+                        list.add(((AbstractMapSection<?>) obj).rawMap());
+                    } else {
+                        list.add(obj);
+                    }
+                }
+                output.put(entry.getKey(), list);
             } else {
                 output.put(entry.getKey(), entry.getValue());
             }

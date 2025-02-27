@@ -1,10 +1,12 @@
 package cc.carm.lib.configuration.source.meta;
 
+import cc.carm.lib.configuration.value.ConfigValue;
+
 public interface StandardMeta {
 
     /**
-     * To mark the {@link cc.carm.lib.configuration.value.ConfigValue} as a minimal unit path.
+     * To mark the {@link ConfigValue} instance of specific path.
      */
-    ConfigurationMetadata<Boolean> UNIT = ConfigurationMetadata.of(false);
+    ConfigurationMetadata<ConfigValue<?>> VALUE = ConfigurationMetadata.of();
 
 }

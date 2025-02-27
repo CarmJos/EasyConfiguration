@@ -1,53 +1,63 @@
 package cc.carm.lib.configuration.source.sql;
 
+import cc.carm.lib.configuration.adapter.ValueType;
+import cc.carm.lib.configuration.commentable.Commentable;
 import cc.carm.lib.configuration.source.ConfigurationHolder;
 import cc.carm.lib.configuration.source.section.ConfigureSource;
-import cc.carm.lib.configuration.source.section.MemorySection;
+import cc.carm.lib.configuration.source.section.SourcedSection;
+import cc.carm.lib.configuration.value.ConfigValue;
+import cc.carm.lib.configuration.versioned.VersionedMetaTypes;
 import cc.carm.lib.easysql.api.SQLManager;
+import cc.carm.lib.easysql.api.SQLQuery;
 import cc.carm.lib.easysql.api.SQLTable;
 import cc.carm.lib.easysql.api.enums.IndexType;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.sql.ResultSet;
+import java.time.LocalDateTime;
 import java.util.*;
 
-public class SQLSource extends ConfigureSource<MemorySection, Map<?, ?>, SQLSource> {
+public class SQLSource extends ConfigureSource<SourcedSection, Map<String, Object>, SQLSource> {
 
     protected static final @NotNull Gson DEFAULT_GSON = new GsonBuilder()
-            .serializeNulls().disableHtmlEscaping().setPrettyPrinting()
-            .create();
+            .serializeNulls().disableHtmlEscaping().create();
 
     protected final @NotNull Gson gson;
     protected final @NotNull SQLManager sqlManager;
     protected final @NotNull String namespace;
     protected final @NotNull SQLTable table;
 
-    protected final @NotNull Set<String> updated = new HashSet<>();
-    protected MemorySection rootSection;
+    protected final @NotNull Map<Integer, SQLValueResolver<?>> resolvers;
+    protected SourcedSection rootSection;
 
     public SQLSource(@NotNull ConfigurationHolder<? extends SQLSource> holder, long lastUpdateMillis,
-                     @NotNull Gson gson, @NotNull SQLManager sqlManager, @NotNull String tableName, @NotNull String namespace) {
+                     @NotNull Gson gson, @NotNull SQLManager sqlManager,
+                     @NotNull Map<Integer, SQLValueResolver<?>> resolvers,
+                     @NotNull String tableName, @NotNull String namespace) {
         super(holder, lastUpdateMillis);
         this.gson = gson;
         this.sqlManager = sqlManager;
+        this.resolvers = resolvers;
         this.namespace = namespace;
         this.table = SQLTable.of(tableName, builder -> {
 
             builder.addColumn("namespace", "VARCHAR(32) NOT NULL");
             builder.addColumn("path", "VARCHAR(96) NOT NULL");
 
-            builder.addColumn("type", "TINYINT NOT NULL DEFAULT 0");
             builder.addColumn("value", "TEXT");
 
             builder.addColumn("inline_comment", "TEXT");
             builder.addColumn("header_comments", "MEDIUMTEXT");
             builder.addColumn("footer_comments", "MEDIUMTEXT");
 
+            builder.addColumn("type", "TINYINT NOT NULL DEFAULT 0");
             builder.addColumn("version", "MEDIUMINT UNSIGNED NOT NULL DEFAULT 0");
 
-            builder.addColumn("create_time", "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP");
-            builder.addColumn("update_time", "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP");
+            builder.addColumn("create_time", "TIMESTAMP NOT NULL");
+            builder.addColumn("update_time", "TIMESTAMP NOT NULL");
 
             builder.setIndex(
                     IndexType.PRIMARY_KEY, "pk_" + tableName.toLowerCase(),
@@ -55,82 +65,131 @@ public class SQLSource extends ConfigureSource<MemorySection, Map<?, ?>, SQLSour
             );
             builder.setTableSettings("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         });
+
+        try {
+            this.table.create(this.sqlManager);
+            onReload();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    protected SQLSource self() {
+    protected @NotNull SQLSource self() {
         return this;
     }
 
+    public @NotNull Gson gson() {
+        return gson;
+    }
+
     @Override
-    public @NotNull Map<?, ?> original() {
+    public @NotNull Map<String, Object> original() {
         return section().data();
     }
 
     @Override
-    public @NotNull MemorySection section() {
+    public @NotNull SourcedSection section() {
         return Objects.requireNonNull(this.rootSection, "Root section is not initialized.");
     }
 
     @Override
     public void save() throws Exception {
-        if (this.updated.isEmpty()) return; // Nothing to save
+        LocalDateTime time = LocalDateTime.now(); // Update time
+        List<Object[]> dataValues = new ArrayList<>();
 
-        Date date = new Date(); // Update time
-        List<Object[]> values = new ArrayList<>();
+        SourcedSection section = section();
+        Map<String, ConfigValue<?>> values = holder().registeredValues();
+        for (Map.Entry<String, ConfigValue<?>> entry : values.entrySet()) {
+            @NotNull String path = entry.getKey();
+            @NotNull ConfigValue<?> value = entry.getValue();
 
-        for (String path : this.updated) {
-            Object value = get(path);
+            try {
+                int typeID = typeOf(entry.getValue());
+                String data = null;
 
-//            if (value instanceof SQLConfigWrapper) {
-//                value = getSourceMap(((SQLConfigWrapper) value).getSource());
-//            }
-//
-//            SQLValueResolver<?> type = SQLValueTypes.get(value.getClass());
-//            if (type != null) {
-//                values.add(new Object[]{
-//                        this.namespace, path, date,
-//                        type.getID(), type.serializeObject(value),
-//                        getComments().getInlineComment(path),
-//                        GSON.toJson(getComments().getHeaderComment(path))
-//                });
-//            }
+                if (value != null) {
+                    if (value instanceof SourcedSection) {
+                        data = serialize(typeID, ((SourcedSection) value).rawMap());
+                    } else if (value instanceof List) {
+                        List<Object> list = new ArrayList<>();
+                        for (Object obj : (List<?>) value) {
+                            if (obj instanceof SourcedSection) {
+                                list.add(((SourcedSection) obj).rawMap());
+                            } else {
+                                list.add(obj);
+                            }
+                        }
+                        data = serialize(typeID, list);
+                    } else {
+                        data = serialize(typeID, value);
+                    }
+                }
+
+                int version = holder().metadata(path).get(VersionedMetaTypes.VERSION, 0);
+                dataValues.add(new Object[]{
+                        namespace, path, time, version, typeID, data,
+                        Commentable.getInlineComment(holder(), path),
+                        gson.toJson(Commentable.getHeaderComments(holder(), path)),
+                        gson.toJson(Commentable.getFooterComments(holder(), path))
+                });
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
 
-        this.updated.clear();
-
         this.table.createReplaceBatch()
-                .setColumnNames("namespace", "path", "update_time", "type", "value", "inline_comment", "header_comments")
-                .setAllParams(values)
-                .execute();
+                .setColumnNames(
+                        "namespace", "path", "update_time", "version", "type", "value",
+                        "inline_comment", "header_comments", "footer_comments"
+                ).setAllParams(dataValues).execute();
     }
 
     @Override
     protected void onReload() throws Exception {
-        LinkedHashMap<String, Object> values = new LinkedHashMap<>();
-
-//        try (SQLQuery query = this.table.createQuery()
-//                .addCondition("namespace", namespace)
-//                .build().execute()) {
-//            ResultSet rs = query.getResultSet();
-//            while (rs.next()) {
-//                String path = rs.getString("path");
-//                int type = rs.getInt("type");
-//                try {
-//                    SQLValueResolver<?> resolver = SQLValueTypes.get(type);
-//                    if (resolver == null) throw new IllegalStateException("No resolver for type #" + type);
-//                    String value = rs.getString("value");
-//                    values.put(path, resolver.resolve(value));
-//
-//                    loadInlineComment(path, rs.getString("inline_comment"));
-//                    loadHeaderComment(path, rs.getString("header_comments"));
-//                } catch (Exception ex) {
-//                    ex.printStackTrace();
-//                }
-//            }
-//        }
-//
-//        this.rootConfiguration = new SQLConfigWrapper(this, values);
+        Map<String, Object> loaded = new LinkedHashMap<>();
+        try (SQLQuery query = this.table.createQuery()
+                .addCondition("namespace", namespace)
+                .build().execute()) {
+            ResultSet rs = query.getResultSet();
+            while (rs.next()) {
+                String path = rs.getString("path");
+                if (path == null) continue; // Path should be not null
+                int ver = rs.getInt("version");
+                try {
+                    Object val = parse(rs.getInt("type"), rs.getString("value"));
+                    System.out.println("Path <" + path + "> Value = " + val);
+                    loaded.put(path, val);
+                    if (ver != 0) {
+                        holder().metadata(path).set(VersionedMetaTypes.VERSION, ver);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        this.rootSection = SourcedSection.root(this, loaded);
     }
+
+
+    protected @Nullable Object parse(int type, String value) throws Exception {
+        SQLValueResolver<?> function = this.resolvers.get(type);
+        if (function == null) throw new IllegalStateException("No resolvers for type #" + type);
+        return function.resolve(holder(), value);
+    }
+
+    protected @Nullable String serialize(int type, @NotNull Object value) throws Exception {
+        SQLValueResolver<?> function = this.resolvers.get(type);
+        if (function == null) throw new IllegalStateException("No resolvers for type #" + type);
+        return function.serialize(holder(), value);
+    }
+
+    protected int typeOf(@NotNull ValueType<?> value) {
+        return this.resolvers.entrySet().stream()
+                .filter(entry -> entry.getValue().isTypeOf(value))
+                .findFirst().map(Map.Entry::getKey)
+                .orElseThrow(() -> new IllegalStateException("No resolvers for value " + value));
+    }
+
 
 }
