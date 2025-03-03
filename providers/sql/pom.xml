@@ -15,7 +15,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
 
-        <deps.mysql-driver.version>8.0.26</deps.mysql-driver.version>
+        <deps.mysql-driver.version>8.0.33</deps.mysql-driver.version>
         <deps.log4j.version>2.24.3</deps.log4j.version>
     </properties>
     <artifactId>easyconfiguration-sql</artifactId>
