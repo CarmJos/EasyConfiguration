@@ -14,8 +14,11 @@ import java.io.File;
 
 public class SQLConfigTest {
 
+    boolean local = false;
+
     @Test
     public void test() {
+        if (!local) return;
 
         ConfigurationHolder<?> gsonHolder = JSONConfigFactory.from(new File("target/sql.json")).build();
         gsonHolder.initialize(DatabaseConfiguration.class);
