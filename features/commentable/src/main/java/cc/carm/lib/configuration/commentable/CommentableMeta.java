@@ -49,6 +49,17 @@ public interface CommentableMeta {
                 FooterComments.class, FOOTER,
                 a -> Arrays.asList(a.value())
         );
+        initializer.registerAnnotation(InlineComment.class, INLINE, a -> {
+            Map<String, String> map = new HashMap<>();
+            if (a.regex().length == 0) { // for current path
+                map.put(null, a.value());
+                return map;
+            }
+            for (String regex : a.regex()) { // for specified path
+                map.put(regex, a.value());
+            }
+            return map;
+        });
         initializer.registerAnnotation(InlineComments.class, INLINE, a -> {
             Map<String, String> map = new HashMap<>();
             for (InlineComment comment : a.value()) {

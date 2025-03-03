@@ -36,6 +36,12 @@ public interface DemoConfiguration extends Configuration {
     @FooterComments({"上述的枚举内容本质上是通过STRING解析的"})
     ConfigValue<ChronoUnit> TEST_ENUM = ConfiguredValue.of(ChronoUnit.class, ChronoUnit.DAYS);
 
+    @HeaderComments({"空值测试"})
+    @InlineComment("空值Inline注释")
+    ConfiguredMap<String, String> EMPTY = ConfiguredMap.builderOf(String.class, String.class)
+            .asLinkedMap().fromString()
+            .build();
+
     @ConfigPath("registered_users") // 通过注解规定配置文件中的路径，若不进行注解则以变量名自动生成。
     @HeaderComments({"Section类型数据测试"}) // 通过注解给配置添加注释。
     @InlineComment("默认地注释会加到Section的首行末尾") // 通过注解给配置添加注释。

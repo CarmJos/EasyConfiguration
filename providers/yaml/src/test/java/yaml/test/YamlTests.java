@@ -1,5 +1,6 @@
 package yaml.test;
 
+import cc.carm.lib.configuration.commentable.Commentable;
 import cc.carm.lib.configuration.commentable.CommentableMeta;
 import cc.carm.lib.configuration.demo.tests.ConfigurationTest;
 import cc.carm.lib.configuration.source.ConfigurationHolder;
@@ -20,7 +21,6 @@ public class YamlTests {
 
         ConfigurationTest.testDemo(holder);
         ConfigurationTest.testInner(holder);
-
 
         Map<String, List<String>> headers = holder.extractMetadata(CommentableMeta.HEADER);
         System.out.println("Header comments: ");
