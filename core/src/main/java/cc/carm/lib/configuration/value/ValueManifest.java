@@ -4,6 +4,7 @@ import cc.carm.lib.configuration.adapter.ValueType;
 import cc.carm.lib.configuration.source.ConfigurationHolder;
 import cc.carm.lib.configuration.source.meta.ConfigurationMetaHolder;
 import cc.carm.lib.configuration.source.section.ConfigureSource;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -108,14 +109,15 @@ public class ValueManifest<T> {
         return holder().metadata(path());
     }
 
+    @ApiStatus.Internal
     protected Object getData() {
         return config().get(path());
     }
 
+    @ApiStatus.Internal
     protected void setData(@Nullable Object value) {
         config().set(path(), value);
     }
-
 
     private static final @NotNull BiConsumer<@NotNull ConfigurationHolder<?>, @NotNull String> EMPTY_INITIALIZER = (provider, valuePath) -> {
     };

@@ -25,6 +25,7 @@ public interface DatabaseConfiguration extends Configuration {
     ConfigValue<String> DATABASE = ConfiguredValue.of(String.class, "minecraft");
     ConfigValue<String> USERNAME = ConfiguredValue.of(String.class, "root");
     ConfigValue<String> PASSWORD = ConfiguredValue.of(String.class, "password");
+
     ConfigValue<String> EXTRA = ConfiguredValue.of(String.class, "?useSSL=false");
 
     static String buildJDBC() {

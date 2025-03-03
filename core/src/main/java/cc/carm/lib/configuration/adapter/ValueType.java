@@ -4,6 +4,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -28,7 +30,6 @@ public abstract class ValueType<T> {
     public static final ValueType<Short> SHORT_TYPE = ofPrimitiveType(short.class);
     public static final ValueType<Character> CHAR = ofPrimitiveType(Character.class);
     public static final ValueType<Character> CHAR_TYPE = ofPrimitiveType(char.class);
-
 
     public static final ValueType<?>[] PRIMITIVE_TYPES = {
             STRING, INTEGER, LONG, DOUBLE, FLOAT, BOOLEAN, BYTE, SHORT, CHAR,

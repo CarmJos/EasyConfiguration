@@ -5,6 +5,7 @@ import cc.carm.lib.configuration.commentable.Commentable;
 import cc.carm.lib.configuration.function.DataFunction;
 import cc.carm.lib.configuration.source.ConfigurationFactory;
 import cc.carm.lib.configuration.source.ConfigurationHolder;
+import cc.carm.lib.configuration.versioned.VersionedMetaTypes;
 import cc.carm.lib.easysql.api.SQLManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -79,34 +80,19 @@ public class SQLConfigFactory extends ConfigurationFactory<SQLSource, Configurat
 
     public <T> SQLConfigFactory resolver(@Range(from = 0, to = 255) int id, @NotNull ValueType<T> type,
                                          @NotNull DataFunction<String, T> parser) {
-        return resolver(id, new SQLValueResolver<T>(type) {
-            @Override
-            public @NotNull T resolve(@NotNull ConfigurationHolder<? extends SQLSource> holder, String data) throws Exception {
-                return parser.handle(data);
-            }
-        });
+        return resolver(id, SQLValueResolver.of(type, parser));
     }
 
     public <T> SQLConfigFactory resolver(@Range(from = 0, to = 255) int id, @NotNull Class<T> clazz,
                                          @NotNull DataFunction<String, T> parser,
-                                         @NotNull DataFunction<Object, String> serializer) {
+                                         @NotNull DataFunction<T, String> serializer) {
         return resolver(id, ValueType.of(clazz), parser, serializer);
     }
 
     public <T> SQLConfigFactory resolver(@Range(from = 0, to = 255) int id, @NotNull ValueType<T> type,
                                          @NotNull DataFunction<String, T> parser,
-                                         @NotNull DataFunction<Object, String> serializer) {
-        return resolver(id, new SQLValueResolver<T>(type) {
-            @Override
-            public @NotNull T resolve(@NotNull ConfigurationHolder<? extends SQLSource> holder, String data) throws Exception {
-                return parser.handle(data);
-            }
-
-            @Override
-            public @NotNull String serialize(@NotNull ConfigurationHolder<? extends SQLSource> holder, Object value) throws Exception {
-                return serializer.handle(value);
-            }
-        });
+                                         @NotNull DataFunction<T, String> serializer) {
+        return resolver(id, SQLValueResolver.of(type, parser, serializer));
     }
 
     public SQLConfigFactory tableName(@NotNull String tableName) {
@@ -128,6 +114,7 @@ public class SQLConfigFactory extends ConfigurationFactory<SQLSource, Configurat
         if (manager == null) throw new NullPointerException("No SQLManager instance provided.");
 
         Commentable.registerMeta(this.initializer);
+        VersionedMetaTypes.register(this.initializer);
 
         return new ConfigurationHolder<SQLSource>(this.adapters, this.options, this.metadata, this.initializer) {
             final SQLSource source = new SQLSource(

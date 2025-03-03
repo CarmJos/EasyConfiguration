@@ -2,7 +2,6 @@ package cc.carm.lib.configuration.source.sql;
 
 import cc.carm.lib.configuration.adapter.ValueType;
 import cc.carm.lib.configuration.function.DataFunction;
-import cc.carm.lib.configuration.source.ConfigurationHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,26 +25,26 @@ public abstract class SQLValueResolver<T> {
     public static final @NotNull SQLValueResolver<List<?>> LIST = new SQLValueResolver<List<?>>(new ValueType<List<?>>() {
     }) {
         @Override
-        public @Nullable List<?> resolve(@NotNull ConfigurationHolder<? extends SQLSource> holder, String data) throws Exception {
-            return holder.config().gson().fromJson(data, List.class);
+        public @Nullable List<?> resolve(@NotNull SQLSource source, String data) throws Exception {
+            return source.gson().fromJson(data, List.class);
         }
 
         @Override
-        public @Nullable String serialize(@NotNull ConfigurationHolder<? extends SQLSource> holder, Object value) {
-            return holder.config().gson().toJson(value);
+        public @Nullable String serialize(@NotNull SQLSource source, Object value) {
+            return source.gson().toJson(value);
         }
     };
 
     public static final @NotNull SQLValueResolver<Map<?, ?>> MAP = new SQLValueResolver<Map<?, ?>>(new ValueType<Map<?, ?>>() {
     }) {
         @Override
-        public @Nullable Map<?, ?> resolve(@NotNull ConfigurationHolder<? extends SQLSource> holder, String data) throws Exception {
-            return holder.config().gson().fromJson(data, LinkedHashMap.class);
+        public @Nullable Map<?, ?> resolve(@NotNull SQLSource source, String data) throws Exception {
+            return source.gson().fromJson(data, LinkedHashMap.class);
         }
 
         @Override
-        public @Nullable String serialize(@NotNull ConfigurationHolder<? extends SQLSource> holder, Object value) {
-            return holder.config().gson().toJson(value);
+        public @Nullable String serialize(@NotNull SQLSource source, Object value) {
+            return source.gson().toJson(value);
         }
     };
 
@@ -70,11 +69,28 @@ public abstract class SQLValueResolver<T> {
     public static <V> SQLValueResolver<V> of(@NotNull ValueType<V> type, @NotNull DataFunction<String, V> resolver) {
         return new SQLValueResolver<V>(type) {
             @Override
-            public @NotNull V resolve(@NotNull ConfigurationHolder<? extends SQLSource> holder, String data) throws Exception {
+            public @NotNull V resolve(@NotNull SQLSource source, String data) throws Exception {
                 return resolver.handle(data);
             }
         };
     }
+
+    public static <V> SQLValueResolver<V> of(@NotNull ValueType<V> type,
+                                             @NotNull DataFunction<String, V> resolver,
+                                             @NotNull DataFunction<V, String> serializer) {
+        return new SQLValueResolver<V>(type) {
+            @Override
+            public @NotNull V resolve(@NotNull SQLSource source, String data) throws Exception {
+                return resolver.handle(data);
+            }
+
+            @Override
+            public @NotNull String serialize(@NotNull SQLSource source, Object value) throws Exception {
+                return serializer.handle(type.cast(value));
+            }
+        };
+    }
+
 
     protected final @NotNull ValueType<T> type;
 
@@ -86,17 +102,13 @@ public abstract class SQLValueResolver<T> {
         return type;
     }
 
-    public boolean isTypeOf(@NotNull Class<?> clazz) {
-        return type.isSubtypeOf(clazz);
+    public boolean isInstance(@NotNull Object obj) {
+        return getType().isInstance(obj);
     }
 
-    public boolean isTypeOf(@NotNull ValueType<?> valueType) {
-        return valueType.equals(type);
-    }
+    public abstract @Nullable T resolve(@NotNull SQLSource source, String data) throws Exception;
 
-    public abstract @Nullable T resolve(@NotNull ConfigurationHolder<? extends SQLSource> holder, String data) throws Exception;
-
-    public @Nullable String serialize(@NotNull ConfigurationHolder<? extends SQLSource> holder, Object value) throws Exception {
+    public @Nullable String serialize(@NotNull SQLSource source, Object value) throws Exception {
         return String.valueOf(value);
     }
 

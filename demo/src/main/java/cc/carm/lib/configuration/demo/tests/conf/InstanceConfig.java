@@ -8,6 +8,6 @@ import cc.carm.lib.configuration.value.standard.ConfiguredValue;
 @HeaderComments("Inner Test")
 public class InstanceConfig implements Configuration {
 
-    public final ConfigValue<Double> INNER_VALUE = ConfiguredValue.of(1.0D);
+    public final ConfigValue<Double> STATUS = ConfiguredValue.of(1.0D);
 
 }

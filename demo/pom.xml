@@ -33,6 +33,19 @@
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>easyconfiguration-feature-versioned</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>cc.carm.lib</groupId>
+            <artifactId>easyconfiguration-feature-versioned</artifactId>
+            <version>4.0.8</version>
+            <scope>compile</scope>
+        </dependency>
+
     </dependencies>
 
     <build>

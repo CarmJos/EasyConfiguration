@@ -20,7 +20,7 @@ public class RegistryConfig implements Configuration {
     @FooterComments({"12313213212"})
     @InlineComment(value = "用户名(匹配注释)", regex = "name") // 通过注解给配置添加注释。
     @InlineComment(value = "信息", regex = {"info.*", "info.game.*"}) // 通过注解给配置添加注释。
-    public final ConfigValue<UserRecord> TEST_MODEL = ConfiguredValue.builderOf(UserRecord.class).fromSection()
+    public final ConfigValue<UserRecord> OWNER = ConfiguredValue.builderOf(UserRecord.class).fromSection()
             .defaults(new UserRecord("Carm", UUID.randomUUID()))
             .parse((holder, section) -> UserRecord.deserialize(section))
             .serialize((holder, data) -> data.serialize()).build();

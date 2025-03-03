@@ -1,11 +1,7 @@
 package cc.carm.lib.configuration.demo.tests.conf;
 
 import cc.carm.lib.configuration.Configuration;
-import cc.carm.lib.configuration.annotation.ConfigPath;
-import cc.carm.lib.configuration.annotation.FooterComments;
-import cc.carm.lib.configuration.annotation.HeaderComments;
-import cc.carm.lib.configuration.annotation.InlineComment;
-import cc.carm.lib.configuration.demo.DatabaseConfiguration;
+import cc.carm.lib.configuration.annotation.*;
 import cc.carm.lib.configuration.demo.tests.model.ItemStack;
 import cc.carm.lib.configuration.demo.tests.model.UserRecord;
 import cc.carm.lib.configuration.value.ConfigValue;
@@ -29,7 +25,8 @@ import java.util.UUID;
 public interface DemoConfiguration extends Configuration {
 
     @ConfigPath(root = true)
-    ConfigValue<Double> VERSION = ConfiguredValue.of(Double.class, 1.0D);
+    @ConfigVersion(2)
+    ConfigValue<Double> VERSION = ConfiguredValue.of(Double.class, 2.0D);
 
     @ConfigPath(root = true)
     @FooterComments({"此处内容将显示在配置条目的下方", "可用于补充说明，但一般不建议使用"})
@@ -38,10 +35,6 @@ public interface DemoConfiguration extends Configuration {
     @HeaderComments({"枚举类型测试"})
     @FooterComments({"上述的枚举内容本质上是通过STRING解析的"})
     ConfigValue<ChronoUnit> TEST_ENUM = ConfiguredValue.of(ChronoUnit.class, ChronoUnit.DAYS);
-
-    // 支持通过 Class<?> 变量标注子配置，一并注册。
-    // 注意： 若对应类也有注解，则优先使用类的注解。
-    Class<?> DATABASE = DatabaseConfiguration.class;
 
     @ConfigPath("registered_users") // 通过注解规定配置文件中的路径，若不进行注解则以变量名自动生成。
     @HeaderComments({"Section类型数据测试"}) // 通过注解给配置添加注释。

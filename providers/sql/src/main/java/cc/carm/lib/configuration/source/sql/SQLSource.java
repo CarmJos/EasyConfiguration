@@ -1,6 +1,5 @@
 package cc.carm.lib.configuration.source.sql;
 
-import cc.carm.lib.configuration.adapter.ValueType;
 import cc.carm.lib.configuration.commentable.Commentable;
 import cc.carm.lib.configuration.source.ConfigurationHolder;
 import cc.carm.lib.configuration.source.section.ConfigureSource;
@@ -93,6 +92,10 @@ public class SQLSource extends ConfigureSource<SourcedSection, Map<String, Objec
         return Objects.requireNonNull(this.rootSection, "Root section is not initialized.");
     }
 
+    public int purge() throws Exception {
+        return this.table.createDelete().addCondition("namespace", namespace).build().execute();
+    }
+
     @Override
     public void save() throws Exception {
         LocalDateTime time = LocalDateTime.now(); // Update time
@@ -102,29 +105,29 @@ public class SQLSource extends ConfigureSource<SourcedSection, Map<String, Objec
         Map<String, ConfigValue<?>> values = holder().registeredValues();
         for (Map.Entry<String, ConfigValue<?>> entry : values.entrySet()) {
             @NotNull String path = entry.getKey();
-            @NotNull ConfigValue<?> value = entry.getValue();
+            @NotNull ConfigValue<?> config = entry.getValue();
+            @Nullable Object value = section.get(path);
 
-            try {
-                int typeID = typeOf(entry.getValue());
-                String data = null;
-
-                if (value != null) {
-                    if (value instanceof SourcedSection) {
-                        data = serialize(typeID, ((SourcedSection) value).rawMap());
-                    } else if (value instanceof List) {
-                        List<Object> list = new ArrayList<>();
-                        for (Object obj : (List<?>) value) {
-                            if (obj instanceof SourcedSection) {
-                                list.add(((SourcedSection) obj).rawMap());
-                            } else {
-                                list.add(obj);
-                            }
-                        }
-                        data = serialize(typeID, list);
+            if (value instanceof SourcedSection) {
+                value = ((SourcedSection) value).rawMap();
+            } else if (value instanceof List<?>) {
+                List<Object> list = new ArrayList<>();
+                for (Object obj : (List<?>) value) {
+                    if (obj instanceof SourcedSection) {
+                        list.add(((SourcedSection) obj).rawMap());
                     } else {
-                        data = serialize(typeID, value);
+                        list.add(obj);
                     }
                 }
+                value = list;
+            }
+
+            if (value == null) continue;
+
+            try {
+                int typeID = typeIdOf(value);
+                String data = serialize(typeID, value);
+                if (data == null) continue;
 
                 int version = holder().metadata(path).get(VersionedMetaTypes.VERSION, 0);
                 dataValues.add(new Object[]{
@@ -138,6 +141,9 @@ public class SQLSource extends ConfigureSource<SourcedSection, Map<String, Objec
             }
         }
 
+        if (holder.option(SQLOptions.PURGE)) {
+            purge();
+        }
         this.table.createReplaceBatch()
                 .setColumnNames(
                         "namespace", "path", "update_time", "version", "type", "value",
@@ -157,12 +163,8 @@ public class SQLSource extends ConfigureSource<SourcedSection, Map<String, Objec
                 if (path == null) continue; // Path should be not null
                 int ver = rs.getInt("version");
                 try {
-                    Object val = parse(rs.getInt("type"), rs.getString("value"));
-                    System.out.println("Path <" + path + "> Value = " + val);
-                    loaded.put(path, val);
-                    if (ver != 0) {
-                        holder().metadata(path).set(VersionedMetaTypes.VERSION, ver);
-                    }
+                    loaded.put(path, parse(rs.getInt("type"), rs.getString("value")));
+                    if (ver != 0) holder().metadata(path).set(VersionedMetaTypes.VERSION, ver);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -175,20 +177,20 @@ public class SQLSource extends ConfigureSource<SourcedSection, Map<String, Objec
     protected @Nullable Object parse(int type, String value) throws Exception {
         SQLValueResolver<?> function = this.resolvers.get(type);
         if (function == null) throw new IllegalStateException("No resolvers for type #" + type);
-        return function.resolve(holder(), value);
+        return function.resolve(this, value);
     }
 
     protected @Nullable String serialize(int type, @NotNull Object value) throws Exception {
         SQLValueResolver<?> function = this.resolvers.get(type);
         if (function == null) throw new IllegalStateException("No resolvers for type #" + type);
-        return function.serialize(holder(), value);
+        return function.serialize(this, value);
     }
 
-    protected int typeOf(@NotNull ValueType<?> value) {
+    protected int typeIdOf(@NotNull Object value) {
         return this.resolvers.entrySet().stream()
-                .filter(entry -> entry.getValue().isTypeOf(value))
+                .filter(entry -> entry.getValue().isInstance(value))
                 .findFirst().map(Map.Entry::getKey)
-                .orElseThrow(() -> new IllegalStateException("No resolvers for value " + value));
+                .orElseThrow(() -> new IllegalStateException("No resolvers for value " + value.getClass().getName()));
     }
 
 

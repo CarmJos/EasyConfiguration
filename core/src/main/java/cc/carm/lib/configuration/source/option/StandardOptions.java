@@ -23,12 +23,13 @@ public interface StandardOptions {
     ConfigurationOption<Boolean> LOAD_SUB_CLASSES = of(true);
 
     /**
-     * Whether to pre parse the config values.
-     * <br> if false, the values will be parsed when calling
-     * {@link cc.carm.lib.configuration.value.ConfigValue#get()}
+     * Whether to pre parse the config values,
+     * may good to set true if you want to keep the config format.
      * <br> if true, the values will be parsed when
      * {@link ConfigurationHolder#initialize(Configuration)}.
+     * <br> if false, the values will be parsed when calling
+     * {@link cc.carm.lib.configuration.value.ConfigValue#get()}
      */
-    ConfigurationOption<Boolean> PRELOAD = of(false);
+    ConfigurationOption<Boolean> PRELOAD = of(true);
 
 }
