@@ -16,11 +16,12 @@ import java.util.stream.IntStream;
 public abstract class ContentHandler<RECEIVER, SELF extends ContentHandler<RECEIVER, SELF>> {
 
     /**
-     * Used to match the message insertion
+     * Used to match the message insertion.
      * <p>
      * format:
      * <br>- to insert parsed line {prefix}#content-id#{offset-above,offset-down}
      * <br>- to insert original line {prefix}@content-id@{offset-above,offset-down}
+     * <br>  original lines will not be parsed
      * <br> example:
      * <ul>
      *     <li>{- }#content-id#{1,1}</li>
@@ -30,6 +31,21 @@ public abstract class ContentHandler<RECEIVER, SELF extends ContentHandler<RECEI
     public static final @NotNull Pattern INSERT_PATTERN = Pattern.compile(
             "^(?:\\{(?<prefix>.*)})?(?<type>[#@])(?<id>.*)[#@](?:\\{(?<above>-?\\d+)(?:,(?<down>-?\\d+))?})?$"
     );
+
+    /**
+     * Used to match the message which can be inserted
+     * <p>
+     * format:
+     * <br>- ?[id]Message content
+     * <br> example:
+     * <ul>
+     *     <li>?[click]Click to use this item!</li>
+     * </ul>
+     */
+    public static final @NotNull Pattern ENABLE_PATTERN = Pattern.compile(
+            "^\\?\\[(?<id>.+)](?<content>.*)$"
+    );
+
     public static final @NotNull UnaryOperator<String> DEFAULT_PARAM_BUILDER = s -> "%(" + s + ")";
 
     protected BiFunction<RECEIVER, String, String> parser = (receiver, value) -> value;
@@ -45,7 +61,7 @@ public abstract class ContentHandler<RECEIVER, SELF extends ContentHandler<RECEI
     /**
      * Used to store the insertion of the message
      */
-    protected @NotNull Map<String, Function<RECEIVER, List<String>>> insertion = new HashMap<>();
+    protected @NotNull Map<String, @Nullable Function<RECEIVER, List<String>>> insertion = new HashMap<>();
     protected boolean disableInsertion = false;
 
     public abstract SELF self();
@@ -142,6 +158,17 @@ public abstract class ContentHandler<RECEIVER, SELF extends ContentHandler<RECEI
     /**
      * Insert the specific contents by the id.
      *
+     * @param id the id of the insertion text
+     * @return the current {@link ContentHandler} instance
+     */
+    public SELF insert(@NotNull String id) {
+        this.insertion.put(id, null);
+        return self();
+    }
+
+    /**
+     * Insert the specific contents by the id.
+     *
      * @param id            the id of the insertion text
      * @param linesSupplier to supply the lines to insert
      * @return the current {@link ContentHandler} instance
@@ -205,35 +232,48 @@ public abstract class ContentHandler<RECEIVER, SELF extends ContentHandler<RECEI
         }
 
         for (String line : contents.lines()) {
-            Matcher matcher = INSERT_PATTERN.matcher(line);
-            if (!matcher.matches()) {
-                lineConsumer.accept(parse(receiver, line));
+            Matcher insertMatcher = INSERT_PATTERN.matcher(line);
+            if (insertMatcher.matches()) {
+                doInsert(insertMatcher, receiver, lineConsumer);
                 continue;
             }
 
-            String id = matcher.group("id");
-            List<String> values = Optional.ofNullable(this.insertion.get(id))
-                    .map(f -> f.apply(receiver))
-                    .orElse(null);
-            if (values == null || values.isEmpty()) continue;
-
-            String prefix = matcher.group("prefix");
-            String type = matcher.group("type");
-            boolean original = type.equals("@");
-            int offsetAbove = Optional.ofNullable(matcher.group("above"))
-                    .map(Integer::parseInt).orElse(0);
-            int offsetDown = Optional.ofNullable(matcher.group("down"))
-                    .map(Integer::parseInt).orElse(offsetAbove); // If offsetDown is not set, use offsetAbove
-
-            IntStream.range(0, Math.max(0, offsetAbove)).mapToObj(i -> "").forEach(lineConsumer);
-            String prefixContent = Optional.ofNullable(prefix).map(p -> parse(receiver, p)).orElse("");
-            if (original) {
-                values.stream().map(value -> prefixContent + value).forEach(lineConsumer);
-            } else {
-                values.stream().map(value -> prefixContent + parse(receiver, value)).forEach(lineConsumer);
+            Matcher enableMatcher = ENABLE_PATTERN.matcher(line);
+            if (enableMatcher.matches()) {
+                if (this.insertion.containsKey(enableMatcher.group("id"))) {
+                    lineConsumer.accept(parse(receiver, enableMatcher.group("content")));
+                }
+                continue;
             }
-            IntStream.range(0, Math.max(0, offsetDown)).mapToObj(i -> "").forEach(lineConsumer);
+
+            lineConsumer.accept(parse(receiver, line));
         }
+    }
+
+    private void doInsert(Matcher matcher, @Nullable RECEIVER receiver,
+                          @NotNull Consumer<String> lineConsumer) {
+        String id = matcher.group("id");
+        List<String> values = Optional.ofNullable(this.insertion.get(id))
+                .map(f -> f.apply(receiver))
+                .orElse(null);
+        if (values == null || values.isEmpty()) return; // No values to insert
+
+        String prefix = matcher.group("prefix");
+        String type = matcher.group("type");
+        boolean original = type.equals("@");
+        int offsetAbove = Optional.ofNullable(matcher.group("above"))
+                .map(Integer::parseInt).orElse(0);
+        int offsetDown = Optional.ofNullable(matcher.group("down"))
+                .map(Integer::parseInt).orElse(offsetAbove); // If offsetDown is not set, use offsetAbove
+
+        IntStream.range(0, Math.max(0, offsetAbove)).mapToObj(i -> "").forEach(lineConsumer);
+        String prefixContent = Optional.ofNullable(prefix).map(p -> parse(receiver, p)).orElse("");
+        if (original) {
+            values.stream().map(value -> prefixContent + value).forEach(lineConsumer);
+        } else {
+            values.stream().map(value -> prefixContent + parse(receiver, value)).forEach(lineConsumer);
+        }
+        IntStream.range(0, Math.max(0, offsetDown)).mapToObj(i -> "").forEach(lineConsumer);
     }
 
     public static String setPlaceholders(@NotNull String messages,

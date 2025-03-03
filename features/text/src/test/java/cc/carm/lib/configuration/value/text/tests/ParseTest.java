@@ -20,7 +20,8 @@ public class ParseTest {
         lines.add("#guidance#");
         lines.add("{- }#websites#{0,1}");
         lines.add("Thanks for your reading!");
-
+        lines.add("?[click]");
+        lines.add("?[click]Click to see more!");
 
         Map<String, List<String>> optional = new HashMap<>();
         optional.put("guidance", Arrays.asList("To get more information for %(name), see:"));
@@ -35,6 +36,7 @@ public class ParseTest {
 
         msg.placeholder("name", "Carm")
                 .insert("guidance")
+                .insert("click")
                 .insert("websites", "Baidu", "Bilibili", "Google");
 
         System.out.println("----------------------------");
