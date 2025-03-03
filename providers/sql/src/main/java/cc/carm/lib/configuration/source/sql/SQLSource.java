@@ -55,8 +55,14 @@ public class SQLSource extends ConfigureSource<SourcedSection, Map<String, Objec
             builder.addColumn("type", "TINYINT NOT NULL DEFAULT 0");
             builder.addColumn("version", "MEDIUMINT UNSIGNED NOT NULL DEFAULT 0");
 
-            builder.addColumn("create_time", "TIMESTAMP NOT NULL");
-            builder.addColumn("update_time", "TIMESTAMP NOT NULL");
+            builder.addColumn(
+                    "create_time",
+                    "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            );
+            builder.addColumn(
+                    "update_time",
+                    "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            );
 
             builder.setIndex(
                     IndexType.PRIMARY_KEY, "pk_" + tableName.toLowerCase(),
