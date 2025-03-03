@@ -108,6 +108,11 @@ public abstract class ConfigureSource<
     }
 
     @Override
+    public @NotNull @UnmodifiableView Map<String, Object> asMap() {
+        return section().asMap();
+    }
+
+    @Override
     public @NotNull ConfigureSection createSection(@NotNull String path, @NotNull Map<?, ?> data) {
         return section().createSection(path, data);
     }

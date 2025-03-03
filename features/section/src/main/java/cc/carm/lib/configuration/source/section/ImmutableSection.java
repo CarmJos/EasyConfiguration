@@ -20,12 +20,17 @@ public class ImmutableSection implements ConfigureSection {
     }
 
     protected final @Nullable ImmutableSection parent;
-    protected final @NotNull ConfigureSection section;
+    protected final @NotNull ConfigureSection raw;
 
-    private ImmutableSection(@Nullable ImmutableSection parent, @NotNull ConfigureSection section) {
+    private ImmutableSection(@Nullable ImmutableSection parent, @NotNull ConfigureSection raw) {
         this.parent = parent;
-        this.section = section;
+        this.raw = raw;
     }
+
+    private @NotNull ConfigureSection raw() {
+        return raw;
+    }
+
 
     @Override
     public @Nullable ImmutableSection parent() {
@@ -34,16 +39,12 @@ public class ImmutableSection implements ConfigureSection {
 
     @Override
     public @NotNull String path() {
-        return section().path();
-    }
-
-    private @NotNull ConfigureSection section() {
-        return section;
+        return raw().path();
     }
 
     @Override
     public @NotNull @UnmodifiableView Map<String, Object> getValues(boolean deep) {
-        return section().getValues(deep);
+        return raw().getValues(deep);
     }
 
     @Override
@@ -58,12 +59,12 @@ public class ImmutableSection implements ConfigureSection {
 
     @Override
     public @NotNull ImmutableSection createSection(@NotNull String path, @NotNull Map<?, ?> data) {
-        return new ImmutableSection(this, section().createSection(path, data));
+        return new ImmutableSection(this, raw().createSection(path, data));
     }
 
     @Override
     public @Nullable Object get(@NotNull String path) {
-        Object value = section().get(path);
+        Object value = raw().get(path);
         if (value instanceof ConfigureSection && !(value instanceof ImmutableSection)) {
             return new ImmutableSection(this, (ConfigureSection) value);
         }
@@ -72,7 +73,7 @@ public class ImmutableSection implements ConfigureSection {
 
     @Override
     public @Nullable ConfigureSection getSection(@NotNull String path) {
-        ConfigureSection get = section().getSection(path);
+        ConfigureSection get = raw().getSection(path);
         if (get != null && !(get instanceof ImmutableSection)) {
             return new ImmutableSection(this, get);
         }
@@ -81,297 +82,302 @@ public class ImmutableSection implements ConfigureSection {
 
     @Override
     public char pathSeparator() {
-        return section().pathSeparator();
+        return raw().pathSeparator();
     }
 
     @Override
     public boolean isRoot() {
-        return section().isRoot();
+        return raw().isRoot();
     }
 
     @Override
     public boolean isEmpty() {
-        return section().isEmpty();
+        return raw().isEmpty();
     }
 
     @Override
     public @NotNull @UnmodifiableView Set<String> getKeys(boolean deep) {
-        return section().getKeys(deep);
+        return raw().getKeys(deep);
     }
 
     @Override
     public @NotNull @UnmodifiableView Set<String> keys() {
-        return section().keys();
+        return raw().keys();
     }
 
     @Override
     public @NotNull @UnmodifiableView Map<String, Object> values() {
-        return section().values();
+        return raw().values();
+    }
+
+    @Override
+    public @NotNull @UnmodifiableView Map<String, Object> asMap() {
+        return raw().asMap();
     }
 
     @Override
     public Stream<Map.Entry<String, Object>> stream() {
-        return section().stream();
+        return raw().stream();
     }
 
     @Override
     public void forEach(@NotNull BiConsumer<String, Object> action) {
-        section().forEach(action);
+        raw().forEach(action);
     }
 
     @Override
     public boolean contains(@NotNull String path) {
-        return section().contains(path);
+        return raw().contains(path);
     }
 
     @Override
     public boolean containsValue(@NotNull String path) {
-        return section().containsValue(path);
+        return raw().containsValue(path);
     }
 
     @Override
     public <T> boolean isType(@NotNull String path, @NotNull Class<T> typeClass) {
-        return section().isType(path, typeClass);
+        return raw().isType(path, typeClass);
     }
 
     @Override
     public boolean isList(@NotNull String path) {
-        return section().isList(path);
+        return raw().isList(path);
     }
 
     @Override
     public @Nullable List<?> getList(@NotNull String path) {
-        return section().getList(path);
+        return raw().getList(path);
     }
 
     @Override
     public boolean isSection(@NotNull String path) {
-        return section().isSection(path);
+        return raw().isSection(path);
     }
 
     @Override
     public <T> @Nullable T get(@NotNull String path, @NotNull Class<T> type) {
-        return section().get(path, type);
+        return raw().get(path, type);
     }
 
     @Override
     public <T> @Nullable T get(@NotNull String path, @NotNull DataFunction<@Nullable Object, T> parser) {
-        return section().get(path, parser);
+        return raw().get(path, parser);
     }
 
     @Override
     public <T> @Nullable T get(@NotNull String path, @Nullable T defaults, @NotNull Class<T> clazz) {
-        return section().get(path, defaults, clazz);
+        return raw().get(path, defaults, clazz);
     }
 
     @Override
     public <T> @Nullable T get(@NotNull String path, @Nullable T defaultValue, @NotNull DataFunction<Object, T> parser) {
-        return section().get(path, defaultValue, parser);
+        return raw().get(path, defaultValue, parser);
     }
 
     @Override
     public boolean isBoolean(@NotNull String path) {
-        return section().isBoolean(path);
+        return raw().isBoolean(path);
     }
 
     @Override
     public boolean getBoolean(@NotNull String path) {
-        return section().getBoolean(path);
+        return raw().getBoolean(path);
     }
 
     @Override
     public @Nullable Boolean getBoolean(@NotNull String path, @Nullable Boolean def) {
-        return section().getBoolean(path, def);
+        return raw().getBoolean(path, def);
     }
 
     @Override
     public @Nullable Boolean isByte(@NotNull String path) {
-        return section().isByte(path);
+        return raw().isByte(path);
     }
 
     @Override
     public @Nullable Byte getByte(@NotNull String path) {
-        return section().getByte(path);
+        return raw().getByte(path);
     }
 
     @Override
     public @Nullable Byte getByte(@NotNull String path, @Nullable Byte def) {
-        return section().getByte(path, def);
+        return raw().getByte(path, def);
     }
 
     @Override
     public boolean isShort(@NotNull String path) {
-        return section().isShort(path);
+        return raw().isShort(path);
     }
 
     @Override
     public @Nullable Short getShort(@NotNull String path) {
-        return section().getShort(path);
+        return raw().getShort(path);
     }
 
     @Override
     public @Nullable Short getShort(@NotNull String path, @Nullable Short def) {
-        return section().getShort(path, def);
+        return raw().getShort(path, def);
     }
 
     @Override
     public boolean isInt(@NotNull String path) {
-        return section().isInt(path);
+        return raw().isInt(path);
     }
 
     @Override
     public @Nullable Integer getInt(@NotNull String path) {
-        return section().getInt(path);
+        return raw().getInt(path);
     }
 
     @Override
     public @Nullable Integer getInt(@NotNull String path, @Nullable Integer def) {
-        return section().getInt(path, def);
+        return raw().getInt(path, def);
     }
 
     @Override
     public boolean isLong(@NotNull String path) {
-        return section().isLong(path);
+        return raw().isLong(path);
     }
 
     @Override
     public @Nullable Long getLong(@NotNull String path) {
-        return section().getLong(path);
+        return raw().getLong(path);
     }
 
     @Override
     public @Nullable Long getLong(@NotNull String path, @Nullable Long def) {
-        return section().getLong(path, def);
+        return raw().getLong(path, def);
     }
 
     @Override
     public boolean isFloat(@NotNull String path) {
-        return section().isFloat(path);
+        return raw().isFloat(path);
     }
 
     @Override
     public @Nullable Float getFloat(@NotNull String path) {
-        return section().getFloat(path);
+        return raw().getFloat(path);
     }
 
     @Override
     public @Nullable Float getFloat(@NotNull String path, @Nullable Float def) {
-        return section().getFloat(path, def);
+        return raw().getFloat(path, def);
     }
 
     @Override
     public boolean isDouble(@NotNull String path) {
-        return section().isDouble(path);
+        return raw().isDouble(path);
     }
 
     @Override
     public @Nullable Double getDouble(@NotNull String path) {
-        return section().getDouble(path);
+        return raw().getDouble(path);
     }
 
     @Override
     public @Nullable Double getDouble(@NotNull String path, @Nullable Double def) {
-        return section().getDouble(path, def);
+        return raw().getDouble(path, def);
     }
 
     @Override
     public boolean isChar(@NotNull String path) {
-        return section().isChar(path);
+        return raw().isChar(path);
     }
 
     @Override
     public @Nullable Character getChar(@NotNull String path) {
-        return section().getChar(path);
+        return raw().getChar(path);
     }
 
     @Override
     public @Nullable Character getChar(@NotNull String path, @Nullable Character def) {
-        return section().getChar(path, def);
+        return raw().getChar(path, def);
     }
 
     @Override
     public boolean isString(@NotNull String path) {
-        return section().isString(path);
+        return raw().isString(path);
     }
 
     @Override
     public @Nullable String getString(@NotNull String path) {
-        return section().getString(path);
+        return raw().getString(path);
     }
 
     @Override
     public @Nullable String getString(@NotNull String path, @Nullable String def) {
-        return section().getString(path, def);
+        return raw().getString(path, def);
     }
 
     @Override
     public @NotNull <V> List<V> getList(@NotNull String path, @NotNull DataFunction<Object, V> parser) {
-        return section().getList(path, parser);
+        return raw().getList(path, parser);
     }
 
     @Override
     public @NotNull List<String> getStringList(@NotNull String path) {
-        return section().getStringList(path);
+        return raw().getStringList(path);
     }
 
     @Override
     public @NotNull List<Integer> getIntegerList(@NotNull String path) {
-        return section().getIntegerList(path);
+        return raw().getIntegerList(path);
     }
 
     @Override
     public @NotNull List<Long> getLongList(@NotNull String path) {
-        return section().getLongList(path);
+        return raw().getLongList(path);
     }
 
     @Override
     public @NotNull List<Double> getDoubleList(@NotNull String path) {
-        return section().getDoubleList(path);
+        return raw().getDoubleList(path);
     }
 
     @Override
     public @NotNull List<Float> getFloatList(@NotNull String path) {
-        return section().getFloatList(path);
+        return raw().getFloatList(path);
     }
 
     @Override
     public @NotNull List<Byte> getByteList(@NotNull String path) {
-        return section().getByteList(path);
+        return raw().getByteList(path);
     }
 
     @Override
     public @NotNull List<Character> getCharList(@NotNull String path) {
-        return section().getCharList(path);
+        return raw().getCharList(path);
     }
 
     @Override
     public <T, C extends Collection<T>> @NotNull C getCollection(@NotNull String path, @NotNull Supplier<C> constructor, @NotNull DataFunction<Object, T> parser) {
-        return section().getCollection(path, constructor, parser);
+        return raw().getCollection(path, constructor, parser);
     }
 
     @Override
     public @NotNull Stream<?> stream(@NotNull String path) {
-        return section().stream(path);
+        return raw().stream(path);
     }
 
     @Override
     public @NotNull <T> Stream<T> stream(@NotNull String path, @NotNull Function<Object, T> parser) {
-        return section().stream(path, parser);
+        return raw().stream(path, parser);
     }
 
     @Override
     public String childPath(String path) {
-        return section().childPath(path);
+        return raw().childPath(path);
     }
 
     @Override
     public int hashCode() {
-        return section.hashCode();
+        return raw.hashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
-        return Objects.equals(section, obj);
+        return Objects.equals(raw, obj);
     }
 
 }

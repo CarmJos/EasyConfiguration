@@ -109,12 +109,12 @@ public class SQLSource extends ConfigureSource<SourcedSection, Map<String, Objec
             @Nullable Object value = section.get(path);
 
             if (value instanceof SourcedSection) {
-                value = ((SourcedSection) value).rawMap();
+                value = ((SourcedSection) value).asMap();
             } else if (value instanceof List<?>) {
                 List<Object> list = new ArrayList<>();
                 for (Object obj : (List<?>) value) {
                     if (obj instanceof SourcedSection) {
-                        list.add(((SourcedSection) obj).rawMap());
+                        list.add(((SourcedSection) obj).asMap());
                     } else {
                         list.add(obj);
                     }

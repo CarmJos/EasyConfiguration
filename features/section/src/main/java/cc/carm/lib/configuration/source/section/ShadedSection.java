@@ -41,6 +41,12 @@ public class ShadedSection implements ConfigureSection {
     }
 
     @Override
+    public @NotNull @UnmodifiableView Map<String, Object> asMap() {
+        if (source == null) return template.asMap();
+        return merge(template, source).asMap();
+    }
+
+    @Override
     public @NotNull @UnmodifiableView Set<String> getKeys(boolean deep) {
         Set<String> keys = new HashSet<>(template.getKeys(deep));
         if (source != null) {

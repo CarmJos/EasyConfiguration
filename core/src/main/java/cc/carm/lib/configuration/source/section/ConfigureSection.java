@@ -48,7 +48,6 @@ public interface ConfigureSection {
         return (parent().isRoot() ? "" : parent().fullPath() + pathSeparator()) + path();
     }
 
-
     /**
      * Get the path separator for the section.
      *
@@ -144,6 +143,17 @@ public interface ConfigureSection {
     }
 
     /**
+     * Get this section as a map.
+     * <p>
+     * In this map, child {@link ConfigureSection}s will also be represented as {@link Map}s.
+     *
+     * @return Map of data values contained within this Section.
+     */
+    @NotNull
+    @UnmodifiableView
+    Map<String, Object> asMap();
+
+    /**
      * Create a stream of all values in this section.
      *
      * @return Stream of all values in this section.
@@ -153,7 +163,7 @@ public interface ConfigureSection {
     }
 
     /**
-     * Iterates over all keys in this section.
+     * Iterates over all key-values in this section (include child sections)
      *
      * @param action The action to apply to each key.
      */

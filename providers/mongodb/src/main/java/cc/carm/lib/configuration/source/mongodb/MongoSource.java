@@ -55,7 +55,7 @@ public class MongoSource extends ConfigureSource<SourcedSection, Map<String, Obj
 
     @Override
     public void save() throws Exception {
-        Map<String, Object> data = this.rootSection.rawMap();
+        Map<String, Object> data = this.rootSection.asMap();
         if (data.isEmpty()) return; // Skip saving if empty
         if (data.containsKey("_id") && data.size() == 1) return; // Skip saving if only contains _id
 
