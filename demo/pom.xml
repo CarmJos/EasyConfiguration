@@ -39,10 +39,11 @@
             <version>${project.parent.version}</version>
             <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>cc.carm.lib</groupId>
-            <artifactId>easyconfiguration-feature-versioned</artifactId>
-            <version>4.0.8</version>
+            <artifactId>easyconfiguration-feature-text</artifactId>
+            <version>${project.parent.version}</version>
             <scope>compile</scope>
         </dependency>
 
