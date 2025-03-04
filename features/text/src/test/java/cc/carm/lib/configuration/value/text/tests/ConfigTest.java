@@ -2,9 +2,11 @@ package cc.carm.lib.configuration.value.text.tests;
 
 
 import cc.carm.lib.configuration.source.ConfigurationHolder;
-import cc.carm.lib.configuration.source.yaml.YAMLConfigFactory;
+import cc.carm.lib.configuration.source.json.JSONConfigFactory;
 import cc.carm.lib.configuration.value.text.tests.conf.AppMessages;
 import org.junit.Test;
+
+import java.io.File;
 
 public class ConfigTest {
 
@@ -19,7 +21,7 @@ public class ConfigTest {
     @Test
     public void test() {
 
-        ConfigurationHolder<?> holder = YAMLConfigFactory.from("target/messages.yml").build();
+        ConfigurationHolder<?> holder = JSONConfigFactory.from(new File("target/messages.json")).build();
 
         holder.initialize(AppMessages.class);
 

@@ -40,13 +40,6 @@
             <scope>compile</scope>
         </dependency>
 
-        <dependency>
-            <groupId>cc.carm.lib</groupId>
-            <artifactId>easyconfiguration-feature-text</artifactId>
-            <version>${project.parent.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
     </dependencies>
 
     <build>
