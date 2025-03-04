@@ -26,7 +26,7 @@
 
         <module>providers/yaml</module>
         <module>providers/gson</module>
-        <!--        <module>providers/hocon</module>-->
+        <module>providers/hocon</module>
         <module>providers/sql</module>
         <module>providers/mongodb</module>
 
