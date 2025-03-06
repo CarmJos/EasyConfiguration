@@ -22,6 +22,7 @@ public class ParseTest {
         lines.add("Thanks for your reading!");
         lines.add("?[click]");
         lines.add("?[click]Click to see more!");
+        lines.add("?[hidden]This entry should be hidden!");
 
         Map<String, List<String>> optional = new HashMap<>();
         optional.put("guidance", Arrays.asList("To get more information for %(name), see:"));
