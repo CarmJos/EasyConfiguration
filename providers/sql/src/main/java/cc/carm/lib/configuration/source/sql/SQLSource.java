@@ -9,9 +9,7 @@ import cc.carm.lib.configuration.versioned.VersionedMetaTypes;
 import cc.carm.lib.easysql.api.SQLManager;
 import cc.carm.lib.easysql.api.SQLQuery;
 import cc.carm.lib.easysql.api.SQLTable;
-import cc.carm.lib.easysql.api.enums.IndexType;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,9 +18,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 public class SQLSource extends ConfigureSource<SourcedSection, Map<String, Object>, SQLSource> {
-
-    protected static final @NotNull Gson DEFAULT_GSON = new GsonBuilder()
-            .serializeNulls().disableHtmlEscaping().create();
 
     protected final @NotNull Gson gson;
     protected final @NotNull SQLManager sqlManager;
@@ -35,41 +30,13 @@ public class SQLSource extends ConfigureSource<SourcedSection, Map<String, Objec
     public SQLSource(@NotNull ConfigurationHolder<? extends SQLSource> holder, long lastUpdateMillis,
                      @NotNull Gson gson, @NotNull SQLManager sqlManager,
                      @NotNull Map<Integer, SQLValueResolver<?>> resolvers,
-                     @NotNull String tableName, @NotNull String namespace) {
+                     @NotNull SQLTable table, @NotNull String namespace) {
         super(holder, lastUpdateMillis);
         this.gson = gson;
         this.sqlManager = sqlManager;
         this.resolvers = resolvers;
         this.namespace = namespace;
-        this.table = SQLTable.of(tableName, builder -> {
-
-            builder.addColumn("namespace", "VARCHAR(32) NOT NULL");
-            builder.addColumn("path", "VARCHAR(96) NOT NULL");
-
-            builder.addColumn("value", "TEXT");
-
-            builder.addColumn("inline_comment", "TEXT");
-            builder.addColumn("header_comments", "MEDIUMTEXT");
-            builder.addColumn("footer_comments", "MEDIUMTEXT");
-
-            builder.addColumn("type", "TINYINT NOT NULL DEFAULT 0");
-            builder.addColumn("version", "MEDIUMINT UNSIGNED NOT NULL DEFAULT 0");
-
-            builder.addColumn(
-                    "create_time",
-                    "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP"
-            );
-            builder.addColumn(
-                    "update_time",
-                    "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
-            );
-
-            builder.setIndex(
-                    IndexType.PRIMARY_KEY, "pk_" + tableName.toLowerCase(),
-                    "namespace", "path"
-            );
-            builder.setTableSettings("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-        });
+        this.table = table;
 
         try {
             this.table.create(this.sqlManager);

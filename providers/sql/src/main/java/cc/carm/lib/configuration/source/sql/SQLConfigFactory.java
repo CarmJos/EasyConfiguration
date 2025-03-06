@@ -7,12 +7,17 @@ import cc.carm.lib.configuration.source.ConfigurationFactory;
 import cc.carm.lib.configuration.source.ConfigurationHolder;
 import cc.carm.lib.configuration.versioned.VersionedMetaTypes;
 import cc.carm.lib.easysql.api.SQLManager;
+import cc.carm.lib.easysql.api.SQLTable;
+import cc.carm.lib.easysql.api.builder.TableCreateBuilder;
+import cc.carm.lib.easysql.api.enums.IndexType;
+import cc.carm.lib.easysql.api.function.SQLHandler;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
 
 import java.util.HashMap;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -26,11 +31,43 @@ public class SQLConfigFactory extends ConfigurationFactory<SQLSource, Configurat
         return from(() -> manager);
     }
 
+    protected static final @NotNull Gson DEFAULT_GSON = new GsonBuilder()
+            .serializeNulls().disableHtmlEscaping().create();
+
+    protected static final @NotNull BiConsumer<String, TableCreateBuilder> DEFAULT_TABLE_SCHEMA = (tableName, builder) -> {
+        builder.addColumn("namespace", "VARCHAR(32) NOT NULL");
+        builder.addColumn("path", "VARCHAR(96) NOT NULL");
+
+        builder.addColumn("value", "TEXT");
+
+        builder.addColumn("inline_comment", "TEXT");
+        builder.addColumn("header_comments", "MEDIUMTEXT");
+        builder.addColumn("footer_comments", "MEDIUMTEXT");
+
+        builder.addColumn("type", "TINYINT NOT NULL DEFAULT 0");
+        builder.addColumn("version", "MEDIUMINT UNSIGNED NOT NULL DEFAULT 0");
+
+        builder.addColumn(
+                "create_time",
+                "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP"
+        );
+        builder.addColumn(
+                "update_time",
+                "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+        );
+
+        builder.setIndex(
+                IndexType.PRIMARY_KEY, "pk_" + tableName.toLowerCase(),
+                "namespace", "path"
+        );
+        builder.setTableSettings("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    };
+
     protected @NotNull Supplier<SQLManager> managerSupplier;
-    protected Supplier<Gson> gsonSupplier = () -> SQLSource.DEFAULT_GSON;
+    protected Supplier<Gson> gsonSupplier = () -> DEFAULT_GSON;
 
     protected HashMap<Integer, SQLValueResolver<?>> resolvers = new HashMap<>(SQLValueResolver.STANDARD_RESOLVERS);
-    protected String tableName = "configs";
+    protected SQLTable tableName = SQLTable.of("config", (table) -> DEFAULT_TABLE_SCHEMA.accept("config", table));
     protected String namespace = "default";
 
     public SQLConfigFactory(@NotNull Supplier<SQLManager> managerSupplier) {
@@ -95,9 +132,17 @@ public class SQLConfigFactory extends ConfigurationFactory<SQLSource, Configurat
         return resolver(id, SQLValueResolver.of(type, parser, serializer));
     }
 
-    public SQLConfigFactory tableName(@NotNull String tableName) {
-        this.tableName = tableName;
+    public SQLConfigFactory table(@NotNull SQLTable table) {
+        this.tableName = table;
         return self();
+    }
+
+    public SQLConfigFactory table(@NotNull String tableName, @NotNull SQLHandler<TableCreateBuilder> builder) {
+        return table(SQLTable.of(tableName, builder));
+    }
+
+    public SQLConfigFactory tableName(@NotNull String tableName) {
+        return table(tableName, table -> DEFAULT_TABLE_SCHEMA.accept(tableName, table));
     }
 
     public SQLConfigFactory namespace(@NotNull String namespace) {
